@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Hermes
+{% endblock %}
+
+{% block body %}
+
+    <script type="text/javascript">
+        var intervalID = setInterval(update_values, 1000);
+
+        function update_values() {
+            $.getJSON($SCRIPT_ROOT + '/update',
+
+          function(data) {
+            $('#current_time').text('Current time: '+data.current_time);
+            $('#condition').text('Looking to '+data.condition);
+            $('#crypto_currency').text('for '+data.crypto_currency+'.');
+            $('#fiat_currency').text(''+data.fiat_currency);
+            $('#crypto_balance').text('Asset A: '+data.crypto_balance);
+            $('#fiat_balance').text('Asset B: '+data.fiat_balance);
+            $('#trend_24h').text(data.trend_24h);
+            $('#buy_flag_4h').text(data.buy_flag_4h);
+            $('#sell_flag_4h').text(data.sell_flag_4h);
+            $('#trend_4h').text(data.trend_4h);
+            $('#buy_flag_1h').text(data.buy_flag_1h);
+            $('#sell_flag_1h').text(data.sell_flag_1h);
+            $('#trend_1h').text(data.trend_1h);
+            $('#buy_flag_15m').text(data.buy_flag_15m);
+            $('#sell_flag_15m').text(data.sell_flag_15m);
+            $('#limit').text('Buy limit: '+data.limit);
+            $('#stop').text('Stop loss: '+data.stop);
+            $('#log').text(data.log);
+            console.log(data)
+          });
+        };
+    </script>
+        <span id="current_time"></span>
+        <br>
+        <span id="condition"></span>
+        <span id="fiat_currency"></span>
+        <span id="crypto_currency"></span>
+        <br>
+        <br>
+        <p>Balance: </p>
+        <span id="crypto_balance"></span>
+        <span id="fiat_balance"></span>
+        <br>
+        <br>
+        <span id="trend_24h"></span>
+        <span id="buy_flag_4h"></span>
+        <span id="sell_flag_4h"></span>
+        <br>
+        <span id="trend_4h"></span>
+        <span id="buy_flag_1h"></span>
+        <span id="sell_flag_1h"></span>
+        <br>
+        <span id="trend_1h"></span>
+        <span id="buy_flag_15m"></span>
+        <span id="sell_flag_15m"></span>
+        <br>
+        <br>
+        <span id="limit"></span>
+        <span id="stop"></span>
+        <br>
+        <span id="log"></span>
+        <br>
+        <p>Stop bot sequence. Cancel all active orders.</p>
+        <a href='/stop'><input type='button' value='Stop bot'></a>
+        <a href='/cancel'><input type='button' value='Cancel all orders'></a>
+
+{% endblock %}
