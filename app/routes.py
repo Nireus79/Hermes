@@ -1,11 +1,10 @@
 import time
-from flask import Flask, render_template, jsonify, request
 import threading
-import webbrowser
-from back.bot import elder_cons, elder_trading, data_feed, signal_handler, time_stamp
-from back.kraken import cancel_order
-
-app = Flask(__name__)
+from app.back.bot import elder_cons, elder_trading, data_feed, signal_handler
+from app.back.kraken import cancel_order
+from app import app
+from flask import render_template, request, jsonify
+from app.back.kraken import time_stamp
 
 asset_a = None
 asset_b = None
@@ -68,8 +67,3 @@ def stopper():
 def canceler():
     cancel_order()
     return render_template('overview.html')
-
-
-if __name__ == '__main__':
-    webbrowser.open_new('http://127.0.0.1:5000')
-    app.run(debug=True)

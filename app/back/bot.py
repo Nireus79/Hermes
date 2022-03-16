@@ -1,7 +1,7 @@
 import logging
 import time
 import threading
-from back.kraken import Api, high_frame_indicators, mid_frame_indicators, time_stamp, \
+from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, time_stamp, \
     volume, add_order, get_order_info, cancel_order, get_condition
 
 logging.basicConfig(level=logging.INFO)
