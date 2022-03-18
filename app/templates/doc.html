@@ -1,13 +1,110 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Manual
+    User's manual
 {% endblock %}
 
 {% block body %}
-<h1>Hermes</h1>
-<p>A real time, multiple time frame, consulting-trading bot application, based on Alexander Elder's "Triple screen" trading strategy.</p>
+<h2>Hermes</h2>
+<p>A custom, real time, multiple time frame, consulting-trading bot application, </p>
+<p>interpretation of Alexander Elder's "triple screen" forex market trading strategy.</p>
+<h5>The strategy.</h5>
+<p>
+    The strategy is using data from three time frames, calculating indicators on first two and acts on the third.
+</p>
+    First frame used for establishing a trading bias.
+<br>
+    Second frame applies technical indicators to identify retracements against the trading bias established earlier.
+<br>
+    Third frame is used for timing entries using short-term breakouts in the direction of your trading bias.
+<p>Program starts with higher degree time frame and subsequently downgrades time frames lower progressively.
+<p>Frames combinations:
+    <br>Combination 1: High 24hours - mid 4 hours - low 1 hour.
+    <br>Combination 2: High 4 hours - mid 1 hour - low 15 min.
+    <br>Combination 3: High 1 hour - mid 15 min - low 5 min.
+</p>
+<h5>Evaluation phases</h5>
+    1) Trend. The long-term trend is evaluated.
+    – Alex Elder calls this as being the tide, and it's evaluation gives the general trend direction.
+<br>
+    2) Correction. The medium-term trend is evaluated.
+    – This trend is also known as the wave, gives the trend momentum strength and position.
+<br>
+    3) Specification.
+    - The short-term trend – It is also referred to as the ripple used to set limits of buy and stop loss.
+    Exact entry point is corrected by closely monitoring price movement.
+<!--    Different indicators can be used and different values can be set when following this strategy.-->
+<p>
+<h5>High frame.</h5>
+    General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc.
+    According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback,
+    entering the bullish zone.<br>
+    In our case a preset combination of 13p EMA, 30p EMA and macd indicators is used to determine the high frame trend.
+<!--    That makes evaluation faster, entering the buy zone more early. Use of 200 EMA (current price above 200ema)-->
+<!--    is much safer but also slow. Use of 9-20-50ema combination is very accurate but also very sensitive.-->
+<!--    Use of macd only may raise false signals.-->
+<h5>Mid frame.</h5>
+    Trend momentum and position is detected with the use of stochastic slow indicator.
+    Stochastic fast can be used for quicker response but in this case more force signals are generated.
+    Stochastic slow is used as it is a 'smothered' version of stoch fast.
+    An additional indicator of strength is added (rsi) for safety reasons, as when current price strength is above safety,
+    price is actually 'overbought' and probability of descent is high.
+<!--    The use of triggers can be applied for %K and %D curves as a safety measure, with opportunity cost.-->
+<!--    (Remains commented in the code)-->
+<h5>Low frame.</h5>
+    When conditions are aligned in the higher frames action limits are set,
+    according to the last low frame closed candle range.
+    Next time fragment of candle price gives action flag or sets new limits.
+<br>
+<a href="https://en.wikipedia.org/wiki/Alexander_Elder">Wiki/Elder</a>,
 
+<a href="https://www.elder.com/">elder.com</a>,
 
+<a href="https://tradingstrategyguides.com/alexander-elder-trading-strategy-the-triple-screen/">tradingstrategyguides.com</a>,
 
+<a href="https://www.elearnmarkets.com/blog/triple-screen-trading-method-alexander-elder-way-trading/">www.elearnmarkets.com</a>
+<p></p>
+<h2>Instructions.</h2>
+<h5>Setting up your credentials:</h5>
+<p>(This process needs to be done only once.)</p>
+<p>1) Go to <a href="https://www.kraken.com/">kraken.com</a> and create a new account.</p>
+<p>2) Then proceed to support:
+    <a href="https://support.kraken.com/hc/en-us/articles/360000919966-How-to-generate-an-API-key-pair-">
+        How to generate an API key pair</a><br>
+     and follow instructions to create your personal API key and Secret Key.<br>
+    These are essential for your app operation. The app will use them access your account.
+</p>
+<p>3) Carefully save your Api Key and secret. If you loose them you will have to generate new.</p>
+<p> A. Proceed to your windows "Control panel".<br>
+    B. Click on "System and security".<br>
+    C. Navigate to "System" and "Advanced system settings".<br>
+    D. Navigate to "Advanced" and "Environment variables".<br>
+    E. Click "New" button under "User variables" window.<br>
+    F. Type or paste API_KEY_KRAKEN on "Variable name" input field and your Api key on "Variable value" input field.<br>
+    G. Repeat "E" step and <br>
+    type or paste API_SEC_KRAKEN on "Variable name" input field and your Api secret key on "Variable value" input field.<br>
+    Now you have safely stored your credentials, and you can operate your app.
+</p>
+<p>
+    <h5>Operating your app:</h5>
+    <p>
+        A. Click "control" on nav bar field.<br>
+        B. Select your assets and press submit button.<br>
+        PLEASE BE SURE YOUR CHOICE IS SUPPORTED BEFORE YOU SUBMIT!!!<br>
+        C. Click "Start consulting" or "Start trading" button.
+    </p>
+<h3>General info:</h3>
+<p>
+    On "Consulting" mode app will only process data in real time and advice you
+    to manually place or cancel orders on your trading platform.<br>
+    On "Trading" mode app will automatically place these orders.
+    <p>
+    The app is designed to operate in Windows systems.<br>
+    Is using Kraken trading platform to collect data and trade.<br>
+    "Stop bot" button terminates the app operation after the completion of current
+    evaluation period. Message appears on Overview when done.<br>
+    "Cancel active order" has immediate effect.
+    <p>
+
+</p>
 {% endblock %}
