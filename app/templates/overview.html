@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block body %}
-
     <script type="text/javascript">
         var intervalID = setInterval(update_values, 1000);
 
@@ -19,15 +18,15 @@
             $('#fiat_currency').text(''+data.fiat_currency);
             $('#crypto_balance').text('Asset A: '+data.crypto_balance);
             $('#fiat_balance').text('Asset B: '+data.fiat_balance);
-            $('#trend_24h').text(data.trend_24h);
-            $('#buy_flag_4h').text(data.buy_flag_4h);
-            $('#sell_flag_4h').text(data.sell_flag_4h);
-            $('#trend_4h').text(data.trend_4h);
-            $('#buy_flag_1h').text(data.buy_flag_1h);
-            $('#sell_flag_1h').text(data.sell_flag_1h);
-            $('#trend_1h').text(data.trend_1h);
-            $('#buy_flag_15m').text(data.buy_flag_15m);
-            $('#sell_flag_15m').text(data.sell_flag_15m);
+            $('#trend_24h').text('24h trend: '+data.trend_24h);
+            $('#buy_flag_4h').text('4h buy flag: '+data.buy_flag_4h);
+            $('#sell_flag_4h').text('4h sell flag: '+data.sell_flag_4h);
+            $('#trend_4h').text('4h trend: '+data.trend_4h);
+            $('#buy_flag_1h').text('1h buy flag: '+data.buy_flag_1h);
+            $('#sell_flag_1h').text('1h sell flag: '+data.sell_flag_1h);
+            $('#trend_1h').text('1h trend: '+data.trend_1h);
+            $('#buy_flag_15m').text('15min buy flag: '+data.buy_flag_15m);
+            $('#sell_flag_15m').text('15min sell flag: '+data.sell_flag_15m);
             $('#limit').text('Buy limit: '+data.limit);
             $('#stop').text('Stop loss: '+data.stop);
             $('#log').text(data.log);
@@ -67,5 +66,4 @@
         <br>
         <a href='/stop'><input type='button' value='Stop bot'></a>
         <a href='/cancel'><input type='button' value='Cancel active order'></a>
-
 {% endblock %}
