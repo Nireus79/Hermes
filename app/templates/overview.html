@@ -14,8 +14,8 @@
           function(data) {
             $('#current_time').text('Current time: '+data.current_time);
             $('#condition').text('Looking to '+data.condition);
-            $('#crypto_currency').text('for '+data.crypto_currency+'.');
-            $('#fiat_currency').text(''+data.fiat_currency);
+            $('#crypto_currency').text('for '+data.fiat_currency+'.');
+            $('#fiat_currency').text(''+data.crypto_currency);
             $('#crypto_balance').text('Asset A: '+data.crypto_balance);
             $('#fiat_balance').text('Asset B: '+data.fiat_balance);
             $('#trend_24h').text('24h trend: '+data.trend_24h);

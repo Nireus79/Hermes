@@ -7,7 +7,7 @@ from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, ti
 logging.basicConfig(level=logging.INFO)
 
 condition = None
-stop = None
+stop = 0
 limit = None
 new_closing = None
 log = None
@@ -152,7 +152,7 @@ def limit_manager(mid, instance, cond):
                 #     break
 
 
-def order_manager(mid, instance, cond, crypto_currency, fiat_currency):
+def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currency):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
     order_manager takes limit, stop, and private account balance (crypto and fiat)
@@ -178,6 +178,7 @@ def order_manager(mid, instance, cond, crypto_currency, fiat_currency):
         (That means initial limit order is closed)
         If that was to buy a pillow limit order is set and manager loop breaks.
         If that was to sell loop just breaks.
+    :param order_type: limit / market
     :param crypto_currency:
     :param fiat_currency:
     :param mid: mid-frame instance
@@ -204,7 +205,7 @@ def order_manager(mid, instance, cond, crypto_currency, fiat_currency):
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
     if cond == 'buy':
-        tx = add_order('limit', cond, fiat_balance, limit, fiat_currency, crypto_currency)['txid']
+        tx = add_order(order_type, cond, fiat_balance, limit, fiat_currency, crypto_currency)['txid']
         status = get_order_info(tx)
         if status == 'open':
             log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 4)
@@ -227,7 +228,8 @@ def order_manager(mid, instance, cond, crypto_currency, fiat_currency):
                         new_closing = new['close']
                         if new['close'] < stop:
                             cancel_order()
-                            tx = add_order('limit', cond, fiat_balance, limit, fiat_currency, crypto_currency)['txid']
+                            tx = add_order(order_type, cond, fiat_balance, limit,
+                                           fiat_currency, crypto_currency)['txid']
                             log = 'New limit order added to {}. Wait {}min.'.format(limit, instance.interval / 4)
                             logging.info(log)
                             time.sleep(instance.candle / 4)
@@ -241,15 +243,15 @@ def order_manager(mid, instance, cond, crypto_currency, fiat_currency):
                             .format(time_stamp(time.time()))
                         logging.info(log)
                         break
-                else:
-                    crypto = volume(fiat_currency, crypto_currency)[crypto_currency]
-                    add_order('limit', 'sell', crypto, stop, fiat_currency, crypto_currency)  # Pillow.
-                    log = 'Pillow set to {}'.format(stop)
-                    logging.info(log)
-                    break
+                # else:
+                #     crypto = volume(fiat_currency, crypto_currency)[crypto_currency]
+                #     add_order('limit', 'sell', crypto, stop, fiat_currency, crypto_currency)  # Pillow.
+                #     log = 'Pillow set to {}'.format(stop)
+                #     logging.info(log)
+                #     break
     elif cond == 'sell':
-        cancel_order()  # Canceling previous pillow.
-        tx = add_order('limit', cond, crypto_balance, stop, fiat_currency, crypto_currency)['txid']
+        # cancel_order()  # Canceling previous pillow.
+        tx = add_order(order_type, cond, crypto_balance, stop, fiat_currency, crypto_currency)['txid']
         status = get_order_info(tx)
         if status == 'open':
             log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 4)
@@ -266,7 +268,8 @@ def order_manager(mid, instance, cond, crypto_currency, fiat_currency):
                         new_closing = new['close']
                         if new['close'] > limit:
                             cancel_order()
-                            tx = add_order('limit', cond, crypto_balance, stop, fiat_currency, crypto_currency)['txid']
+                            tx = add_order(order_type, cond, crypto_balance, stop,
+                                           fiat_currency, crypto_currency)['txid']
                             log = 'New limit order added to {}. Wait {}min.'.format(stop, instance.interval / 4)
                             logging.info(log)
                             time.sleep(instance.candle / 4)
@@ -638,7 +641,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if buy_flag_4h:
                     log = '{} 4hour momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager(i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                    order_manager('limit', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
                 elif buy_flag_4h is not True:
                     log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
@@ -651,7 +654,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                         if buy_flag_1h:
                             log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            order_manager(i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                            order_manager('limit', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
                         elif buy_flag_1h is not True:
                             log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                             logging.info(log)
@@ -664,7 +667,8 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                                 if buy_flag_15m:
                                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                     logging.info(log)
-                                    order_manager(i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                                    order_manager('limit', i15m_frame, i5m_feed, condition,
+                                                  fiat_currency, crypto_currency)
                                 elif buy_flag_15m is not True:
                                     log = '{} 15 min momentum is weak. Wait 5 minutes.' \
                                         .format(time_stamp(time.time()))
@@ -687,7 +691,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                             if buy_flag_15m:
                                 log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                 logging.info(log)
-                                order_manager(i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                                order_manager('limit', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                             elif buy_flag_15m is not True:
                                 log = '{} 15 min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
                                 logging.info(log)
@@ -706,7 +710,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if buy_flag_1h:
                     log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager(i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                    order_manager('limit', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
                 elif buy_flag_1h is not True:
                     log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
@@ -719,7 +723,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                         if buy_flag_15m:
                             log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            order_manager(i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                            order_manager('limit', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                         elif buy_flag_15m is not True:
                             log = '{} 15min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
                             logging.info(log)
@@ -738,7 +742,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if buy_flag_15m:
                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager(i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                    order_manager('limit', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                 elif buy_flag_15m is not True:
                     log = '{} 15min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
                     logging.info(log)
@@ -749,6 +753,8 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 logging.info(log)
                 time.sleep(i5m_feed.candle)
         elif condition == 'sell':
+            if i5m_feed.get_frame().iloc[-1]['close'] < stop:  # pillow
+                order_manager('limit', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
             if trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
@@ -758,7 +764,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if sell_flag_4h:
                     log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager(i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                    order_manager('limit', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
                 elif sell_flag_4h is not True:
                     log = '{} 4hour momentum is strong. Wait {} minutes.' \
                         .format(time_stamp(time.time()), i4h_frame.interval / 4)
@@ -773,7 +779,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if sell_flag_1h:
                     log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager(i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                    order_manager('limit', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
                 elif sell_flag_1h is not True:
                     log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 4)
                     logging.info(log)
@@ -787,7 +793,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if sell_flag_15m:
                     log = '{} 15min momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager(i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                    order_manager('limit', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                 elif sell_flag_15m is not True:
                     log = '{} 15min momentum strong. Wait {} minutes.' \
                         .format(time_stamp(time.time()), i15m_frame.interval / 4)
@@ -797,7 +803,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 log = '{} All high frames trends are negative. Safe sell activated.' \
                     .format(time_stamp(time.time()))
                 logging.info(log)
-                order_manager(i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
 
 
 def data_feed():
