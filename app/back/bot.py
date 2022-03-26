@@ -243,14 +243,13 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                             .format(time_stamp(time.time()))
                         logging.info(log)
                         break
-                # else:
-                #     crypto = volume(fiat_currency, crypto_currency)[crypto_currency]
-                #     add_order('limit', 'sell', crypto, stop, fiat_currency, crypto_currency)  # Pillow.
-                #     log = 'Pillow set to {}'.format(stop)
-                #     logging.info(log)
-                #     break
+                else:
+                    stop = mid_frame_indicators(mid.get_frame()).iloc[-1]['low']
+                    log = 'Pillow set to {}'.format(stop)
+                    logging.info(log)
+                    break
     elif cond == 'sell':
-        # cancel_order()  # Canceling previous pillow.
+        cancel_order()  # Canceling previous pillow.
         tx = add_order(order_type, cond, crypto_balance, stop, fiat_currency, crypto_currency)['txid']
         status = get_order_info(tx)
         if status == 'open':
@@ -752,10 +751,11 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     .format(time_stamp(time.time()))
                 logging.info(log)
                 time.sleep(i5m_feed.candle)
+
         elif condition == 'sell':
             if i5m_feed.get_frame().iloc[-1]['close'] < stop:  # pillow
                 order_manager('limit', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
-            if trend_24h:
+            elif trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
                 log = '{} mid 4hour frame buy flag is {}. mid 4hour frame sell flag is {}.' \
@@ -804,6 +804,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     .format(time_stamp(time.time()))
                 logging.info(log)
                 order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                #  type of trade here is market, as immediate action must be taken.
 
 
 def data_feed():
