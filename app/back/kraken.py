@@ -38,7 +38,7 @@ def get_private_balance():
     return resp.json()
 
 
-def get_condition(fiat_currency, crypto_currency):
+def get_condition(crypto_currency, fiat_currency):
     """
     Takes the private user's account balance and gives condition to buy or sell to the bot.
     If balance has fiat and no crypto returns condition "buy" for the bot to look for good crypto buy conditions.
@@ -47,11 +47,11 @@ def get_condition(fiat_currency, crypto_currency):
     """
     balance = get_private_balance()
     crypto = balance['result'][crypto_currency]
-    fiat = balance['result'][fiat_currency]
+    fiat = balance['result'][fiat_currency+'.HOLD']
     if float(crypto) == 0:
-        return 'buy', crypto, fiat
+        return 'buy'
     elif float(crypto) > 0:
-        return 'sell', crypto, fiat
+        return 'sell'
 
 
 def volume(fiat_currency, crypto_currency):
@@ -60,7 +60,7 @@ def volume(fiat_currency, crypto_currency):
             fiat_currency: balance['result'][fiat_currency+'.HOLD']}
 
 
-def add_order(ordertype, cond, vol, price, fiat_currency, crypto_currency):
+def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
     """
     https://support.kraken.com/hc/en-us/articles/360022839631-Open-Orders
     :param crypto_currency:
@@ -71,7 +71,7 @@ def add_order(ordertype, cond, vol, price, fiat_currency, crypto_currency):
     :param price: order price
     :return: order response
     """
-    pair = fiat_currency+crypto_currency
+    pair = crypto_currency+fiat_currency
     resp = kraken_request('/0/private/AddOrder', {
         "nonce": str(int(1000 * time.time())),
         "ordertype": ordertype,

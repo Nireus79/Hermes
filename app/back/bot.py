@@ -334,7 +334,7 @@ def elder_cons(crypto_currency, fiat_currency, depth):
             log = '{} Break consulting.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-        condition = 'buy'
+        condition = get_condition(crypto_currency, fiat_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
