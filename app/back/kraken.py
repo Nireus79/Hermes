@@ -47,7 +47,7 @@ def get_condition(crypto_currency, fiat_currency):
     """
     balance = get_private_balance()
     crypto = balance['result'][crypto_currency]
-    fiat = balance['result'][fiat_currency+'.HOLD']
+    # fiat = balance['result'][fiat_currency+'.HOLD']
     if float(crypto) == 0:
         return 'buy'
     elif float(crypto) > 0:

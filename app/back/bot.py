@@ -68,9 +68,9 @@ def limit_manager(mid, instance, cond):
     if cond == 'buy':
         status = 'open'
         if status == 'open':
-            log = 'Please set limit buy order to {}. Wait {}min.'.format(limit, instance.interval / 4)
+            log = 'Please set limit buy order to {}. Wait {}min.'.format(limit, instance.interval / 6)
             logging.info(log)
-            time.sleep(instance.candle / 4)
+            time.sleep(instance.candle / 6)
             while True:
                 if exit_event.is_set():
                     # thread "kill" by user
@@ -85,9 +85,9 @@ def limit_manager(mid, instance, cond):
                         stop = new['low']
                         new_closing = new['close']
                         if new['close'] < stop:
-                            log = 'Please set new limit order to {}. Wait {}min.'.format(limit, instance.interval / 4)
+                            log = 'Please set new limit order to {}. Wait {}min.'.format(limit, instance.interval / 6)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                         elif new['close'] >= stop:
                             log = '{} {} at {}. Please set sell pillow to {}. Frame {} min.' \
                                 .format(time_stamp(time.time()), condition, new['close'], stop, instance.interval)
@@ -95,9 +95,9 @@ def limit_manager(mid, instance, cond):
                             condition = 'sell'
                             break
                         else:
-                            log = 'Order still open. Wait {}min.'.format(instance.interval / 4)
+                            log = 'Order still open. Wait {}min.'.format(instance.interval / 6)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                     else:
                         log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
                               ' Please cancel all active orders' \
@@ -111,9 +111,9 @@ def limit_manager(mid, instance, cond):
     elif cond == 'sell':
         status = 'open'
         if status == 'open':
-            log = 'Please set limit sell order to {}. Wait {}min.'.format(limit, instance.interval / 4)
+            log = 'Please set limit sell order to {}. Wait {}min.'.format(limit, instance.interval / 6)
             logging.info(log)
-            time.sleep(instance.candle / 4)
+            time.sleep(instance.candle / 6)
             while True:
                 if exit_event.is_set():
                     # thread "kill" by user
@@ -130,16 +130,16 @@ def limit_manager(mid, instance, cond):
                         if new['close'] > limit:
                             log = 'Please set new limit order to {}. Wait {}min.'.format(stop, instance.interval / 4)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                         elif new['close'] <= limit:
                             log = '{} {} at {}. Frame {}min.' \
                                 .format(time_stamp(time.time()), condition, new['close'], instance.interval)
                             logging.info(log)
                             condition = 'buy'
                         else:
-                            log = 'Order still open. Wait {}min.'.format(instance.interval / 4)
+                            log = 'Order still open. Wait {}min.'.format(instance.interval / 6)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                     else:
                         log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
                               ' Please cancel all active orders' \
@@ -208,9 +208,9 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
         tx = add_order(order_type, cond, fiat_balance, limit, fiat_currency, crypto_currency)['txid']
         status = get_order_info(tx)
         if status == 'open':
-            log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 4)
+            log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 6)
             logging.info(log)
-            time.sleep(instance.candle / 4)
+            time.sleep(instance.candle / 6)
             while True:
                 if exit_event.is_set():
                     # thread "kill" by user
@@ -230,13 +230,13 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                             cancel_order()
                             tx = add_order(order_type, cond, fiat_balance, limit,
                                            fiat_currency, crypto_currency)['txid']
-                            log = 'New limit order added to {}. Wait {}min.'.format(limit, instance.interval / 4)
+                            log = 'New limit order added to {}. Wait {}min.'.format(limit, instance.interval / 6)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                         else:
-                            log = 'Order still open. Wait {}min.'.format(instance.interval / 4)
+                            log = 'Order still open. Wait {}min.'.format(instance.interval / 6)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                     else:
                         cancel_order()
                         log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
@@ -253,9 +253,9 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
         tx = add_order(order_type, cond, crypto_balance, stop, fiat_currency, crypto_currency)['txid']
         status = get_order_info(tx)
         if status == 'open':
-            log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 4)
+            log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 6)
             logging.info(log)
-            time.sleep(instance.candle / 4)
+            time.sleep(instance.candle / 6)
             while True:
                 status = get_order_info(tx)
                 if status == 'open':
@@ -269,12 +269,12 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                             cancel_order()
                             tx = add_order(order_type, cond, crypto_balance, stop,
                                            fiat_currency, crypto_currency)['txid']
-                            log = 'New limit order added to {}. Wait {}min.'.format(stop, instance.interval / 4)
+                            log = 'New limit order added to {}. Wait {}min.'.format(stop, instance.interval / 6)
                             logging.info(log)
-                            time.sleep(instance.candle / 4)
+                            time.sleep(instance.candle / 6)
                         else:
-                            log = 'Order still open. Wait {}min.'.format(instance.interval / 4)
-                            time.sleep(instance.candle / 4)
+                            log = 'Order still open. Wait {}min.'.format(instance.interval / 6)
+                            time.sleep(instance.candle / 6)
                     else:
                         cancel_order()
                         log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
@@ -316,12 +316,9 @@ def elder_cons(crypto_currency, fiat_currency, depth):
     i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
-    i30m_frame = Api(crypto_currency, fiat_currency, 30, depth)
     i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
 
-    i4h_feed = Api(crypto_currency, fiat_currency, 240, 1)
     i1h_feed = Api(crypto_currency, fiat_currency, 60, 1)
-    i30m_feed = Api(crypto_currency, fiat_currency, 30, 1)
     i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
     i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
 
@@ -490,9 +487,9 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                     limit_manager(i4h_frame, i1h_feed, condition)
                 elif sell_flag_4h is not True:
                     log = '{} 4hour momentum is strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i4h_frame.interval / 4)
+                        .format(time_stamp(time.time()), i4h_frame.interval / 6)
                     logging.info(log)
-                    time.sleep(i4h_frame.candle / 4)
+                    time.sleep(i4h_frame.candle / 6)
             elif trend_4h:
                 log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                 logging.info(log)
@@ -504,9 +501,9 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                     logging.info(log)
                     limit_manager(i1h_frame, i15m_feed, condition)
                 elif sell_flag_1h is not True:
-                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 4)
+                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 6)
                     logging.info(log)
-                    time.sleep(i1h_frame.candle / 4)
+                    time.sleep(i1h_frame.candle / 6)
             elif trend_1h:
                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                 logging.info(log)
@@ -519,9 +516,9 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                     limit_manager(i15m_frame, i5m_feed, condition)
                 elif sell_flag_15m is not True:
                     log = '{} 15min momentum strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i15m_frame.interval / 4)
+                        .format(time_stamp(time.time()), i15m_frame.interval / 6)
                     logging.info(log)
-                    time.sleep(i15m_frame.candle / 4)
+                    time.sleep(i15m_frame.candle / 6)
             else:
                 log = '{} All high frames trends are negative. Safe sell activated.' \
                     .format(time_stamp(time.time()))
@@ -592,12 +589,9 @@ def elder_trading(crypto_currency, fiat_currency, depth):
     i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
-    i30m_frame = Api(crypto_currency, fiat_currency, 30, depth)
     i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
 
-    i4h_feed = Api(crypto_currency, fiat_currency, 240, 1)
     i1h_feed = Api(crypto_currency, fiat_currency, 60, 1)
-    i30m_feed = Api(crypto_currency, fiat_currency, 30, 1)
     i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
     i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
 
@@ -609,7 +603,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-        condition, crypto, fiat = get_condition(fiat_currency, crypto_currency)
+        condition = get_condition(fiat_currency, crypto_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
 
@@ -767,9 +761,9 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     order_manager('limit', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
                 elif sell_flag_4h is not True:
                     log = '{} 4hour momentum is strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i4h_frame.interval / 4)
+                        .format(time_stamp(time.time()), i4h_frame.interval / 6)
                     logging.info(log)
-                    time.sleep(i4h_frame.candle / 4)
+                    time.sleep(i4h_frame.candle / 6)
             elif trend_4h:
                 log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                 logging.info(log)
@@ -781,9 +775,9 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     logging.info(log)
                     order_manager('limit', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
                 elif sell_flag_1h is not True:
-                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 4)
+                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 6)
                     logging.info(log)
-                    time.sleep(i1h_frame.candle / 4)
+                    time.sleep(i1h_frame.candle / 6)
             elif trend_1h:
                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                 logging.info(log)
@@ -796,9 +790,9 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     order_manager('limit', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                 elif sell_flag_15m is not True:
                     log = '{} 15min momentum strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i15m_frame.interval / 4)
+                        .format(time_stamp(time.time()), i15m_frame.interval / 6)
                     logging.info(log)
-                    time.sleep(i15m_frame.candle / 4)
+                    time.sleep(i15m_frame.candle / 6)
             else:
                 log = '{} All high frames trends are negative. Safe sell activated.' \
                     .format(time_stamp(time.time()))
