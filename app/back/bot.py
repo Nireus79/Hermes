@@ -198,93 +198,116 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
     vol = volume(fiat_currency, crypto_currency)
     limit = new['high']
     stop = new['low']
+    new_closing = new['close']
     crypto_balance = vol[crypto_currency]
     fiat_balance = vol[fiat_currency]
-    log = '{} limit {}. Stop loss-Pillow {}.'.format(time_stamp(time.time()), limit, stop)
-    logging.info(log)
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
-    if cond == 'buy':
-        tx = add_order(order_type, cond, fiat_balance, limit, fiat_currency, crypto_currency)['txid']
-        status = get_order_info(tx)
-        if status == 'open':
-            log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 6)
+    log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
+        .format(time_stamp(time.time()), new_closing, limit, stop)
+    logging.info(log)
+    log = 'Wait {}min.'.format(instance.interval / 6)
+    logging.info(log)
+    time.sleep(instance.candle / 6)
+    while True:
+        new = instance.get_frame().iloc[-1]
+        new_closing = new['close']
+
+        if exit_event.is_set():  # thread "kill" by user
+            cancel_order()
+            log = '{} Break ordering.'.format(time_stamp(time.time()))
             logging.info(log)
-            time.sleep(instance.candle / 6)
-            while True:
-                if exit_event.is_set():
-                    # thread "kill" by user
-                    cancel_order()
-                    log = '{} Break ordering.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    break
-                status = get_order_info(tx)
-                if status == 'open':
-                    buy_flag = mid_frame_indicators(mid.get_frame()).iloc[-1]['buy flag']
-                    if buy_flag:
-                        new = instance.get_frame().iloc[-1]
-                        limit = new['high']
-                        stop = new['low']
-                        new_closing = new['close']
-                        if new['close'] < stop:
-                            cancel_order()
-                            tx = add_order(order_type, cond, fiat_balance, limit,
-                                           fiat_currency, crypto_currency)['txid']
-                            log = 'New limit order added to {}. Wait {}min.'.format(limit, instance.interval / 6)
-                            logging.info(log)
-                            time.sleep(instance.candle / 6)
+            break
+
+        elif cond == 'buy':
+            if mid_frame_indicators(mid.get_frame()).iloc[-1]['buy flag'] is True:
+                if new_closing > limit:
+                    tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
+                    status = get_order_info(tx)
+                    time.sleep(10)
+                    while True:
+                        if mid_frame_indicators(mid.get_frame()).iloc[-1]['buy flag'] is True:
+                            if status == 'close':
+                                log = '{} Order closed.'.format(time_stamp(time.time()))
+                                logging.info(log)
+                                break
+                            elif status == 'open':
+                                new = instance.get_frame().iloc[-1]
+                                if new['high'] < limit:
+                                    cancel_order()
+                                    limit = new['high']
+                                    tx = add_order(order_type, cond,
+                                                   fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
+                                    status = get_order_info(tx)
+                                    log = '{} New {} order added at {}.' \
+                                        .format(time_stamp(time.time()), cond, new['close'])
+                                    logging.info(log)
+                                    time.sleep(10)
+                                else:
+                                    log = '{} Order is open.'.format(time_stamp(time.time()))
+                                    logging.info(log)
+                                    time.sleep(10)
                         else:
-                            log = 'Order still open. Wait {}min.'.format(instance.interval / 6)
-                            logging.info(log)
-                            time.sleep(instance.candle / 6)
-                    else:
-                        cancel_order()
-                        log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
-                            .format(time_stamp(time.time()))
-                        logging.info(log)
-                        break
-                else:
-                    stop = mid_frame_indicators(mid.get_frame()).iloc[-1]['low']
-                    log = 'Pillow set to {}'.format(stop)
-                    logging.info(log)
-                    break
-    elif cond == 'sell':
-        cancel_order()  # Canceling previous pillow.
-        tx = add_order(order_type, cond, crypto_balance, stop, fiat_currency, crypto_currency)['txid']
-        status = get_order_info(tx)
-        if status == 'open':
-            log = 'Limit order added to {}. Wait {}min.'.format(limit, instance.interval / 6)
-            logging.info(log)
-            time.sleep(instance.candle / 6)
-            while True:
-                status = get_order_info(tx)
-                if status == 'open':
-                    sell_flag = mid_frame_indicators(mid.get_frame()).iloc[-1]['sell flag']
-                    if sell_flag:
-                        new = instance.get_frame().iloc[-1]
-                        limit = new['high']
-                        stop = new['low']
-                        new_closing = new['close']
-                        if new['close'] > limit:
                             cancel_order()
-                            tx = add_order(order_type, cond, crypto_balance, stop,
-                                           fiat_currency, crypto_currency)['txid']
-                            log = 'New limit order added to {}. Wait {}min.'.format(stop, instance.interval / 6)
+                            log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
+                                .format(time_stamp(time.time()))
                             logging.info(log)
-                            time.sleep(instance.candle / 6)
-                        else:
-                            log = 'Order still open. Wait {}min.'.format(instance.interval / 6)
-                            time.sleep(instance.candle / 6)
-                    else:
-                        cancel_order()
-                        log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
-                            .format(time_stamp(time.time()))
-                        logging.info(log)
-                        break
+                            break
                 else:
-                    log = 'Limit order closed. Crypto sold.'
+                    log = '{} Closing price under limit. Wait {}min.' \
+                        .format(time_stamp(time.time()), instance.interval / 6)
                     logging.info(log)
-                    break
+                    time.sleep(instance.candle / 6)
+            else:
+                log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
+                    .format(time_stamp(time.time()))
+                logging.info(log)
+                break
+
+        elif cond == 'sell':
+            if mid_frame_indicators(mid.get_frame()).iloc[-1]['sell flag'] is True:
+                if new_closing < stop:
+                    tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
+                    status = get_order_info(tx)
+                    time.sleep(10)
+                    while True:
+                        if mid_frame_indicators(mid.get_frame()).iloc[-1]['sell flag'] is True:
+                            if status == 'close':
+                                log = '{} Order closed.'.format(time_stamp(time.time()))
+                                logging.info(log)
+                                break
+                            elif status == 'open':
+                                new = instance.get_frame().iloc[-1]
+                                if new['low'] > stop:
+                                    cancel_order()
+                                    stop = new['low']
+                                    tx = add_order(order_type, cond,
+                                                   fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
+                                    status = get_order_info(tx)
+                                    log = '{} New {} order added at {}.' \
+                                        .format(time_stamp(time.time()), cond, new['close'])
+                                    logging.info(log)
+                                    time.sleep(10)
+                                else:
+                                    log = '{} Order is open.'.format(time_stamp(time.time()))
+                                    logging.info(log)
+                                    time.sleep(10)
+                        else:
+                            cancel_order()
+                            log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
+                                .format(time_stamp(time.time()))
+                            logging.info(log)
+                            break
+                else:
+                    log = '{} Closing price over stop. Wait {}min.' \
+                        .format(time_stamp(time.time()), instance.interval / 6)
+                    logging.info(log)
+                    time.sleep(instance.candle / 6)
+            else:
+                log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
+                    .format(time_stamp(time.time()))
+                logging.info(log)
+                break
 
 
 def elder_cons(crypto_currency, fiat_currency, depth):
