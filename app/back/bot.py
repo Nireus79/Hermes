@@ -40,13 +40,13 @@ def signal_handler():
     exit_event.set()
 
 
-def limit_manager(mid, instance, cond):
+def limit_manager(mid, low, cond):
     """
     Same as order_manager.
     No actual order is set.
     User is just informed for the action he has to take.
     :param mid: The middle time frame instance, used to check if buy/sell flag is still True.
-    :param instance: The low time frame instance, used to set limit/stop-loss borders.
+    :param low: The low time frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
     global pillow
@@ -55,90 +55,93 @@ def limit_manager(mid, instance, cond):
     global limit
     global log
     global new_closing
-    log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), instance.interval, cond)
+    log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
-    new = instance.get_frame().iloc[-1]
+    new = low.get_frame().iloc[-1]
     middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
     limit = new['high']
     stop = new['low']
     pillow = middle['low']
-    log = '{} limit {}. Stop loss-Pillow {}.'.format(time_stamp(time.time()), limit, stop)
+    log = '{} limit: {}. Stop loss: {}. Pillow: {}'.format(time_stamp(time.time()), limit, stop, pillow)
     logging.info(log)
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
-            .format(time_stamp(time.time()), limit, instance.interval / 6)
+            .format(time_stamp(time.time()), limit, low.interval / 6)
         logging.info(log)
-        time.sleep(instance.candle / 6)
+        time.sleep(low.candle / 6)
     elif cond == 'sell':
         log = '{} Please give sell order when price deceeds {}. Wait {}min.' \
-            .format(time_stamp(time.time()), stop, instance.interval / 6)
+            .format(time_stamp(time.time()), stop, low.interval / 6)
         logging.info(log)
-        time.sleep(instance.candle / 6)
-        while True:
-            new = instance.get_frame().iloc[-1]
-            middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
-            new_closing = new['close']
-            pillow = middle['low']
-            if exit_event.is_set():
-                # thread "kill" by user
-                log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
+        time.sleep(low.candle / 6)
+    while True:
+        middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
+        new = low.get_frame().iloc[-1]
+        buy_flag = middle['buy flag']
+        sell_flag = middle['sell flag']
+        new_pillow = middle['low']
+        new_closing = new['close']
+        new_limit = new['high']
+        new_stop = new['low']
+        if exit_event.is_set():  # thread "kill" by user
+            log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
+            logging.info(log)
+            break
+        if cond == 'buy':
+            if buy_flag:
+                if new_closing > limit:
+                    log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
+                    logging.info(log)
+                    pillow = new_pillow
+                    time.sleep(1)
+                    break
+                elif new_closing < limit:
+                    if new_limit < limit:
+                        limit = new_limit
+                        stop = new_stop
+                        pillow = new_pillow
+                        log = '{} New limit set to {}.'.format(time_stamp(time.time()), limit)
+                        logging.info(log)
+                    else:
+                        log = '{} Closing price not exceeded limit. Please wait {}min.'.format(
+                            time_stamp(time.time()), low.interval / 6)
+                        logging.info(log)
+                        time.sleep(low.candle / 6)
+            elif sell_flag:
+                log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
+                    .format(time_stamp(time.time()))
                 logging.info(log)
+                time.sleep(1)
                 break
-            if cond == 'buy':
-                if middle['buy flag'] is True:
-                    if new_closing > limit:
-                        log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
-                        logging.info(log)
-                        pillow = middle['low']
-                        time.sleep(10)
-                        break
-                    elif new_closing < limit:
-                        if new['high'] < limit:
-                            limit = new['high']
-                            stop = new['low']
-                            pillow = middle['low']
-                            log = '{} New limit set to {}.'.format(time_stamp(time.time()), limit)
-                            logging.info(log)
-                        else:
-                            log = '{} Closing price not exceeded limit. Please wait {}min.'.format(
-                                time_stamp(time.time()), instance.interval / 6)
-                            logging.info(log)
-                            time.sleep(instance.candle / 6)
-                elif middle['buy flag'] is False:
-                    log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
+        elif cond == 'sell':
+            if sell_flag:
+                if new_closing < stop:
+                    log = '{} Closing price deceeded stop loss level. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
+                    time.sleep(1)
                     break
-            elif cond == 'sell':
-                if middle['sell flag'] is True:
-                    if new_closing < stop:
-                        log = '{} Closing price deceeded stop loss level. Please add sell order' \
-                            .format(time_stamp(time.time()))
+                elif new_closing > stop:
+                    if new_stop > stop:
+                        limit = new_limit
+                        stop = new_stop
+                        pillow = new_pillow
+                        log = '{} New stop-loss set to {}.'.format(time_stamp(time.time()), limit)
                         logging.info(log)
-                        pillow = middle['low']
-                        time.sleep(10)
-                        break
-                    elif new_closing > stop:
-                        if new['low'] > stop:
-                            limit = new['high']
-                            stop = new['low']
-                            pillow = middle['low']
-                            log = '{} New stop-loss set to {}.'.format(time_stamp(time.time()), limit)
-                            logging.info(log)
-                        else:
-                            log = '{} Closing price not deceeded stop-loss level. Please wait {}min.'.format(
-                                time_stamp(time.time()), instance.interval / 6)
-                            logging.info(log)
-                            time.sleep(instance.candle / 6)
-                elif middle['sell flag'] is False:
-                    pillow = middle['low']
-                    log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
-                        .format(time_stamp(time.time()))
-                    logging.info(log)
-                    break
+                    else:
+                        log = '{} Closing price not deceeded stop-loss level. Please wait {}min.'.format(
+                            time_stamp(time.time()), low.interval / 6)
+                        logging.info(log)
+                        time.sleep(low.candle / 6)
+            elif buy_flag:
+                log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
+                    .format(time_stamp(time.time()))
+                logging.info(log)
+                time.sleep(1)
+                break
 
 
-def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currency):
+def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
     order_manager is setting limit and stop loss levels.
@@ -154,7 +157,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
     :param crypto_currency: asset a
     :param fiat_currency: asset b
     :param mid: mid-frame instance
-    :param instance: low-frame instance
+    :param low: low-frame instance
     :param cond: buy / sell
     """
     global pillow
@@ -165,9 +168,9 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
     global fiat_balance
     global crypto_balance
     global new_closing
-    log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), instance.interval, cond)
+    log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
-    new = instance.get_frame().iloc[-1]
+    new = low.get_frame().iloc[-1]
     vol = volume(fiat_currency, crypto_currency)
     limit = new['high']
     stop = new['low']
@@ -179,12 +182,15 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
     log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
         .format(time_stamp(time.time()), new_closing, limit, stop)
     logging.info(log)
-    log = 'Wait {}min.'.format(instance.interval / 6)
+    log = 'Wait {}min.'.format(low.interval / 6)
     logging.info(log)
-    time.sleep(instance.candle / 6)
+    time.sleep(low.candle / 6)
     while True:
-        new = instance.get_frame().iloc[-1]
         middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
+        new = low.get_frame().iloc[-1]
+        buy_flag = middle['buy flag']
+        sell_flag = middle['sell flag']
+        new_pillow = middle['low']
         new_closing = new['close']
         if exit_event.is_set():  # thread "kill" by user
             cancel_order()
@@ -192,96 +198,106 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
             logging.info(log)
             break
         elif cond == 'buy':
-            if middle['buy flag'] is True:
+            if buy_flag:
                 if new_closing > limit:
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
-                    pillow = middle['low']
-                    time.sleep(10)
+                    pillow = new_pillow
                     while True:
-                        if middle['buy flag'] is True:
+                        if buy_flag:
                             if status == 'close':
                                 log = '{} Order closed.'.format(time_stamp(time.time()))
                                 logging.info(log)
+                                time.sleep(1)
                                 break
                             elif status == 'open':
-                                new = instance.get_frame().iloc[-1]
-                                if new['high'] < limit:
+                                middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
+                                new = low.get_frame().iloc[-1]
+                                new_pillow = middle['low']
+                                new_closing = new['close']
+                                new_limit = new['high']
+                                new_stop = new['low']
+                                if new_limit < limit:
                                     cancel_order()
-                                    limit = new['high']
-                                    stop = new['low']
-                                    pillow = middle['low']
+                                    limit = new_limit
+                                    stop = new_stop
+                                    pillow = new_pillow
                                     tx = add_order(order_type, cond,
-                                                   fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
+                                                   fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                                     status = get_order_info(tx)
                                     log = '{} New {} order added at {}.' \
                                         .format(time_stamp(time.time()), cond, new['close'])
                                     logging.info(log)
-                                    time.sleep(10)
                                 else:
                                     log = '{} Order is open.'.format(time_stamp(time.time()))
                                     logging.info(log)
-                                    time.sleep(10)
-                        else:
+                        elif sell_flag:
                             cancel_order()
                             log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
                                 .format(time_stamp(time.time()))
-                            logging.info(log)
+                            logging.warning(log)
+                            time.sleep(1)
                             break
                 else:
                     log = '{} Closing price under limit. Wait {}min.' \
-                        .format(time_stamp(time.time()), instance.interval / 6)
-                    logging.info(log)
-                    time.sleep(instance.candle / 6)
-            elif middle['buy flag'] is False:
+                        .format(time_stamp(time.time()), low.interval / 6)
+                    logging.warning(log)
+                    time.sleep(low.candle / 6)
+            elif sell_flag:
+                cancel_order()
                 log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
                     .format(time_stamp(time.time()))
-                logging.info(log)
+                logging.warning(log)
+                time.sleep(1)
                 break
         elif cond == 'sell':
-            if middle['sell flag'] is True:
+            if sell_flag:
                 if new_closing < stop:
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
-                    time.sleep(10)
                     while True:
-                        if middle['sell flag'] is True:
+                        if sell_flag:
                             if status == 'close':
                                 log = '{} Order closed.'.format(time_stamp(time.time()))
-                                logging.info(log)
+                                logging.warning(log)
+                                time.sleep(1)
                                 break
                             elif status == 'open':
-                                new = instance.get_frame().iloc[-1]
-                                if new['low'] > stop:
+                                new = low.get_frame().iloc[-1]
+                                new_closing = new['close']
+                                new_limit = new['high']
+                                new_stop = new['low']
+                                if new_stop > stop:
                                     cancel_order()
-                                    limit = new['high']
-                                    stop = new['low']
+                                    limit = new_limit
+                                    stop = new_stop
                                     tx = add_order(order_type, cond,
-                                                   fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
+                                                   fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                                     status = get_order_info(tx)
                                     log = '{} New {} order added at {}.' \
                                         .format(time_stamp(time.time()), cond, new['close'])
-                                    logging.info(log)
-                                    time.sleep(10)
+                                    logging.warning(log)
                                 else:
                                     log = '{} Order is open.'.format(time_stamp(time.time()))
-                                    logging.info(log)
-                                    time.sleep(10)
-                        elif middle['sell flag'] is False:
+                                    logging.warning(log)
+                        elif buy_flag:
                             cancel_order()
                             log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
                                 .format(time_stamp(time.time()))
-                            logging.info(log)
+                            logging.warning(log)
+                            time.sleep(1)
                             break
                 else:
                     log = '{} Closing price over stop. Wait {}min.' \
-                        .format(time_stamp(time.time()), instance.interval / 6)
-                    logging.info(log)
-                    time.sleep(instance.candle / 6)
-            else:
+                        .format(time_stamp(time.time()), low.interval / 6)
+                    logging.warning(log)
+                    time.sleep(low.candle / 6)
+            elif buy_flag:
+                cancel_order()
                 log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
                     .format(time_stamp(time.time()))
-                logging.info(log)
+                logging.warning(log)
+                time.sleep(1)
                 break
 
 
@@ -398,13 +414,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
     i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
     log = '{} Elder bot start.'.format(time_stamp(time.time()))
-    logging.info(log)
+    logging.warning(log)
     while True:
-        if exit_event.is_set():
-            # thread "kill" by user
+        if exit_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break trading.'.format(time_stamp(time.time()))
-            logging.info(log)
+            logging.warning(log)
             break
         condition = get_condition(crypto_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
