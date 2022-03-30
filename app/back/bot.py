@@ -93,15 +93,17 @@ def limit_manager(mid, low, cond):
                     log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
                     logging.info(log)
                     pillow = new_pillow
-                    time.sleep(1)
+                    time.sleep(10)
                     break
                 elif new_closing < limit:
                     if new_limit < limit:
                         limit = new_limit
                         stop = new_stop
                         pillow = new_pillow
-                        log = '{} New limit set to {}.'.format(time_stamp(time.time()), limit)
+                        log = '{} New limit set to {}. Please wait {}min.'\
+                            .format(time_stamp(time.time()), limit, low.interval / 6)
                         logging.info(log)
+                        time.sleep(low.candle / 6)
                     else:
                         log = '{} Closing price not exceeded limit. Please wait {}min.'.format(
                             time_stamp(time.time()), low.interval / 6)
@@ -119,15 +121,17 @@ def limit_manager(mid, low, cond):
                     log = '{} Closing price deceeded stop loss level. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
-                    time.sleep(1)
+                    time.sleep(10)
                     break
                 elif new_closing > stop:
                     if new_stop > stop:
                         limit = new_limit
                         stop = new_stop
                         pillow = new_pillow
-                        log = '{} New stop-loss set to {}.'.format(time_stamp(time.time()), limit)
+                        log = '{} New stop-loss set to {}. Please wait {}min.'\
+                            .format(time_stamp(time.time()), limit, low.interval / 6)
                         logging.info(log)
+                        time.sleep(low.candle / 6)
                     else:
                         log = '{} Closing price not deceeded stop-loss level. Please wait {}min.'.format(
                             time_stamp(time.time()), low.interval / 6)
@@ -203,12 +207,12 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
                     pillow = new_pillow
+                    time.sleep(10)
                     while True:
                         if buy_flag:
                             if status == 'close':
                                 log = '{} Order closed.'.format(time_stamp(time.time()))
                                 logging.info(log)
-                                time.sleep(1)
                                 break
                             elif status == 'open':
                                 middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
@@ -228,9 +232,11 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                                     log = '{} New {} order added at {}.' \
                                         .format(time_stamp(time.time()), cond, new['close'])
                                     logging.info(log)
+                                    time.sleep(10)
                                 else:
                                     log = '{} Order is open.'.format(time_stamp(time.time()))
                                     logging.info(log)
+                                    time.sleep(10)
                         elif sell_flag:
                             cancel_order()
                             log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
@@ -260,7 +266,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                             if status == 'close':
                                 log = '{} Order closed.'.format(time_stamp(time.time()))
                                 logging.warning(log)
-                                time.sleep(1)
+                                time.sleep(10)
                                 break
                             elif status == 'open':
                                 new = low.get_frame().iloc[-1]
@@ -277,9 +283,11 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                                     log = '{} New {} order added at {}.' \
                                         .format(time_stamp(time.time()), cond, new['close'])
                                     logging.warning(log)
+                                    time.sleep(10)
                                 else:
                                     log = '{} Order is open.'.format(time_stamp(time.time()))
                                     logging.warning(log)
+                                    time.sleep(10)
                         elif buy_flag:
                             cancel_order()
                             log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
