@@ -1,6 +1,6 @@
 import time
 import threading
-from app.back.bot import elder_cons, elder_trading, data_feed, signal_handler
+from app.back.bot import elderbot, data_feed, signal_handler
 from app.back.kraken import cancel_order
 from app import app
 from flask import render_template, request, jsonify
@@ -43,7 +43,7 @@ def update():
 
 @app.route('/consulting_start')
 def consulting_starter():
-    consulting = threading.Thread(target=elder_cons, args=(asset_a, asset_b, 50))
+    consulting = threading.Thread(target=elderbot, args=('consulting', asset_a, asset_b, 50))
     consulting.daemon = True
     consulting.start()
     return render_template('overview.html')
@@ -51,9 +51,9 @@ def consulting_starter():
 
 @app.route('/trading_start')
 def trading_starter():
-    trading = threading.Thread(target=elder_trading, args=(asset_a, asset_b, 50))
+    trading = threading.Thread(target=elderbot, args=('trading', asset_a, asset_b, 50))
     trading.daemon = True
-    # trading.start()
+    trading.start()
     return render_template('overview.html')
 
 

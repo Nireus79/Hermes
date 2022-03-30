@@ -65,12 +65,12 @@ def limit_manager(mid, instance, cond):
     log = '{} limit {}. Stop loss-Pillow {}.'.format(time_stamp(time.time()), limit, stop)
     logging.info(log)
     if cond == 'buy':
-        log = '{} Please give buy order when price exceeds {}. Wait {}min.'\
+        log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
             .format(time_stamp(time.time()), limit, instance.interval / 6)
         logging.info(log)
         time.sleep(instance.candle / 6)
     elif cond == 'sell':
-        log = '{} Please give sell order when price deceeds {}. Wait {}min.'\
+        log = '{} Please give sell order when price deceeds {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, instance.interval / 6)
         logging.info(log)
         time.sleep(instance.candle / 6)
@@ -112,7 +112,7 @@ def limit_manager(mid, instance, cond):
             elif cond == 'sell':
                 if middle['sell flag'] is True:
                     if new_closing < stop:
-                        log = '{} Closing price deceeded stop loss level. Please add sell order'\
+                        log = '{} Closing price deceeded stop loss level. Please add sell order' \
                             .format(time_stamp(time.time()))
                         logging.info(log)
                         pillow = middle['low']
@@ -285,242 +285,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                 break
 
 
-def elder_cons(crypto_currency, fiat_currency, depth):
-    """
-    Same as elder_trading.
-    No actual order is set.
-    User is just informed for the action he has to take.
-    """
-    global condition
-    global log
-    global trend_24h
-    global trend_4h
-    global trend_1h
-    global buy_flag_4h
-    global sell_flag_4h
-    global buy_flag_1h
-    global sell_flag_1h
-    global buy_flag_15m
-    global sell_flag_15m
-    global high_frame_24h
-    global high_frame_4h
-    global high_frame_1h
-    global mid_frame_4h
-    global mid_frame_1h
-    global mid_frame_15m
-
-    i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
-    i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
-    i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
-    i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
-
-    i1h_feed = Api(crypto_currency, fiat_currency, 60, 1)
-    i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
-    i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
-
-    log = '{} Elder bot start.'.format(time_stamp(time.time()))
-    logging.info(log)
-
-    while True:
-        if exit_event.is_set():
-            # thread "kill" by user
-            log = '{} Break consulting.'.format(time_stamp(time.time()))
-            logging.info(log)
-            break
-        condition = get_condition(crypto_currency, fiat_currency)
-        log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
-        logging.info(log)
-        high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
-        high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
-        high_frame_1h = high_frame_indicators(i1h_frame.get_frame())
-        mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame())
-        mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame())
-        mid_frame_15m = mid_frame_indicators(i15m_frame.get_frame())
-        trend_24h = high_frame_24h.iloc[-1]['trend']
-        trend_4h = high_frame_4h.iloc[-1]['trend']
-        trend_1h = high_frame_1h.iloc[-1]['trend']
-        buy_flag_4h = mid_frame_4h.iloc[-1]['buy flag']
-        sell_flag_4h = mid_frame_4h.iloc[-1]['sell flag']
-        buy_flag_1h = mid_frame_1h.iloc[-1]['buy flag']
-        sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
-        buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
-        sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
-        if condition == 'buy':
-            if trend_24h:
-                log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
-                logging.info(log)
-                log = '{} mid 4hour frame buy flag is {}. mid 4hour frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_4h, sell_flag_4h)
-                logging.info(log)
-                if buy_flag_4h:
-                    log = '{} 4hour momentum is strong.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    limit_manager(i4h_frame, i1h_feed, condition)
-                elif buy_flag_4h is not True:
-                    log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    if trend_4h:
-                        log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
-                        logging.info(log)
-                        log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
-                            .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
-                        logging.info(log)
-                        if buy_flag_1h:
-                            log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
-                            logging.info(log)
-                            limit_manager(i1h_frame, i15m_feed, condition)
-                        elif buy_flag_1h is not True:
-                            log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
-                            logging.info(log)
-                            if trend_1h:
-                                log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                                logging.info(log)
-                                log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                                    .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                                logging.info(log)
-                                if buy_flag_15m:
-                                    log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
-                                    logging.info(log)
-                                    limit_manager(i15m_frame, i5m_feed, condition)
-                                elif buy_flag_15m is not True:
-                                    log = '{} 15 min momentum is weak. Wait 5 minutes.' \
-                                        .format(time_stamp(time.time()))
-                                    logging.info(log)
-                                    time.sleep(i5m_feed.candle)
-                            elif trend_1h is not True:
-                                log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
-                                    .format(time_stamp(time.time()), trend_1h)
-                                logging.info(log)
-                                time.sleep(i5m_feed.candle)
-                    elif trend_4h is not True:
-                        log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
-                        logging.info(log)
-                        if trend_1h:
-                            log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                            logging.info(log)
-                            log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                                .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                            logging.info(log)
-                            if buy_flag_15m:
-                                log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
-                                logging.info(log)
-                                limit_manager(i15m_frame, i5m_feed, condition)
-                            elif buy_flag_15m is not True:
-                                log = '{} 15 min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
-                                logging.info(log)
-                                time.sleep(i5m_feed.candle)
-                        elif trend_1h is not True:
-                            log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
-                                .format(time_stamp(time.time()), trend_1h)
-                            logging.info(log)
-                            time.sleep(i5m_feed.candle)
-            elif trend_4h:
-                log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
-                logging.info(log)
-                log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
-                logging.info(log)
-                if buy_flag_1h:
-                    log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    limit_manager(i1h_frame, i15m_feed, condition)
-                elif buy_flag_1h is not True:
-                    log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    if trend_1h:
-                        log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                        logging.info(log)
-                        log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                            .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                        logging.info(log)
-                        if buy_flag_15m:
-                            log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
-                            logging.info(log)
-                            limit_manager(i15m_frame, i5m_feed, condition)
-                        elif buy_flag_15m is not True:
-                            log = '{} 15min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
-                            logging.info(log)
-                            time.sleep(i5m_feed.candle)
-                    elif trend_1h is not True:
-                        log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
-                            .format(time_stamp(time.time()), trend_1h)
-                        logging.info(log)
-                        time.sleep(i5m_feed.candle)
-            elif trend_1h:
-                log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                logging.info(log)
-                log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                logging.info(log)
-                if buy_flag_15m:
-                    log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    limit_manager(i15m_frame, i5m_feed, condition)
-                elif buy_flag_15m is not True:
-                    log = '{} 15min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    time.sleep(i5m_feed.candle)
-            else:
-                log = '{} All high frames trends are negative. No buying opportunity. Wait 5 minutes.' \
-                    .format(time_stamp(time.time()))
-                logging.info(log)
-                time.sleep(i5m_feed.candle)
-        elif condition == 'sell':
-            if i5m_feed.get_frame().iloc[-1]['close'] < pillow:  # pillow
-                log = '{} Pillow activated. Sell asset.'.format(time_stamp(time.time()))
-                logging.info(log)
-            if trend_24h:
-                log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
-                logging.info(log)
-                log = '{} mid 4hour frame buy flag is {}. mid 4hour frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_4h, sell_flag_4h)
-                logging.info(log)
-                if sell_flag_4h:
-                    log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    limit_manager(i4h_frame, i1h_feed, condition)
-                elif sell_flag_4h is not True:
-                    log = '{} 4hour momentum is strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i4h_frame.interval / 6)
-                    logging.info(log)
-                    time.sleep(i4h_frame.candle / 6)
-            elif trend_4h:
-                log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
-                logging.info(log)
-                log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
-                logging.info(log)
-                if sell_flag_1h:
-                    log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    limit_manager(i1h_frame, i15m_feed, condition)
-                elif sell_flag_1h is not True:
-                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 6)
-                    logging.info(log)
-                    time.sleep(i1h_frame.candle / 6)
-            elif trend_1h:
-                log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                logging.info(log)
-                log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                logging.info(log)
-                if sell_flag_15m:
-                    log = '{} 15min momentum is weak.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    limit_manager(i15m_frame, i5m_feed, condition)
-                elif sell_flag_15m is not True:
-                    log = '{} 15min momentum strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i15m_frame.interval / 6)
-                    logging.info(log)
-                    time.sleep(i15m_frame.candle / 6)
-            else:
-                log = '{} All high frames trends are negative. Safe sell activated.' \
-                    .format(time_stamp(time.time()))
-                logging.info(log)
-                limit_manager(i15m_frame, i5m_feed, condition)
-
-
-def elder_trading(crypto_currency, fiat_currency, depth):
+def elderbot(mode, crypto_currency, fiat_currency, depth):
     """
     elder_trading is a custom, real time, multiple time frame, consulting-trading bot application,
     interpretation of Alexander Elder's "triple screen" forex market trading strategy.
@@ -599,6 +364,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
             elif all high frames trend is negative:
                 second pillow condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
+    :param mode: trading / consulting
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
     :param depth: the time periods back to be analysed
@@ -640,7 +406,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-        condition = get_condition(fiat_currency, crypto_currency)
+        condition = get_condition(crypto_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
@@ -668,7 +434,10 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if buy_flag_4h:
                     log = '{} 4hour momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                    if mode == 'trading':
+                        order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                    elif mode == 'consulting':
+                        limit_manager(i4h_frame, i1h_feed, condition)
                 elif buy_flag_4h is not True:
                     log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
@@ -681,7 +450,10 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                         if buy_flag_1h:
                             log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            order_manager('market', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                            if mode == 'trading':
+                                order_manager('market', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                            elif mode == 'consulting':
+                                limit_manager(i1h_frame, i15m_feed, condition)
                         elif buy_flag_1h is not True:
                             log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                             logging.info(log)
@@ -694,8 +466,11 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                                 if buy_flag_15m:
                                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                     logging.info(log)
-                                    order_manager('market', i15m_frame, i5m_feed, condition,
-                                                  fiat_currency, crypto_currency)
+                                    if mode == 'trading':
+                                        order_manager('market', i15m_frame, i5m_feed, condition,
+                                                      fiat_currency, crypto_currency)
+                                    elif mode == 'consulting':
+                                        limit_manager(i15m_frame, i5m_feed, condition)
                                 elif buy_flag_15m is not True:
                                     log = '{} 15 min momentum is weak. Wait 5 minutes.' \
                                         .format(time_stamp(time.time()))
@@ -718,7 +493,11 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                             if buy_flag_15m:
                                 log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                 logging.info(log)
-                                order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                                if mode == 'trading':
+                                    order_manager('market', i15m_frame, i5m_feed, condition,
+                                                  fiat_currency, crypto_currency)
+                                elif mode == 'consulting':
+                                    limit_manager(i15m_frame, i5m_feed, condition)
                             elif buy_flag_15m is not True:
                                 log = '{} 15 min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
                                 logging.info(log)
@@ -737,7 +516,10 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if buy_flag_1h:
                     log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager('limit', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                    if mode == 'trading':
+                        order_manager('limit', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                    elif mode == 'consulting':
+                        limit_manager(i1h_frame, i15m_feed, condition)
                 elif buy_flag_1h is not True:
                     log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
@@ -750,7 +532,10 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                         if buy_flag_15m:
                             log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                            if mode == 'trading':
+                                order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                            elif mode == 'consulting':
+                                limit_manager(i15m_frame, i5m_feed, condition)
                         elif buy_flag_15m is not True:
                             log = '{} 15min momentum is weak. Wait 5 minutes.'.format(time_stamp(time.time()))
                             logging.info(log)
@@ -781,8 +566,9 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 time.sleep(i5m_feed.candle)
         elif condition == 'sell':
             if i5m_feed.get_frame().iloc[-1]['close'] < pillow:  # pillow
-                order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
-                log = '{} Pillow activated.'.format(time_stamp(time.time()))
+                if mode == 'trading':
+                    order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                log = '{} Warning. Pillow activated. Sell your asset.'.format(time_stamp(time.time()))
                 logging.info(log)
             elif trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
@@ -793,7 +579,10 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if sell_flag_4h:
                     log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                    if mode == 'trading':
+                        order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                    elif mode == 'consulting':
+                        limit_manager(i4h_frame, i1h_feed, condition)
                 elif sell_flag_4h is not True:
                     log = '{} 4hour momentum is strong. Wait {} minutes.' \
                         .format(time_stamp(time.time()), i4h_frame.interval / 6)
@@ -808,7 +597,10 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if sell_flag_1h:
                     log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager('market', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                    if mode == 'trading':
+                        order_manager('market', i1h_frame, i15m_feed, condition, fiat_currency, crypto_currency)
+                    elif mode == 'consulting':
+                        limit_manager(i1h_frame, i15m_feed, condition)
                 elif sell_flag_1h is not True:
                     log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 6)
                     logging.info(log)
@@ -822,17 +614,24 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                 if sell_flag_15m:
                     log = '{} 15min momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                    if mode == 'trading':
+                        order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                    elif mode == 'consulting':
+                        limit_manager(i15m_frame, i5m_feed, condition)
                 elif sell_flag_15m is not True:
                     log = '{} 15min momentum strong. Wait {} minutes.' \
                         .format(time_stamp(time.time()), i15m_frame.interval / 6)
                     logging.info(log)
                     time.sleep(i15m_frame.candle / 6)
             else:
-                log = '{} All high frames trends are negative. Safe sell activated.' \
+                log = '{} All high frames trends are negative.' \
                     .format(time_stamp(time.time()))
                 logging.info(log)
-                order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                if mode == 'trading':
+                    order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                elif mode == 'consulting':
+                    log = 'Please sell your asset'
+                    logging.info(log)
 
 
 def data_feed():

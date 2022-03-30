@@ -38,16 +38,15 @@ def get_private_balance():
     return resp.json()
 
 
-def get_condition(crypto_currency, fiat_currency):
+def get_condition(crypto_currency):
     """
     Takes the private user's account balance and gives condition to buy or sell to the bot.
-    If balance has fiat and no crypto returns condition "buy" for the bot to look for good crypto buy conditions.
-    If balance has crypto and no fiat returns condition "sell" for the bot to look for good crypto sell conditions.
+    If balance has no crypto returns condition "buy" for the bot to look for good crypto buy conditions.
+    If balance has crypto returns condition "sell" for the bot to look for good crypto sell conditions.
     :return: Conditions to buy/sell crypto.
     """
     balance = get_private_balance()
     crypto = balance['result'][crypto_currency]
-    # fiat = balance['result'][fiat_currency+'.HOLD']
     if float(crypto) == 0:
         return 'buy'
     elif float(crypto) > 0:
