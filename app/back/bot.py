@@ -10,6 +10,7 @@ condition = None
 stop = 0
 limit = None
 new_closing = None
+pillow = None
 log = None
 trend_24h = None
 trend_4h = None
@@ -41,17 +42,10 @@ def signal_handler():
 
 def limit_manager(mid, instance, cond):
     """
-    Same as order_manager.
-    Simulator mode.
-    condition (cond) variable is set manually to 'buy' from elder_cons and
-    taken by arg.
-    status variable is set manually to 'open'
-    No actual order is set.
-    Instead, in case of buy conditions fulfilled,
-    user is notified and cond is set to 'sell'.
-    :param mid: mid-frame instance
-    :param instance: low-frame instance
-    :param cond: buy / sell
+
+    :param mid: The middle time frame instance, used to check if buy/sell flag is still True.
+    :param instance: The low time frame instance, used to set limit/stop-loss borders.
+    :param cond: Condition sell/buy
     """
     global condition
     global stop
@@ -77,16 +71,15 @@ def limit_manager(mid, instance, cond):
         time.sleep(instance.candle / 6)
         while True:
             new = instance.get_frame().iloc[-1]
+            middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
             new_closing = new['close']
-
             if exit_event.is_set():
                 # thread "kill" by user
                 log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
                 logging.info(log)
                 break
-
             if cond == 'buy':
-                if mid_frame_indicators(mid.get_frame()).iloc[-1]['buy flag'] is True:
+                if middle['buy flag'] is True:
                     if new_closing > limit:
                         log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -108,9 +101,8 @@ def limit_manager(mid, instance, cond):
                         .format(time_stamp(time.time()))
                     logging.info(log)
                     break
-
             elif cond == 'sell':
-                if mid_frame_indicators(mid.get_frame()).iloc[-1]['sell flag'] is True:
+                if middle is True:
                     if new_closing < stop:
                         log = '{} Closing price deceeded stop loss level. Please add sell order'\
                             .format(time_stamp(time.time()))
@@ -168,6 +160,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
     :param instance: low-frame instance
     :param cond: buy / sell
     """
+    global pillow
     global condition
     global stop
     global limit
@@ -194,22 +187,22 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
     time.sleep(instance.candle / 6)
     while True:
         new = instance.get_frame().iloc[-1]
+        middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
         new_closing = new['close']
-
         if exit_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break ordering.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-
         elif cond == 'buy':
-            if mid_frame_indicators(mid.get_frame()).iloc[-1]['buy flag'] is True:
+            if middle['buy flag'] is True:
                 if new_closing > limit:
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
+                    pillow = middle['low']
                     time.sleep(10)
                     while True:
-                        if mid_frame_indicators(mid.get_frame()).iloc[-1]['buy flag'] is True:
+                        if middle['buy flag'] is True:
                             if status == 'close':
                                 log = '{} Order closed.'.format(time_stamp(time.time()))
                                 logging.info(log)
@@ -220,6 +213,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                                     cancel_order()
                                     limit = new['high']
                                     stop = new['low']
+                                    pillow = middle['low']
                                     tx = add_order(order_type, cond,
                                                    fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
                                     status = get_order_info(tx)
@@ -247,15 +241,14 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                     .format(time_stamp(time.time()))
                 logging.info(log)
                 break
-
         elif cond == 'sell':
-            if mid_frame_indicators(mid.get_frame()).iloc[-1]['sell flag'] is True:
+            if middle['sell flag'] is True:
                 if new_closing < stop:
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
                     time.sleep(10)
                     while True:
-                        if mid_frame_indicators(mid.get_frame()).iloc[-1]['sell flag'] is True:
+                        if middle['sell flag'] is True:
                             if status == 'close':
                                 log = '{} Order closed.'.format(time_stamp(time.time()))
                                 logging.info(log)
@@ -348,7 +341,6 @@ def elder_cons(crypto_currency, fiat_currency, depth):
         mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame())
         mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame())
         mid_frame_15m = mid_frame_indicators(i15m_frame.get_frame())
-
         trend_24h = high_frame_24h.iloc[-1]['trend']
         trend_4h = high_frame_4h.iloc[-1]['trend']
         trend_1h = high_frame_1h.iloc[-1]['trend']
@@ -358,7 +350,6 @@ def elder_cons(crypto_currency, fiat_currency, depth):
         sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
         buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
         sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
-
         if condition == 'buy':
             if trend_24h:
                 log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
@@ -376,7 +367,6 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                     if trend_4h:
                         log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                         logging.info(log)
-
                         log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
                             .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
                         logging.info(log)
@@ -390,7 +380,6 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                             if trend_1h:
                                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                                 logging.info(log)
-
                                 log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                                     .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                                 logging.info(log)
@@ -414,7 +403,6 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                         if trend_1h:
                             log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                             logging.info(log)
-
                             log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                                 .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                             logging.info(log)
@@ -536,22 +524,62 @@ def elder_cons(crypto_currency, fiat_currency, depth):
 
 def elder_trading(crypto_currency, fiat_currency, depth):
     """
-        Original strategy dictates to wait the whole time of each candle to set condition flag,
+    elder_trading is a custom, real time, multiple time frame, consulting-trading bot application,
+    interpretation of Alexander Elder's "triple screen" forex market trading strategy.
+    The strategy.
+    The strategy is using data from three time frames, calculating indicators on first two and acts on the third.
+
+    First frame used for establishing a trading bias.
+    Second frame applies technical indicators to identify retracements against the trading bias established earlier.
+    Third frame is used for timing entries using short-term breakouts in the direction of your trading bias.
+    Program starts with higher degree time frame and subsequently downgrades time frames lower progressively.
+
+    Frames combinations:
+    Combination 1: High 24hours - mid 4 hours - low 1 hour.
+    Combination 2: High 4 hours - mid 1 hour - low 15 min.
+    Combination 3: High 1 hour - mid 15 min - low 5 min.
+
+    Evaluation phases
+    1) Trend. The long-term trend is evaluated. – Alex Elder calls this as being the tide, and it's evaluation gives
+    the general trend direction.
+    2) Correction. The medium-term trend is evaluated. – This trend is also known as the wave, gives the trend momentum
+    strength and position.
+    3) Specification. - The short-term trend – It is also referred to as the ripple used to set limits of buy and stop
+    loss. Exact entry point is corrected by closely monitoring price movement.
+    High frame.
+    General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc.
+    According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback,
+    entering the bullish zone.
+    In our case a preset combination of 13p EMA, 30p EMA and macd indicators is used to determine the high frame trend.
+    Mid frame.
+    Trend momentum and position is detected with the use of stochastic slow indicator. Stochastic fast can be used for
+    quicker response but in this case more force signals are generated. Stochastic slow is used as it is a 'smothered'
+    version of stoch fast. An additional indicator of strength is added (rsi) for safety reasons, as when current price
+    strength is above safety, price is actually 'overbought' and probability of descent is high.
+    Low frame.
+    When conditions are aligned in the higher frames action limits are set, according to the last low frame
+    closed candle range. Next time fragment of candle price gives action flag or sets new limits.
+    https://en.wikipedia.org/wiki/Alexander_Elder
+    elder.com
+    tradingstrategyguides.com
+    www.elearnmarkets.com
+
+    Original strategy dictates to wait the whole time of each candle to set condition flag,
         but as api provides data in real time, duration is divided to make bot faster.
         Next, condition (get_condition()) is taken from users account balance
-        and bot constantly evaluates the flags in a while loop (asynchronous to the previous functions).
+        and bot constantly evaluates the flags in a while loop.
         if condition is 'buy':
             if 24 hour high frame trend is positive (True trend flag):
                 if 4 hour mid-frame conditions are aligned (buy or sell flag True according to condition):
-                    ratchet() kicks in to buy on 1 hour low frame.
+                    order_manager() kicks in to buy on 1 hour low frame.
                 elif 4 hour mid-frame conditions are NOT aligned:
                     if 4 hour high frame trend is positive:
                         if 1 hour mid-frame conditions are aligned:
-                            ratchet() kicks in to buy on 15 min low frame.
+                            order_manager() kicks in to buy on 15 min low frame.
                         elif 1 hour mid-frame conditions are NOT aligned:
                             if 1 hour high frame trend is positive:
                                 if 15-min mid-frame conditions are aligned:
-                                    ratchet() kicks in to buy on 5 min low frame.
+                                    order_manager() kicks in to buy on 5 min low frame.
                                 elif 15-min mid-frame conditions are NOT aligned:
                                     sleep 5 minutes to review conditions.
             elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15 and H1 M15 L5)...
@@ -562,18 +590,22 @@ def elder_trading(crypto_currency, fiat_currency, depth):
             if new closing price < stop:
                 pillow
             elif 24 hour high frame and 4 hour mid-frame conditions are aligned (both flags True):
-                ratchet() kicks in to sell on 1 hour low frame.
-                if NOT waits 1 / 4 of 4 hours.
+                order_manager() kicks in to sell on 1 hour low frame.
+                if NOT waits 1 / 6 of 4 hours.
             elif 4 hour high frame and 1 hour mid-frame conditions are aligned (both flags True):
-                ratchet() kicks in to sell on 15 min low frame.
-                if NOT waits 1 / 4 of 1 hour.
+                order_manager() kicks in to sell on 15 min low frame.
+                if NOT waits 1 / 6 of 1 hour.
             elif 1 hour high frame and 15min  mid-frame conditions are aligned (both flags True):
-                ratchet() kicks in to sell on 5min low frame.
-                if NOT waits 1 / 4 of 15 min.
+                order_manager() kicks in to sell on 5min low frame.
+                if NOT waits 1 / 6 of 15 min.
             elif all high frames trend is negative:
                 second pillow condition is activated.
-                ratchet() kicks in to sell on 5minute low frame.
+                order_manager() kicks in to sell on 5minute low frame.
+    :param crypto_currency: the crypto asset to be traded
+    :param fiat_currency: the fiat asset to be traded
+    :param depth: the time periods back to be analysed
     """
+
     global condition
     global log
     global trend_24h
@@ -598,11 +630,9 @@ def elder_trading(crypto_currency, fiat_currency, depth):
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
     i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
-
     i1h_feed = Api(crypto_currency, fiat_currency, 60, 1)
     i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
     i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
-
     log = '{} Elder bot start.'.format(time_stamp(time.time()))
     logging.info(log)
     while True:
@@ -615,14 +645,12 @@ def elder_trading(crypto_currency, fiat_currency, depth):
         condition = get_condition(fiat_currency, crypto_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
-
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
         high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
         high_frame_1h = high_frame_indicators(i1h_frame.get_frame())
         mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame())
         mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame())
         mid_frame_15m = mid_frame_indicators(i15m_frame.get_frame())
-
         trend_24h = high_frame_24h.iloc[-1]['trend']
         trend_4h = high_frame_4h.iloc[-1]['trend']
         trend_1h = high_frame_1h.iloc[-1]['trend']
@@ -632,7 +660,6 @@ def elder_trading(crypto_currency, fiat_currency, depth):
         sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
         buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
         sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
-
         if condition == 'buy':
             if trend_24h:
                 log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
@@ -754,9 +781,8 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     .format(time_stamp(time.time()))
                 logging.info(log)
                 time.sleep(i5m_feed.candle)
-
         elif condition == 'sell':
-            if i5m_feed.get_frame().iloc[-1]['close'] < stop:  # pillow
+            if i5m_feed.get_frame().iloc[-1]['close'] < pillow:  # pillow
                 order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
                 log = '{} Pillow activated.'.format(time_stamp(time.time()))
                 logging.info(log)
@@ -818,6 +844,7 @@ def data_feed():
             'fiat_balance': fiat_balance,
             'stop': stop,
             'limit': limit,
+            'pillow': pillow,
             'trend_24h': str(trend_24h),
             'trend_4h': str(trend_4h),
             'trend_1h': str(trend_1h),
