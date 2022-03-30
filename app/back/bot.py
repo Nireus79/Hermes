@@ -10,7 +10,7 @@ condition = None
 stop = 0
 limit = None
 new_closing = None
-pillow = None
+pillow = 0
 log = None
 trend_24h = None
 trend_4h = None
@@ -42,11 +42,14 @@ def signal_handler():
 
 def limit_manager(mid, instance, cond):
     """
-
+    Same as order_manager.
+    No actual order is set.
+    User is just informed for the action he has to take.
     :param mid: The middle time frame instance, used to check if buy/sell flag is still True.
     :param instance: The low time frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
+    global pillow
     global condition
     global stop
     global limit
@@ -55,8 +58,10 @@ def limit_manager(mid, instance, cond):
     log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), instance.interval, cond)
     logging.info(log)
     new = instance.get_frame().iloc[-1]
+    middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
     limit = new['high']
     stop = new['low']
+    pillow = middle['low']
     log = '{} limit {}. Stop loss-Pillow {}.'.format(time_stamp(time.time()), limit, stop)
     logging.info(log)
     if cond == 'buy':
@@ -73,6 +78,7 @@ def limit_manager(mid, instance, cond):
             new = instance.get_frame().iloc[-1]
             middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
             new_closing = new['close']
+            pillow = middle['low']
             if exit_event.is_set():
                 # thread "kill" by user
                 log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
@@ -83,12 +89,14 @@ def limit_manager(mid, instance, cond):
                     if new_closing > limit:
                         log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
                         logging.info(log)
+                        pillow = middle['low']
                         time.sleep(10)
                         break
                     elif new_closing < limit:
                         if new['high'] < limit:
                             limit = new['high']
                             stop = new['low']
+                            pillow = middle['low']
                             log = '{} New limit set to {}.'.format(time_stamp(time.time()), limit)
                             logging.info(log)
                         else:
@@ -96,23 +104,25 @@ def limit_manager(mid, instance, cond):
                                 time_stamp(time.time()), instance.interval / 6)
                             logging.info(log)
                             time.sleep(instance.candle / 6)
-                else:
+                elif middle['buy flag'] is False:
                     log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
                     break
             elif cond == 'sell':
-                if middle is True:
+                if middle['sell flag'] is True:
                     if new_closing < stop:
                         log = '{} Closing price deceeded stop loss level. Please add sell order'\
                             .format(time_stamp(time.time()))
                         logging.info(log)
+                        pillow = middle['low']
                         time.sleep(10)
                         break
                     elif new_closing > stop:
                         if new['low'] > stop:
                             limit = new['high']
                             stop = new['low']
+                            pillow = middle['low']
                             log = '{} New stop-loss set to {}.'.format(time_stamp(time.time()), limit)
                             logging.info(log)
                         else:
@@ -120,7 +130,8 @@ def limit_manager(mid, instance, cond):
                                 time_stamp(time.time()), instance.interval / 6)
                             logging.info(log)
                             time.sleep(instance.candle / 6)
-                else:
+                elif middle['sell flag'] is False:
+                    pillow = middle['low']
                     log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
@@ -130,32 +141,18 @@ def limit_manager(mid, instance, cond):
 def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currency):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
-    order_manager takes limit, stop, and private account balance (crypto and fiat)
-    then places a limit order right away
-    If condition is buy, places a limit order at the price of the higher high of the current low frame period candle.
-    If condition is sell places a limit order at the lower low of the current low frame period candle.
-    Then waits for 1/4 of the current low frame period candle.
-    if the order is still open:
-        if flag is still True:
-            takes new current price.
-            if current price exceeds expectations *
-                * (in case of sell is higher than higher high of current running candle fragment(1/4)/
-                    in case of buy is lower than lower low of current running low candle fragment(1/4))
-                previous order is cancelled and a new one is set.
-            else:
-                (That means current price is between limit order and expectations)
-                Just waits another 1/4 of low candle time.
-        else:
-            (That means momentum is reversed in mid-frame)
-            Last order is cancelled and order manager breaks the loop
-            to start evaluating conditions again in welder()
-    else:
-        (That means initial limit order is closed)
-        If that was to buy a pillow limit order is set and manager loop breaks.
-        If that was to sell loop just breaks.
+    order_manager is setting limit and stop loss levels.
+    Then monitoring closing price.
+    When looking to sell asset,
+        if closing price deceeds stop-loss level:
+            places market sell order for the asset.
+    When looking to buy asset,
+        if closing price exceeds limit level:
+            places a market buy asset for the asset
+            and sets mid frame last candle low as pillow
     :param order_type: limit / market
-    :param crypto_currency:
-    :param fiat_currency:
+    :param crypto_currency: asset a
+    :param fiat_currency: asset b
     :param mid: mid-frame instance
     :param instance: low-frame instance
     :param cond: buy / sell
@@ -236,7 +233,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                         .format(time_stamp(time.time()), instance.interval / 6)
                     logging.info(log)
                     time.sleep(instance.candle / 6)
-            else:
+            elif middle['buy flag'] is False:
                 log = '{} Mid frame momentum reversed to weak. Conditions re-evaluation.' \
                     .format(time_stamp(time.time()))
                 logging.info(log)
@@ -270,7 +267,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                                     log = '{} Order is open.'.format(time_stamp(time.time()))
                                     logging.info(log)
                                     time.sleep(10)
-                        else:
+                        elif middle['sell flag'] is False:
                             cancel_order()
                             log = '{} Mid frame momentum reversed to strong. Conditions re-evaluation.' \
                                 .format(time_stamp(time.time()))
@@ -291,10 +288,8 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
 def elder_cons(crypto_currency, fiat_currency, depth):
     """
     Same as elder_trading.
-    In this case condition is not taken as a result of account balance.
-    Is set to 'buy' from the beginning and limit_manager is called.
     No actual order is set.
-    User is just informed for the simulated action.
+    User is just informed for the action he has to take.
     """
     global condition
     global log
@@ -471,6 +466,9 @@ def elder_cons(crypto_currency, fiat_currency, depth):
                 logging.info(log)
                 time.sleep(i5m_feed.candle)
         elif condition == 'sell':
+            if i5m_feed.get_frame().iloc[-1]['close'] < pillow:  # pillow
+                log = '{} Pillow activated. Sell asset.'.format(time_stamp(time.time()))
+                logging.info(log)
             if trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
