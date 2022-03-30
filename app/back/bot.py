@@ -219,6 +219,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                                 if new['high'] < limit:
                                     cancel_order()
                                     limit = new['high']
+                                    stop = new['low']
                                     tx = add_order(order_type, cond,
                                                    fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
                                     status = get_order_info(tx)
@@ -263,6 +264,7 @@ def order_manager(order_type, mid, instance, cond, crypto_currency, fiat_currenc
                                 new = instance.get_frame().iloc[-1]
                                 if new['low'] > stop:
                                     cancel_order()
+                                    limit = new['high']
                                     stop = new['low']
                                     tx = add_order(order_type, cond,
                                                    fiat_balance, new['close'], crypto_currency, fiat_currency)['txid']
@@ -606,6 +608,7 @@ def elder_trading(crypto_currency, fiat_currency, depth):
     while True:
         if exit_event.is_set():
             # thread "kill" by user
+            cancel_order()
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
             break
@@ -755,6 +758,8 @@ def elder_trading(crypto_currency, fiat_currency, depth):
         elif condition == 'sell':
             if i5m_feed.get_frame().iloc[-1]['close'] < stop:  # pillow
                 order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
+                log = '{} Pillow activated.'.format(time_stamp(time.time()))
+                logging.info(log)
             elif trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
@@ -804,7 +809,6 @@ def elder_trading(crypto_currency, fiat_currency, depth):
                     .format(time_stamp(time.time()))
                 logging.info(log)
                 order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
-                #  type of trade here is market, as immediate action must be taken.
 
 
 def data_feed():
