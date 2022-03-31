@@ -46,10 +46,12 @@ def beeper(cond):
         for _ in range(5):
             winsound.Beep(440, 500)
             time.sleep(0.5)
-    if cond == 'sell':
+    elif cond == 'sell':
         for _ in range(5):
             winsound.Beep(1000, 500)
             time.sleep(0.1)
+    elif cond == 'start':
+        winsound.Beep(440, 2000)
 
 
 def limit_manager(mid, low, cond):
@@ -67,6 +69,7 @@ def limit_manager(mid, low, cond):
     global limit
     global log
     global new_closing
+    beeper('start')
     log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     new = low.get_frame().iloc[-1]
@@ -82,7 +85,7 @@ def limit_manager(mid, low, cond):
         logging.info(log)
         time.sleep(low.candle / 6)
     elif cond == 'sell':
-        log = '{} Please give sell order when price deceeds {}. Wait {}min.' \
+        log = '{} Please give sell order when price under {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, low.interval / 6)
         logging.info(log)
         time.sleep(low.candle / 6)
@@ -131,7 +134,7 @@ def limit_manager(mid, low, cond):
         elif cond == 'sell':
             if sell_flag:
                 if new_closing < stop:
-                    log = '{} Closing price deceeded stop loss level. Please add sell order' \
+                    log = '{} Closing price under stop loss level. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
                     beeper(cond)
@@ -143,11 +146,11 @@ def limit_manager(mid, low, cond):
                         stop = new_stop
                         pillow = new_pillow
                         log = '{} New stop-loss set to {}. Please wait {}min.' \
-                            .format(time_stamp(time.time()), limit, low.interval / 6)
+                            .format(time_stamp(time.time()), stop, low.interval / 6)
                         logging.info(log)
                         time.sleep(low.candle / 6)
                     else:
-                        log = '{} Closing price not deceeded stop-loss level. Please wait {}min.'.format(
+                        log = '{} Closing price over stop-loss level. Please wait {}min.'.format(
                             time_stamp(time.time()), low.interval / 6)
                         logging.info(log)
                         time.sleep(low.candle / 6)
@@ -165,12 +168,12 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     order_manager is setting limit and stop loss levels.
     Then monitoring closing price.
     When looking to sell asset,
-        if closing price deceeds stop-loss level:
+        if closing price lower stop-loss level:
             places market sell order for the asset.
     When looking to buy asset,
         if closing price exceeds limit level:
             places a market buy asset for the asset
-            and sets mid frame last candle low as pillow
+            and sets mid-frame last candle low as pillow
     :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
@@ -186,6 +189,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     global fiat_balance
     global crypto_balance
     global new_closing
+    beeper('start')
     log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     new = low.get_frame().iloc[-1]
