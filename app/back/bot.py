@@ -1,6 +1,7 @@
 import logging
 import time
 import threading
+import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, time_stamp, \
     volume, add_order, get_order_info, cancel_order, get_condition
 
@@ -38,6 +39,17 @@ exit_event = threading.Event()
 
 def signal_handler():
     exit_event.set()
+
+
+def beeper(cond):
+    if cond == 'buy':
+        for _ in range(5):
+            winsound.Beep(440, 500)
+            time.sleep(0.5)
+    if cond == 'sell':
+        for _ in range(5):
+            winsound.Beep(1000, 500)
+            time.sleep(0.1)
 
 
 def limit_manager(mid, low, cond):
@@ -93,6 +105,7 @@ def limit_manager(mid, low, cond):
                     log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
                     logging.info(log)
                     pillow = new_pillow
+                    beeper(cond)
                     time.sleep(10)
                     break
                 elif new_closing < limit:
@@ -100,7 +113,7 @@ def limit_manager(mid, low, cond):
                         limit = new_limit
                         stop = new_stop
                         pillow = new_pillow
-                        log = '{} New limit set to {}. Please wait {}min.'\
+                        log = '{} New limit set to {}. Please wait {}min.' \
                             .format(time_stamp(time.time()), limit, low.interval / 6)
                         logging.info(log)
                         time.sleep(low.candle / 6)
@@ -121,6 +134,7 @@ def limit_manager(mid, low, cond):
                     log = '{} Closing price deceeded stop loss level. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
+                    beeper(cond)
                     time.sleep(10)
                     break
                 elif new_closing > stop:
@@ -128,7 +142,7 @@ def limit_manager(mid, low, cond):
                         limit = new_limit
                         stop = new_stop
                         pillow = new_pillow
-                        log = '{} New stop-loss set to {}. Please wait {}min.'\
+                        log = '{} New stop-loss set to {}. Please wait {}min.' \
                             .format(time_stamp(time.time()), limit, low.interval / 6)
                         logging.info(log)
                         time.sleep(low.candle / 6)
@@ -207,6 +221,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
                     pillow = new_pillow
+                    beeper(cond)
                     time.sleep(10)
                     while True:
                         if buy_flag:
@@ -261,6 +276,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                 if new_closing < stop:
                     tx = add_order(order_type, cond, fiat_balance, new_closing, crypto_currency, fiat_currency)['txid']
                     status = get_order_info(tx)
+                    beeper(cond)
                     while True:
                         if sell_flag:
                             if status == 'close':
@@ -608,9 +624,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                         limit_manager(i4h_frame, i1h_feed, condition)
                 elif sell_flag_4h is not True:
                     log = '{} 4hour momentum is strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i4h_frame.interval / 6)
+                        .format(time_stamp(time.time()), i4h_frame.interval / 10)
                     logging.info(log)
-                    time.sleep(i4h_frame.candle / 6)
+                    time.sleep(i4h_frame.candle / 10)
             elif trend_4h:
                 log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                 logging.info(log)
@@ -625,9 +641,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                     elif mode == 'consulting':
                         limit_manager(i1h_frame, i15m_feed, condition)
                 elif sell_flag_1h is not True:
-                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 6)
+                    log = '1hour momentum is strong. Wait {} minutes.'.format(i1h_frame.interval / 10)
                     logging.info(log)
-                    time.sleep(i1h_frame.candle / 6)
+                    time.sleep(i1h_frame.candle / 10)
             elif trend_1h:
                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                 logging.info(log)
@@ -643,9 +659,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                         limit_manager(i15m_frame, i5m_feed, condition)
                 elif sell_flag_15m is not True:
                     log = '{} 15min momentum strong. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i15m_frame.interval / 6)
+                        .format(time_stamp(time.time()), i15m_frame.interval / 10)
                     logging.info(log)
-                    time.sleep(i15m_frame.candle / 6)
+                    time.sleep(i15m_frame.candle / 10)
             else:
                 log = '{} All high frames trends are negative.' \
                     .format(time_stamp(time.time()))
@@ -654,6 +670,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                     order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                 elif mode == 'consulting':
                     log = 'Please sell your asset'
+                    limit_manager(i15m_frame, i5m_feed, condition)
                     logging.info(log)
 
 
