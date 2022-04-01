@@ -172,10 +172,15 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     When looking to sell asset,
         if closing price lower stop-loss level:
             places market sell order for the asset.
+        else:
+            waits 1 / 10 of low frame duration to reevaluate.
     When looking to buy asset,
         if closing price exceeds limit level:
             places a market buy asset for the asset
             and sets mid-frame last candle low as pillow
+        else:
+            waits 1 / 10 of low frame duration to reevaluate.
+
     :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
@@ -368,6 +373,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     Low frame.
     When conditions are aligned in the higher frames action limits are set, according to the last low frame
     closed candle range. Next time fragment of candle price gives action flag or sets new limits.
+
     https://en.wikipedia.org/wiki/Alexander_Elder
     elder.com
     tradingstrategyguides.com
@@ -400,13 +406,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                 pillow
             elif 24 hour high frame and 4 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 1 hour low frame.
-                if NOT waits 1 / 6 of 4 hours.
+                if NOT waits 1 / 10 of 4 hours.
             elif 4 hour high frame and 1 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 15 min low frame.
-                if NOT waits 1 / 6 of 1 hour.
+                if NOT waits 1 / 10 of 1 hour.
             elif 1 hour high frame and 15min  mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 5min low frame.
-                if NOT waits 1 / 6 of 15 min.
+                if NOT waits 1 / 10 of 15 min.
             elif all high frames trend is negative:
                 second pillow condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
