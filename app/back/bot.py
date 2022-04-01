@@ -444,7 +444,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     :param fiat_currency: the fiat asset to be traded
     :param depth: the time periods back to be analysed
     """
-
     global condition
     global log
     global trend_24h
@@ -464,7 +463,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     global mid_frame_4h
     global mid_frame_1h
     global mid_frame_15m
-
     i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
