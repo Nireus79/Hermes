@@ -360,7 +360,7 @@ def limit_manager(mid, low, cond):
 
 def elderbot(mode, crypto_currency, fiat_currency, depth):
     """
-    elder_trading is a custom, real time, multiple time frame, consulting-trading bot application,
+    Custom, real time, multiple time frame, consulting-trading bot application,
     interpretation of Alexander Elder's "triple screen" forex market trading strategy.
     The strategy.
     The strategy is using data from three time frames, calculating indicators on first two and acts on the third.
@@ -420,7 +420,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                                 elif 15-min mid-frame conditions are NOT aligned:
                                     sleep 5 minutes to review conditions.
             elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15 and H1 M15 L5)...
-            elif 1 hour high frame trend is positive ... same as above for lower frames (H1 M15 L5)...
+            elif 1 hour high frame trend is positive ... same as above for frames (H1 M15 L5) only...
             elif conditions at all time frame combinations are not aligned:
                 bot sleeps for 5 minutes to review conditions.
         elif condition is 'sell':
@@ -438,6 +438,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
             elif all high frames trend is negative:
                 second pillow condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
+
     :param mode: trading / consulting
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
