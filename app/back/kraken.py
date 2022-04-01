@@ -53,7 +53,7 @@ def get_condition(crypto_currency):
         return 'sell'
 
 
-def volume(fiat_currency, crypto_currency):
+def volume(crypto_currency, fiat_currency):
     balance = get_private_balance()
     return {crypto_currency: balance['result'][crypto_currency],
             fiat_currency: balance['result'][fiat_currency + '.HOLD']}
@@ -116,7 +116,7 @@ def time_stamp(unix):
     :param unix: unix time.time()
     :return: Readable datetime format.
     """
-    ts = int(unix) + 7200  # (7200 2 hours winter) for local time Athens
+    ts = int(unix) + 10800  # (7200 +2 hours winter, 10800 +3 hours summer) for local time Athens
     return datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 
@@ -124,10 +124,10 @@ def high_frame_indicators(hdf):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
     adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, macd),
-    by using the "ta" library.
+    using the "ta" library.
     Then after comparing the indicators of the last df row, is adding columns with triggers and buy/sell flags.
     : param hdf: raw api dataframe
-    :return: df with technical indicators and flags
+    :return: hdf enriched with technical indicators and flags
     """
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['EMA30'] = hdf['close'].rolling(30).mean()
@@ -140,9 +140,9 @@ def mid_frame_indicators(mdf):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
     adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, macd),
-    by using the "ta" library.
+    using the "ta" library.
     : param mdf: raw api dataframe
-    :return: df with technical indicators and flags
+    :return: mdf enriched with technical indicators and flags
     """
     mdf['%K'] = stoch(mdf['high'], mdf['low'], mdf['close'], window=14, smooth_window=3, fillna=False)
     mdf['%D'] = mdf['%K'].rolling(3).mean()
