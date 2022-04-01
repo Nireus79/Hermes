@@ -56,7 +56,7 @@ def get_condition(crypto_currency):
 def volume(fiat_currency, crypto_currency):
     balance = get_private_balance()
     return {crypto_currency: balance['result'][crypto_currency],
-            fiat_currency: balance['result'][fiat_currency+'.HOLD']}
+            fiat_currency: balance['result'][fiat_currency + '.HOLD']}
 
 
 def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
@@ -70,7 +70,7 @@ def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
     :param price: order price
     :return: order response
     """
-    pair = crypto_currency+fiat_currency
+    pair = crypto_currency + fiat_currency
     resp = kraken_request('/0/private/AddOrder', {
         "nonce": str(int(1000 * time.time())),
         "ordertype": ordertype,
@@ -106,7 +106,6 @@ def get_order_info(txid):
         "txid": txid,
         "trades": True
     }, api_key, api_sec)
-
     print(resp.json())
     return resp.json()
 
@@ -134,7 +133,6 @@ def high_frame_indicators(hdf):
     hdf['EMA30'] = hdf['close'].rolling(30).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
     hdf['trend'] = hdf.apply(lambda x: (x['EMA13'] > x['EMA30']) and x['macd'] > 0, axis=1)
-
     return hdf
 
 
@@ -152,7 +150,6 @@ def mid_frame_indicators(mdf):
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
     mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and (x['rsi'] < 70), axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
-
     return mdf
 
 
