@@ -544,7 +544,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                                 elif mode == 'consulting':
                                     limit_manager(i15m_frame, i5m_feed, condition)
                             elif buy_flag_15m is not True:
-                                log = '{} 15 min momentum is not strong. Wait 5 minutes.'.format(time_stamp(time.time()))
+                                log = '{} 15 min momentum is not strong. Wait 5 minutes.'\
+                                    .format(time_stamp(time.time()))
                                 logging.info(log)
                                 time.sleep(i5m_feed.candle)
                         elif trend_1h is not True:
