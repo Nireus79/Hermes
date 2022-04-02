@@ -463,6 +463,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     global mid_frame_4h
     global mid_frame_1h
     global mid_frame_15m
+    global pillow
     i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
@@ -473,6 +474,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     log = '{} Elder bot start.'.format(time_stamp(time.time()))
     logging.warning(log)
     while True:
+        # Pillow set to 4% loss, in case of connection when condition is already 'sell'
+        pillow = i5m_feed.get_frame().iloc[-1]['close']*0.96
         if exit_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break trading.'.format(time_stamp(time.time()))
