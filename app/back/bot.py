@@ -155,7 +155,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                     time.sleep(10)
                     break
                 else:
-                    if new_limit < limit:
+                    if new_limit <= limit:
                         limit = new_limit
                         log = '{} limit set to {}. Wait {}min' \
                             .format(time_stamp(time.time()), limit, low.interval / 10)
@@ -180,7 +180,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                     beeper(cond)
                     break
                 else:
-                    if new_stop > stop:
+                    if new_stop >= stop:
                         stop = new_stop
                         log = '{} Stop loss set to {}. Wait {}min' \
                             .format(time_stamp(time.time()), stop, low.interval / 10)
@@ -226,13 +226,11 @@ def limit_manager(mid, low, cond):
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
             .format(time_stamp(time.time()), limit, low.interval / 10)
-        logging.info(log)
-        time.sleep(low.candle / 10)
     elif cond == 'sell':
         log = '{} Please give sell order when price under {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, low.interval / 10)
-        logging.info(log)
-        time.sleep(low.candle / 10)
+    logging.info(log)
+    time.sleep(low.candle / 10)
     while True:
         middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
         low_f = low.get_frame().iloc[-1]
@@ -254,7 +252,7 @@ def limit_manager(mid, low, cond):
                     beeper(cond)
                     time.sleep(10)
                     break
-                elif closing_price < limit:
+                elif closing_price <= limit:
                     if new_limit < limit:
                         limit = new_limit
                         stop = new_stop
@@ -267,7 +265,7 @@ def limit_manager(mid, low, cond):
                             time_stamp(time.time()), low.interval / 10)
                         logging.info(log)
                         time.sleep(low.candle / 10)
-            elif sell_flag:
+            elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
                 time.sleep(1)
@@ -281,7 +279,7 @@ def limit_manager(mid, low, cond):
                     beeper(cond)
                     time.sleep(10)
                     break
-                elif closing_price > stop:
+                elif closing_price >= stop:
                     if new_stop > stop:
                         limit = new_limit
                         stop = new_stop
@@ -294,7 +292,7 @@ def limit_manager(mid, low, cond):
                             time_stamp(time.time()), low.interval / 10)
                         logging.info(log)
                         time.sleep(low.candle / 10)
-            elif buy_flag:
+            elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
                 time.sleep(1)
