@@ -63,6 +63,8 @@ def beeper(cond):
             time.sleep(0.1)
     elif cond == 'start':
         winsound.Beep(440, 2000)
+    elif cond == 'break':
+        winsound.Beep(240, 2000)
 
 
 def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
@@ -169,6 +171,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
+                beeper('break')
                 time.sleep(1)
                 break
         elif cond == 'sell':
@@ -194,6 +197,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
+                beeper('break')
                 time.sleep(1)
                 break
 
@@ -268,6 +272,7 @@ def limit_manager(mid, low, cond):
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
+                beeper('break')
                 time.sleep(1)
                 break
         elif cond == 'sell':
@@ -295,6 +300,7 @@ def limit_manager(mid, low, cond):
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
+                beeper('break')
                 time.sleep(1)
                 break
 
