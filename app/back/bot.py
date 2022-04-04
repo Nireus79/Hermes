@@ -143,9 +143,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
         elif cond == 'buy':
             if buy_flag:
                 if closing_price > limit:
-                    add_order(order_type, cond, fiat_balance,
-                              closing_price, crypto_currency, fiat_currency)  # ['txid']
-                    # status = get_order_info(tx)
+                    add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
                     pillow = middle_f['low']
                     beeper(cond)
                     time.sleep(10)
@@ -171,9 +169,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
         elif cond == 'sell':
             if sell_flag:
                 if closing_price < stop:
-                    add_order(order_type, cond, fiat_balance,
-                              closing_price, crypto_currency, fiat_currency)  # ['txid']
-                    # status = get_order_info(tx)
+                    add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
                     beeper(cond)
                     break
                 else:
