@@ -3,7 +3,7 @@ import time
 import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, time_stamp, \
-    volume, add_order, get_order_info, cancel_order, get_condition
+    volume, add_order, cancel_order, get_condition  # , get_order_info
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,9 +35,6 @@ mid_frame_15m = None
 feed = None
 
 exit_event = threading.Event()
-
-
-# add_order('market', 'sell', 0, 0, 'DOT', 'EUR')
 
 
 def signal_handler():
@@ -96,7 +93,6 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                             sets new limit equal to new higher high.
                         else:
                             waits 1 / 10 of low frame period.
-
     :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
@@ -120,11 +116,9 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     vol = volume(crypto_currency, fiat_currency)
     crypto_balance = vol['crypto_currency']
     fiat_balance = vol['fiat_currency']
-
     pillow = middle_f['low']
     limit = low_f['high']
     stop = low_f['low']
-
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
     log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
@@ -149,9 +143,9 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
         elif cond == 'buy':
             if buy_flag:
                 if closing_price > limit:
-                    tx = add_order(order_type, cond, fiat_balance,
-                                   closing_price, crypto_currency, fiat_currency)['txid']
-                    status = get_order_info(tx)
+                    add_order(order_type, cond, fiat_balance,
+                              closing_price, crypto_currency, fiat_currency)  # ['txid']
+                    # status = get_order_info(tx)
                     pillow = middle_f['low']
                     beeper(cond)
                     time.sleep(10)
@@ -177,9 +171,9 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
         elif cond == 'sell':
             if sell_flag:
                 if closing_price < stop:
-                    tx = add_order(order_type, cond, fiat_balance,
-                                   closing_price, crypto_currency, fiat_currency)['txid']
-                    status = get_order_info(tx)
+                    add_order(order_type, cond, fiat_balance,
+                              closing_price, crypto_currency, fiat_currency)  # ['txid']
+                    # status = get_order_info(tx)
                     beeper(cond)
                     break
                 else:
@@ -589,10 +583,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                 time.sleep(i5m_feed.candle)
         elif condition == 'sell':
             if i5m_feed.get_frame().iloc[-1]['close'] < pillow:  # pillow
-                if mode == 'trading':
-                    order_manager('market', i4h_frame, i1h_feed, condition, fiat_currency, crypto_currency)
                 log = '{} Warning. Pillow activated. Sell your asset.'.format(time_stamp(time.time()))
                 logging.info(log)
+                if mode == 'trading':
+                    order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
+                elif mode == 'consulting':
+                    limit_manager(i15m_frame, i5m_feed, condition)
             elif trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
