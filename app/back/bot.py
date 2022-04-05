@@ -114,8 +114,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low.get_frame().iloc[-1]
     vol = volume(crypto_currency, fiat_currency)
-    crypto_balance = vol[crypto_currency]
-    fiat_balance = vol[fiat_currency]
+    crypto_balance = float(vol[crypto_currency])
+    fiat_balance = float(vol[fiat_currency])
     pillow = middle_f['low']
     limit = low_f['high']
     stop = low_f['low']
@@ -418,7 +418,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-        condition = get_condition(crypto_currency)
+        condition = get_condition(crypto_currency, fiat_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
