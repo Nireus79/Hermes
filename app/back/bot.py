@@ -114,8 +114,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low.get_frame().iloc[-1]
     vol = volume(crypto_currency, fiat_currency)
-    crypto_balance = vol['crypto_currency']
-    fiat_balance = vol['fiat_currency']
+    crypto_balance = vol[crypto_currency]
+    fiat_balance = vol[fiat_currency]
     pillow = middle_f['low']
     limit = low_f['high']
     stop = low_f['low']
