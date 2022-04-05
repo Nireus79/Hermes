@@ -56,10 +56,13 @@ def get_condition(crypto_currency, fiat_currency):
 
 
 def volume(crypto_currency, fiat_currency):
-    fiat_currency = 'Z' + fiat_currency
+
     balance = get_private_balance()
     return {crypto_currency: float(balance['result'][crypto_currency]),
-            fiat_currency: float(balance['result'][fiat_currency])}
+            fiat_currency: float(balance['result']['Z' + fiat_currency])}
+
+
+print(volume('DOT', 'EUR'))
 
 
 def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):

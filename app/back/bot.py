@@ -105,17 +105,12 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     global stop
     global limit
     global log
-    global fiat_balance
-    global crypto_balance
     global new_closing
     beeper('start')
     log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low.get_frame().iloc[-1]
-    vol = volume(crypto_currency, fiat_currency)
-    crypto_balance = float(vol[crypto_currency])
-    fiat_balance = float(vol[fiat_currency])
     pillow = middle_f['low']
     limit = low_f['high']
     stop = low_f['low']
@@ -401,6 +396,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     global mid_frame_1h
     global mid_frame_15m
     global pillow
+    vol = volume(crypto_currency, fiat_currency)
+    crypto_balance = float(vol[crypto_currency])
+    fiat_balance = float(vol[fiat_currency])
     i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
