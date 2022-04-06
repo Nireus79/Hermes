@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 condition = None
 stop = 0
 limit = None
-new_closing = None
+closing_price = None
 pillow = 0
 log = None
 trend_24h = None
@@ -105,19 +105,20 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     global stop
     global limit
     global log
-    global new_closing
+    global closing_price
     beeper('start')
-    log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
+    log = '{} Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low.get_frame().iloc[-1]
     pillow = middle_f['low']
     limit = low_f['high']
     stop = low_f['low']
+    closing_price = low_f['close']
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
     log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
-        .format(time_stamp(time.time()), new_closing, limit, stop)
+        .format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
     log = 'Wait {}min.'.format(low.interval / 10)
     logging.info(log)
@@ -201,16 +202,18 @@ def limit_manager(mid, low, cond):
     global stop
     global limit
     global log
-    global new_closing
+    global closing_price
     beeper('start')
-    log = '{} Start setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
+    log = '{} Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     low_f = low.get_frame().iloc[-1]
     middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
     pillow = middle['low']
     limit = low_f['high']
     stop = low_f['low']
-    log = '{} limit: {}. Stop loss: {}. Pillow: {}'.format(time_stamp(time.time()), limit, stop, pillow)
+    closing_price = low_f['low']
+    log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. '\
+        .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
@@ -644,8 +647,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                     order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                 elif mode == 'consulting':
                     log = 'Please sell your asset'
-                    limit_manager(i15m_frame, i5m_feed, condition)
                     logging.info(log)
+                    limit_manager(i15m_frame, i5m_feed, condition)
+                    time.sleep(10)
 
 
 def data_feed():
