@@ -18,15 +18,15 @@
             $('#fiat_currency').text(''+data.crypto_currency);
             $('#crypto_balance').text('Asset A: '+data.crypto_balance);
             $('#fiat_balance').text('Asset B: '+data.fiat_balance);
-            $('#trend_24h').text('24h trend: '+data.trend_24h);
-            $('#buy_flag_4h').text('4h buy flag: '+data.buy_flag_4h);
-            $('#sell_flag_4h').text('4h sell flag: '+data.sell_flag_4h);
-            $('#trend_4h').text('4h trend: '+data.trend_4h);
-            $('#buy_flag_1h').text('1h buy flag: '+data.buy_flag_1h);
-            $('#sell_flag_1h').text('1h sell flag: '+data.sell_flag_1h);
-            $('#trend_1h').text('1h trend: '+data.trend_1h);
-            $('#buy_flag_15m').text('15min buy flag: '+data.buy_flag_15m);
-            $('#sell_flag_15m').text('15min sell flag: '+data.sell_flag_15m);
+            $('#trend_24h').text(data.trend_24h);
+            $('#buy_flag_4h').text(data.buy_flag_4h);
+            $('#sell_flag_4h').text(data.sell_flag_4h);
+            $('#trend_4h').text(data.trend_4h);
+            $('#buy_flag_1h').text(data.buy_flag_1h);
+            $('#sell_flag_1h').text(data.sell_flag_1h);
+            $('#trend_1h').text(data.trend_1h);
+            $('#buy_flag_15m').text(data.buy_flag_15m);
+            $('#sell_flag_15m').text(data.sell_flag_15m);
             $('#price').text('Closing price: '+data.price);
             $('#pillow').text('Pillow: '+data.pillow);
             $('#limit').text('Buy limit: '+data.limit);
@@ -36,7 +36,9 @@
           });
         };
     </script>
+
         <span id="current_time"></span>
+        <br>
         <br>
         <span id="condition"></span>
         <span id="fiat_currency"></span>
@@ -48,28 +50,80 @@
         <span id="fiat_balance"></span>
         <br>
         <br>
-        <span id="trend_24h"></span>
-        <span id="buy_flag_4h"></span>
-        <span id="sell_flag_4h"></span>
-        <br>
-        <span id="trend_4h"></span>
-        <span id="buy_flag_1h"></span>
-        <span id="sell_flag_1h"></span>
-        <br>
-        <span id="trend_1h"></span>
-        <span id="buy_flag_15m"></span>
-        <span id="sell_flag_15m"></span>
-        <br>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>
+                        Frames
+                    </th>
+                    <th>
+                        Trend
+                    </th>
+                    <th>
+                        Buy
+                    </th>
+                    <th>
+                        Sell
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        24 hours
+                    </td>
+                    <td>
+                        <span id="trend_24h"></span>
+                    </td>
+                    <td>
+                        <span id="buy_flag_4h"></span>
+                    </td>
+                    <td>
+                        <span id="sell_flag_4h"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        4 hours
+                    </td>
+                    <td>
+                        <span id="trend_4h"></span>
+                    </td>
+                    <td>
+                        <span id="buy_flag_1h"></span>
+                    </td>
+                    <td>
+                        <span id="sell_flag_1h"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1 hour
+                    </td>
+                    <td>
+                        <span id="trend_1h"></span>
+                    </td>
+                    <td>
+                        <span id="buy_flag_15m"></span>
+                    </td>
+                    <td>
+                        <span id="sell_flag_15m"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <br>
         <span id="price"></span>
-        <br>
-        <span id="pillow"></span>
         <br>
         <span id="limit"></span>
         <br>
         <span id="stop"></span>
         <br>
+        <span id="pillow"></span>
+        <br>
+        <br>
         <span id="log"></span>
+        <br>
         <br>
         <a href='/stop'><input type='button' value='Stop bot'></a>
         <a href='/cancel'><input type='button' value='Cancel active order'></a>
