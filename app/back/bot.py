@@ -120,9 +120,9 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
         .format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
-    log = 'Wait {}min.'.format(low.interval / 10)
+    log = 'Wait {}min.'.format(low.interval / 6)
     logging.info(log)
-    time.sleep(low.candle / 10)
+    time.sleep(low.candle / 6)
     while True:
         middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
         low_f = low.get_frame().iloc[-1]
@@ -148,14 +148,14 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                     if new_limit <= limit:
                         limit = new_limit
                         log = '{} limit set to {}. Wait {}min' \
-                            .format(time_stamp(time.time()), limit, low.interval / 10)
+                            .format(time_stamp(time.time()), limit, low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
                     else:
                         log = '{} Closing price under limit. Wait {}min.' \
-                            .format(time_stamp(time.time()), low.interval / 10)
+                            .format(time_stamp(time.time()), low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
@@ -172,14 +172,14 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                     if new_stop >= stop:
                         stop = new_stop
                         log = '{} Stop loss set to {}. Wait {}min' \
-                            .format(time_stamp(time.time()), stop, low.interval / 10)
+                            .format(time_stamp(time.time()), stop, low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
                     else:
                         log = '{} Closing price over stop. Wait {}min.' \
-                            .format(time_stamp(time.time()), low.interval / 10)
+                            .format(time_stamp(time.time()), low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
@@ -217,12 +217,12 @@ def limit_manager(mid, low, cond):
     logging.info(log)
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
-            .format(time_stamp(time.time()), limit, low.interval / 10)
+            .format(time_stamp(time.time()), limit, low.interval / 6)
     elif cond == 'sell':
         log = '{} Please give sell order when price under {}. Wait {}min.' \
-            .format(time_stamp(time.time()), stop, low.interval / 10)
+            .format(time_stamp(time.time()), stop, low.interval / 6)
     logging.info(log)
-    time.sleep(low.candle / 10)
+    time.sleep(low.candle / 6)
     while True:
         middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
         low_f = low.get_frame().iloc[-1]
@@ -249,14 +249,14 @@ def limit_manager(mid, low, cond):
                         limit = new_limit
                         stop = new_stop
                         log = '{} New limit set to {}. Please wait {}min.' \
-                            .format(time_stamp(time.time()), limit, low.interval / 10)
+                            .format(time_stamp(time.time()), limit, low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
                     else:
                         log = '{} Closing price not exceeded limit. Please wait {}min.'.format(
-                            time_stamp(time.time()), low.interval / 10)
+                            time_stamp(time.time()), low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
@@ -277,14 +277,14 @@ def limit_manager(mid, low, cond):
                         limit = new_limit
                         stop = new_stop
                         log = '{} New stop-loss set to {}. Please wait {}min.' \
-                            .format(time_stamp(time.time()), stop, low.interval / 10)
+                            .format(time_stamp(time.time()), stop, low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
                     else:
                         log = '{} Closing price over stop-loss level. Please wait {}min.'.format(
-                            time_stamp(time.time()), low.interval / 10)
+                            time_stamp(time.time()), low.interval / 6)
                         logging.info(log)
-                        time.sleep(low.candle / 10)
+                        time.sleep(low.candle / 6)
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
@@ -603,9 +603,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                         limit_manager(i4h_frame, i1h_feed, condition)
                 elif sell_flag_4h is not True:
                     log = '{} 4hour momentum is not weak. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i4h_frame.interval / 10)
+                        .format(time_stamp(time.time()), i4h_frame.interval / 12)
                     logging.info(log)
-                    time.sleep(i4h_frame.candle / 10)
+                    time.sleep(i4h_frame.candle / 12)
             elif trend_4h:
                 log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                 logging.info(log)
@@ -620,9 +620,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                     elif mode == 'consulting':
                         limit_manager(i1h_frame, i15m_feed, condition)
                 elif sell_flag_1h is not True:
-                    log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval / 10)
+                    log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval / 12)
                     logging.info(log)
-                    time.sleep(i1h_frame.candle / 10)
+                    time.sleep(i1h_frame.candle / 12)
             elif trend_1h:
                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                 logging.info(log)
@@ -638,9 +638,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                         limit_manager(i15m_frame, i5m_feed, condition)
                 elif sell_flag_15m is not True:
                     log = '{} 15min momentum not weak. Wait {} minutes.' \
-                        .format(time_stamp(time.time()), i15m_frame.interval / 10)
+                        .format(time_stamp(time.time()), i15m_frame.interval / 12)
                     logging.info(log)
-                    time.sleep(i15m_frame.candle / 10)
+                    time.sleep(i15m_frame.candle / 12)
             else:
                 log = '{} All high frames trends are negative.' \
                     .format(time_stamp(time.time()))
