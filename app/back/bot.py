@@ -160,7 +160,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
                 beeper('break')
-                time.sleep(1)
+                time.sleep(10)
                 break
         elif cond == 'sell':
             if sell_flag:
@@ -184,7 +184,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
                 beeper('break')
-                time.sleep(1)
+                time.sleep(10)
                 break
 
 
@@ -261,7 +261,7 @@ def limit_manager(mid, low, cond):
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
                 beeper('break')
-                time.sleep(1)
+                time.sleep(10)
                 break
         elif cond == 'sell':
             if sell_flag:
@@ -289,7 +289,7 @@ def limit_manager(mid, low, cond):
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
                 beeper('break')
-                time.sleep(1)
+                time.sleep(10)
                 break
 
 
