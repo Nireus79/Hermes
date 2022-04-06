@@ -399,6 +399,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     global mid_frame_1h
     global mid_frame_15m
     global pillow
+    global closing_price
     vol = volume(crypto_currency, fiat_currency)
     crypto_balance = float(vol[crypto_currency])
     fiat_balance = float(vol[fiat_currency])
@@ -410,7 +411,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
     i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
     # Pillow set to 4% loss, in case of connection when condition is already 'sell'
-    pillow = i5m_feed.get_frame().iloc[-1]['close'] * 0.96
+    closing_price = i5m_feed.get_frame().iloc[-1]['close']
+    pillow = closing_price * 0.96
     log = '{} Elder bot start.'.format(time_stamp(time.time()))
     logging.info(log)
     while True:
@@ -657,6 +659,7 @@ def data_feed():
             'condition': condition,
             'crypto_balance': crypto_balance,
             'fiat_balance': fiat_balance,
+            'price': closing_price,
             'stop': stop,
             'limit': limit,
             'pillow': pillow,
@@ -670,3 +673,4 @@ def data_feed():
             'buy_flag_15m': str(buy_flag_15m),
             'sell_flag_15m': str(sell_flag_15m)
             }
+

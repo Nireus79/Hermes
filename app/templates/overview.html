@@ -27,6 +27,7 @@
             $('#trend_1h').text('1h trend: '+data.trend_1h);
             $('#buy_flag_15m').text('15min buy flag: '+data.buy_flag_15m);
             $('#sell_flag_15m').text('15min sell flag: '+data.sell_flag_15m);
+            $('#price').text('Closing price: '+data.price);
             $('#pillow').text('Pillow: '+data.pillow);
             $('#limit').text('Buy limit: '+data.limit);
             $('#stop').text('Stop loss: '+data.stop);
@@ -60,8 +61,12 @@
         <span id="sell_flag_15m"></span>
         <br>
         <br>
+        <span id="price"></span>
+        <br>
         <span id="pillow"></span>
+        <br>
         <span id="limit"></span>
+        <br>
         <span id="stop"></span>
         <br>
         <span id="log"></span>
