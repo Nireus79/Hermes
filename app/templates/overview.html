@@ -16,8 +16,8 @@
             $('#condition').text('Evaluating to '+data.condition);
             $('#crypto_currency').text('for '+data.fiat_currency+'.');
             $('#fiat_currency').text(''+data.crypto_currency);
-            $('#crypto_balance').text('Asset A: '+data.crypto_balance);
-            $('#fiat_balance').text('Asset B: '+data.fiat_balance);
+            $('#crypto_balance').text('asset A: '+data.crypto_balance);
+            $('#fiat_balance').text('asset B: '+data.fiat_balance);
             $('#trend_24h').text(data.trend_24h);
             $('#buy_flag_4h').text(data.buy_flag_4h);
             $('#sell_flag_4h').text(data.sell_flag_4h);
@@ -36,19 +36,15 @@
           });
         };
     </script>
-        <br>
         <span id="current_time"></span>
-        <br>
         <br>
         <span id="condition"></span>
         <span id="fiat_currency"></span>
         <span id="crypto_currency"></span>
         <br>
-        <br>
-        <p>Balance: </p>
+        <span>Balance:</span>
         <span id="crypto_balance"></span>
         <span id="fiat_balance"></span>
-        <br>
         <br>
         <table border="1">
             <thead>
@@ -112,7 +108,6 @@
                 </tr>
             </tbody>
         </table>
-        <br>
         <span id="price"></span>
         <br>
         <span id="limit"></span>
