@@ -2,7 +2,7 @@ import logging
 import time
 import threading
 import winsound
-from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, time_stamp, \
+from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
     volume, add_order, cancel_order, get_condition  # , get_order_info
 
 logging.basicConfig(level=logging.INFO)
@@ -111,10 +111,11 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     logging.info(log)
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low.get_frame().iloc[-1]
-    atr = middle_f['atr']
+    m_atr = middle_f['atr']
+    atr = low_f['atr']
     limit = low_f['high'] + atr
     stop = low_f['low'] - atr
-    pillow = middle_f['low']
+    pillow = middle_f['low'] - m_atr
     closing_price = low_f['close']
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
@@ -129,8 +130,10 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
         low_f = low.get_frame().iloc[-1]
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
-        new_limit = low_f['high']
-        new_stop = low_f['low']
+        m_atr = middle_f['atr']
+        atr = low_f['atr']
+        new_limit = low_f['high'] + atr
+        new_stop = low_f['low'] - atr
         closing_price = low_f['close']
         if exit_event.is_set():  # thread "kill" by user
             cancel_order()
@@ -141,7 +144,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
             if buy_flag:
                 if closing_price > limit:
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
-                    pillow = middle_f['low']
+                    pillow = middle_f['low'] - m_atr
                     beeper(cond)
                     time.sleep(10)
                     break
@@ -209,13 +212,14 @@ def limit_manager(mid, low, cond):
     logging.info(log)
     low_f = low.get_frame().iloc[-1]
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
+    m_atr = middle_f['atr']
     atr = middle_f['atr']
     limit = low_f['high'] + atr
     stop = low_f['low'] - atr
-    pillow = middle_f['low'] - atr
+    pillow = middle_f['low'] - m_atr
     closing_price = low_f['close']
     closing_price = low_f['low']
-    log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. '\
+    log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. ' \
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
     if cond == 'buy':
@@ -231,9 +235,11 @@ def limit_manager(mid, low, cond):
         low_f = low.get_frame().iloc[-1]
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
-        pillow = middle_f['low']
-        new_limit = low_f['high']
-        new_stop = low_f['low']
+        m_atr = middle_f['atr']
+        atr = low_f['atr']
+        new_limit = low_f['high'] + atr
+        new_stop = low_f['low'] - atr
+        pillow = middle_f['low'] - m_atr
         closing_price = low_f['close']
         if exit_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
@@ -410,9 +416,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
     i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
     i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
-    i1h_feed = Api(crypto_currency, fiat_currency, 60, 1)
-    i15m_feed = Api(crypto_currency, fiat_currency, 15, 1)
-    i5m_feed = Api(crypto_currency, fiat_currency, 5, 1)
+    i1h_feed = Api(crypto_currency, fiat_currency, 60, 15)
+    i15m_feed = Api(crypto_currency, fiat_currency, 15, 15)
+    i5m_feed = Api(crypto_currency, fiat_currency, 5, 15)
     # Pillow set to 4% loss, in case of connection when condition is already 'sell'
     closing_price = i5m_feed.get_frame().iloc[-1]['close']
     pillow = closing_price * 0.96
@@ -676,4 +682,3 @@ def data_feed():
             'buy_flag_15m': str(buy_flag_15m),
             'sell_flag_15m': str(sell_flag_15m)
             }
-

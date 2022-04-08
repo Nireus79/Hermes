@@ -157,6 +157,11 @@ def mid_frame_indicators(mdf):
     return mdf
 
 
+def low_frame_indicators(ldf):
+    ldf['atr'] = average_true_range(ldf['high'], ldf['low'], ldf['close'], window=14, fillna=False)
+    return ldf
+
+
 class Api:
     """
     crypto: the name of crypto
