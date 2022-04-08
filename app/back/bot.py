@@ -448,6 +448,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
         sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
         buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
         sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
+        # Pillow set to 4% loss, in case of connection when condition is already 'sell'
+        closing_price = i5m_feed.get_frame().iloc[-1]['close']
+        pillow = closing_price * 0.96
         if condition == 'buy':
             if trend_24h:
                 log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
