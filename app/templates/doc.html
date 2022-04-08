@@ -113,7 +113,13 @@
     Using Kraken trading platform to collect data and trade.<br>
     "Stop bot" button terminates the app operation after the completion of current
     evaluation period. Message appears on Overview when done.<br>
-    "Cancel active order" has immediate effect.
+    "Cancel active order" has immediate effect.<br>
+    In stop-loss/limit levels an extra margin of current atr (average true range) is added,
+    to include the volatility factor and limit false positioning.
+    After setting a buy order, a safety "pillow" level is stored as a safety parameter.
+    It is the 'low' of mid-frame candle minus mid-frame atr.
+    In the case of starting the program while an asset is bought and conditions to sell it are evaluated,
+    pillow is set to current price minus 4% and is reset after each evaluation circle.
     <p>
 
 </p>
