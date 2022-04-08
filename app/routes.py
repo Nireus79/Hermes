@@ -39,6 +39,14 @@ def update():
     return jsonify(dt)
 
 
+@app.route('/zero_start')
+def zero_starter():
+    consulting = threading.Thread(target=elderbot, args=('zero', asset_a, asset_b, 50))
+    consulting.daemon = True
+    consulting.start()
+    return render_template('overview.html')
+
+
 @app.route('/consulting_start')
 def consulting_starter():
     consulting = threading.Thread(target=elderbot, args=('consulting', asset_a, asset_b, 50))
