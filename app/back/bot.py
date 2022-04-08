@@ -484,7 +484,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                             log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
                             if mode == 'trading':
-                                order_manager('market', i1h_frame, i15m_frame, condition, fiat_currency, crypto_currency)
+                                order_manager('market', i1h_frame, i15m_frame, condition,
+                                              fiat_currency, crypto_currency)
                             elif mode == 'consulting':
                                 limit_manager(i1h_frame, i15m_frame, condition)
                         elif buy_flag_1h is not True:
@@ -567,7 +568,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                             log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
                             if mode == 'trading':
-                                order_manager('market', i15m_frame, i5m_frame, condition, fiat_currency, crypto_currency)
+                                order_manager('market', i15m_frame, i5m_frame, condition,
+                                              fiat_currency, crypto_currency)
                             elif mode == 'consulting':
                                 limit_manager(i15m_frame, i5m_frame, condition)
                         elif buy_flag_15m is not True:
