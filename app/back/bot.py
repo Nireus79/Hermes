@@ -111,9 +111,10 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     logging.info(log)
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low.get_frame().iloc[-1]
+    atr = middle_f['atr']
+    limit = low_f['high'] + atr
+    stop = low_f['low'] - atr
     pillow = middle_f['low']
-    limit = low_f['high']
-    stop = low_f['low']
     closing_price = low_f['close']
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
@@ -207,10 +208,12 @@ def limit_manager(mid, low, cond):
     log = '{} Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     low_f = low.get_frame().iloc[-1]
-    middle = mid_frame_indicators(mid.get_frame()).iloc[-1]
-    pillow = middle['low']
-    limit = low_f['high']
-    stop = low_f['low']
+    middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
+    atr = middle_f['atr']
+    limit = low_f['high'] + atr
+    stop = low_f['low'] - atr
+    pillow = middle_f['low'] - atr
+    closing_price = low_f['close']
     closing_price = low_f['low']
     log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. '\
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)

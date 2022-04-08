@@ -8,6 +8,7 @@ import hmac
 import base64
 from ta.momentum import rsi, stoch
 from ta.trend import macd_diff
+from ta.volatility import average_true_range
 import os
 import time
 
@@ -56,13 +57,9 @@ def get_condition(crypto_currency, fiat_currency):
 
 
 def volume(crypto_currency, fiat_currency):
-
     balance = get_private_balance()
     return {crypto_currency: float(balance['result'][crypto_currency]),
             fiat_currency: float(balance['result']['Z' + fiat_currency])}
-
-
-print(volume('DOT', 'EUR'))
 
 
 def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
@@ -112,7 +109,7 @@ def get_order_info(txid):
         "txid": txid,
         "trades": True
     }, api_key, api_sec)
-    print(resp.json())
+    # print(resp.json())
     return resp.json()
 
 
@@ -154,6 +151,7 @@ def mid_frame_indicators(mdf):
     mdf['%D'] = mdf['%K'].rolling(3).mean()
     mdf['%DS'] = mdf['%D'].rolling(3).mean()  # Stochastic slow.
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
+    mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
     mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and (x['rsi'] < 70), axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
     return mdf
