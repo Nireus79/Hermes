@@ -160,6 +160,13 @@ def mid_frame_indicators(mdf):
 
 
 def low_frame_indicators(ldf):
+    """
+    Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
+    adding column to each row with the technical indicators of atr,
+    using the "ta" library.
+    :param ldf: low data frame
+    :return: λdf enriched with atr
+    """
     ldf['atr'] = average_true_range(ldf['high'], ldf['low'], ldf['close'], window=14, fillna=False)
     return ldf
 
