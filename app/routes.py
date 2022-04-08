@@ -22,8 +22,6 @@ def control():
     if request.method == 'POST':
         asset_a = request.form['assetA']
         asset_b = request.form['assetB']
-        #
-
     return render_template('control.html')
 
 

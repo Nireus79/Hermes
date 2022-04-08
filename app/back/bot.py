@@ -75,24 +75,24 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
                 places market sell order for the asset.
                 Conditions are reevaluated until order is closed.
             else:
-                waits 1 / 10 of low frame duration to reevaluate:
+                waits 1 / 6 of low frame duration to reevaluate:
                     if new closing price is higher than stop-loss:
                         if new lower low of low frame is higher than previous set:
                             sets new stop-loss equal to new lower-low.
                         else:
-                            waits 1 / 10 of low frame period.
+                            waits 1 / 6 of low frame period.
         When intending to buy asset
             if closing price exceeds set limit level:
                 places a market buy asset for the asset
                 and sets mid-frame last candle low as pillow.
                 Conditions are reevaluated until order is closed.
             else:
-                waits 1 / 10 of low frame duration to reevaluate.
+                waits 1 / 6 of low frame duration to reevaluate.
                     if new closing price is lower than limit:
                         if new higher high of low frame is higher than previous set:
                             sets new limit equal to new higher high.
                         else:
-                            waits 1 / 10 of low frame period.
+                            waits 1 / 6 of low frame period.
     :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
@@ -363,13 +363,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                 pillow
             elif 24 hour high frame and 4 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 1 hour low frame.
-                if NOT waits 1 / 10 of 4 hours.
+                if NOT waits 1 / 12 of 4 hours.
             elif 4 hour high frame and 1 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 15 min low frame.
-                if NOT waits 1 / 10 of 1 hour.
+                if NOT waits 1 / 12 of 1 hour.
             elif 1 hour high frame and 15min  mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 5min low frame.
-                if NOT waits 1 / 10 of 15 min.
+                if NOT waits 1 / 12 of 15 min.
             elif all high frames trend is negative:
                 second pillow condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
