@@ -669,7 +669,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                 if mode == 'trading':
                     order_manager('market', i15m_frame, i5m_feed, condition, fiat_currency, crypto_currency)
                 elif mode == 'consulting':
-                    log = 'Please sell your asset'
+                    log = 'Please sell your asset.'
                     logging.info(log)
                     limit_manager(i15m_frame, i5m_feed, condition)
                     time.sleep(10)
