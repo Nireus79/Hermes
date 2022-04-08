@@ -99,6 +99,10 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     :param mid: mid-frame instance
     :param low: low-frame instance
     :param cond: buy / sell
+    In stop-loss/limit levels an extra margin of current atr (average true range) is added,
+    to include the volatility factor and limit false positioning.
+    After setting a buy order, a safety "pillow" level is stored as a safety parameter.
+    It is the 'low' of mid-frame candle minus mid-frame atr.
     """
     global pillow
     global condition
@@ -387,6 +391,11 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
     :param depth: the time periods back to be analysed
+    :param pillow: A safety level is set at the beginning of the process to 4% under current price
+            and is added after every circle. That is for the case of bot starts evaluating sell condition and no other
+            safety level is stored.
+            After every buy of asset A, a safety level is set on the lowest low of mid-frame candle minus atr,
+            so volatility is calculated in this case.
     """
     global condition
     global log
