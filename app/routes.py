@@ -8,6 +8,7 @@ from app.back.kraken import time_stamp
 
 asset_a = None
 asset_b = None
+mode = None
 
 
 @app.route('/')
@@ -36,28 +37,34 @@ def update():
     dt['current_time'] = time_stamp(time.time())
     dt['crypto_currency'] = asset_a
     dt['fiat_currency'] = asset_b
+    # dt['mode'] = mode
     return jsonify(dt)
 
 
-@app.route('/zero_start')
-def zero_starter():
-    consulting = threading.Thread(target=elderbot, args=('zero', asset_a, asset_b, 50))
-    consulting.daemon = True
-    consulting.start()
-    return render_template('overview.html')
+@app.route('/zero')
+def zero():
+    global mode
+    mode = 'zero'
+    return render_template('control.html')
 
 
-@app.route('/consulting_start')
-def consulting_starter():
-    consulting = threading.Thread(target=elderbot, args=('consulting', asset_a, asset_b, 50))
-    consulting.daemon = True
-    consulting.start()
-    return render_template('overview.html')
+@app.route('/consulting')
+def consulting():
+    global mode
+    mode = 'consulting'
+    return render_template('control.html')
 
 
-@app.route('/trading_start')
-def trading_starter():
-    trading = threading.Thread(target=elderbot, args=('trading', asset_a, asset_b, 50))
+@app.route('/trading')
+def trade():
+    global mode
+    mode = 'trading'
+    return render_template('control.html')
+
+
+@app.route('/start')
+def starter():
+    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50))
     trading.daemon = True
     trading.start()
     return render_template('overview.html')

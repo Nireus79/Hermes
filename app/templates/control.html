@@ -7,6 +7,12 @@
 {% block body %}
     <p>Select trading assets of your choice.</p>
     <form action="#" method="post">
+<!--        <select name="mode" class="form-select" aria-label="Default select example">-->
+<!--          <option selected>Select mode</option>-->
+<!--          <option value="zero">Zero balance</option>-->
+<!--          <option value="consulting">Consulting</option>-->
+<!--          <option value="trading">Trading</option>-->
+<!--        </select>-->
         <select name="assetA" class="form-select" aria-label="Default select example">
           <option selected>Select asset A</option>
           <option value="ZRX">Ox</option>
@@ -273,13 +279,14 @@
       Please be sure your trading asset pair of choice is supported by kraken.</a>
     <br>
     <br>
-    <p>Start bot on consulting or trading mode.</p>
-    <a href='/zero_start'><input type='button' value='Start 0 balance'></a>
-    <a href='/consulting_start'><input type='button' value='Start consulting'></a>
-    <a href='/trading_start'><input type='button' value='Start trading'></a>
+    <p>Select mode.</p>
+    <a href='/zero'><input type='button' value='Zero balance'></a>
+    <a href='/consulting'><input type='button' value='Consulting'></a>
+    <a href='/trading'><input type='button' value='Trading'></a>
     <br>
     <br>
-    <p>Stop bot sequence. Cancel all active orders.</p>
-    <a href='/stop'><input type='button' value='Stop bot'></a>
+    <p>Start/Stop bot sequence. Cancel all active orders.</p>
+    <a href='/start'><input type='button' value='Start'></a>
+    <a href='/stop'><input type='button' value='Stop'></a>
     <a href='/cancel'><input type='button' value='Cancel active order'></a>
 {% endblock %}
