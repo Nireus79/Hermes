@@ -19,10 +19,11 @@ def main():
 
 @app.route('/control', methods=['POST', 'GET'])
 def control():
-    global asset_a, asset_b
+    global asset_a, asset_b, mode
     if request.method == 'POST':
         asset_a = request.form['assetA']
         asset_b = request.form['assetB']
+        mode = request.form['mode']
     return render_template('control.html')
 
 
@@ -37,29 +38,8 @@ def update():
     dt['current_time'] = time_stamp(time.time())
     dt['crypto_currency'] = asset_a
     dt['fiat_currency'] = asset_b
-    # dt['mode'] = mode
+    dt['mode'] = mode
     return jsonify(dt)
-
-
-@app.route('/zero')
-def zero():
-    global mode
-    mode = 'zero'
-    return render_template('control.html')
-
-
-@app.route('/consulting')
-def consulting():
-    global mode
-    mode = 'consulting'
-    return render_template('control.html')
-
-
-@app.route('/trading')
-def trade():
-    global mode
-    mode = 'trading'
-    return render_template('control.html')
 
 
 @app.route('/start')

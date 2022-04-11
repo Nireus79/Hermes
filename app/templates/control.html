@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block body %}
-    <p>Select trading assets of your choice.</p>
+    <p>Select mode and trading assets of your choice.</p>
     <form action="#" method="post">
-<!--        <select name="mode" class="form-select" aria-label="Default select example">-->
-<!--          <option selected>Select mode</option>-->
-<!--          <option value="zero">Zero balance</option>-->
-<!--          <option value="consulting">Consulting</option>-->
-<!--          <option value="trading">Trading</option>-->
-<!--        </select>-->
+        <select name="mode" class="form-select" aria-label="Default select example">
+          <option selected>Select mode</option>
+          <option value="zero">Zero balance</option>
+          <option value="consulting">Consulting</option>
+          <option value="trading">Trading</option>
+        </select>
         <select name="assetA" class="form-select" aria-label="Default select example">
           <option selected>Select asset A</option>
           <option value="ZRX">Ox</option>
@@ -278,14 +278,7 @@
     <a href="https://support.kraken.com/hc/en-us/articles/201893658-Currency-pairs-available-for-trading-on-Kraken">
       Please be sure your trading asset pair of choice is supported by kraken.</a>
     <br>
-    <br>
-    <p>Select mode.</p>
-    <a href='/zero'><input type='button' value='Zero balance'></a>
-    <a href='/consulting'><input type='button' value='Consulting'></a>
-    <a href='/trading'><input type='button' value='Trading'></a>
-    <br>
-    <br>
-    <p>Start/Stop bot sequence. Cancel all active orders.</p>
+    <p>Start/Stop bot sequence, or cancel all active orders.</p>
     <a href='/start'><input type='button' value='Start'></a>
     <a href='/stop'><input type='button' value='Stop'></a>
     <a href='/cancel'><input type='button' value='Cancel active order'></a>
