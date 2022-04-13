@@ -257,8 +257,9 @@ def limit_manager(mode, mid, low, cond):
                     beeper(cond)
                     time.sleep(10)
                     if mode == 'zero':
-                        logging.info('BUY')
                         condition = 'sell'
+                        logging.info('BUY')
+                        logging.info(condition)
                     break
                 elif closing_price <= limit:
                     if new_limit < limit:
@@ -288,8 +289,9 @@ def limit_manager(mode, mid, low, cond):
                     beeper(cond)
                     time.sleep(10)
                     if mode == 'zero':
-                        logging.info('SELL')
                         condition = 'buy'
+                        logging.info('SELL')
+                        logging.info(condition)
                     break
                 elif closing_price >= stop:
                     if new_stop > stop:
@@ -601,7 +603,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
                 if buy_flag_15m:
                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    order_manager('market', i15m_frame, i5m_frame, condition, fiat_currency, crypto_currency)
+                    if mode == 'trading':
+                        order_manager('market', i15m_frame, i5m_frame, condition, fiat_currency, crypto_currency)
+                    elif mode == 'consulting' or mode == 'zero':
+                        limit_manager(mode, i15m_frame, i5m_frame, condition)
                 elif buy_flag_15m is not True:
                     log = '{} 15min momentum is not strong. Wait 5 minutes.'.format(time_stamp(time.time()))
                     logging.info(log)
