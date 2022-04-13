@@ -111,7 +111,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency):
     global log
     global closing_price
     beeper('start')
-    log = '{} Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
+    log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
@@ -213,7 +213,7 @@ def limit_manager(mode, mid, low, cond):
     global log
     global closing_price
     beeper('start')
-    log = '{} Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
+    log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     middle_f = mid_frame_indicators(mid.get_frame()).iloc[-1]
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
