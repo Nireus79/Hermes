@@ -257,6 +257,7 @@ def limit_manager(mode, mid, low, cond):
                     beeper(cond)
                     time.sleep(10)
                     if mode == 'zero':
+                        logging.info('BUY')
                         condition = 'sell'
                     break
                 elif closing_price <= limit:
@@ -287,6 +288,7 @@ def limit_manager(mode, mid, low, cond):
                     beeper(cond)
                     time.sleep(10)
                     if mode == 'zero':
+                        logging.info('SELL')
                         condition = 'buy'
                     break
                 elif closing_price >= stop:
@@ -444,9 +446,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-        elif mode == 'consulting' or mode == 'trading':
+        if mode == 'consulting' or mode == 'trading':
             condition = get_condition(crypto_currency, fiat_currency)
-        log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
+        log = '{} Condition is {}. Mode is {}.'.format(time_stamp(time.time()), condition, mode)
         logging.info(log)
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
         high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
