@@ -201,7 +201,7 @@ def limit_manager(mode, mid, low, cond):
     Same as order_manager.
     No actual order is set.
     User is just informed for the action he has to take.
-    :param mode:
+    :param mode: zero or consulting
     :param mid: The middle time frame instance, used to check if buy/sell flag is still True.
     :param low: The low time frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
@@ -422,6 +422,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
     global mid_frame_15m
     global pillow
     global closing_price
+    if mode == 'zero':
+        condition = 'buy'
     if mode != 'zero':
         vol = volume(crypto_currency, fiat_currency)
         crypto_balance = float(vol[crypto_currency])
@@ -442,9 +444,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth):
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
             break
-        if mode == 'zero':
-            condition = 'buy'
-        else:
+        if mode != 'zero':
             condition = get_condition(crypto_currency, fiat_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
