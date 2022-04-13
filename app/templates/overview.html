@@ -13,6 +13,7 @@
 
           function(data) {
             $('#current_time').text('Current time: '+data.current_time);
+            $('#mode').text('Mode: '+data.mode);
             $('#condition').text('Evaluating to '+data.condition);
             $('#crypto_currency').text('for '+data.fiat_currency+'.');
             $('#fiat_currency').text(''+data.crypto_currency);
@@ -37,6 +38,8 @@
         };
     </script>
         <span id="current_time"></span>
+        <br>
+        <span id="mode"></span>
         <br>
         <span id="condition"></span>
         <span id="fiat_currency"></span>
