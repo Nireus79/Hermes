@@ -1,5 +1,3 @@
-import logging
-
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -111,7 +109,6 @@ def get_order_info(txid):
         "txid": txid,
         "trades": True
     }, api_key, api_sec)
-    # print(resp.json())
     return resp.json()
 
 
@@ -137,6 +134,7 @@ def high_frame_indicators(hdf):
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['EMA30'] = hdf['close'].rolling(30).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
+    # hdf['atr'] = average_true_range(hdf['high'], hdf['low'], hdf['close'], window=14, fillna=False)
     hdf['trend'] = hdf.apply(lambda x: (x['EMA13'] > x['EMA30']) and x['macd'] > 0, axis=1)
     return hdf
 
@@ -165,7 +163,7 @@ def low_frame_indicators(ldf):
     adding column to each row with the technical indicators of atr,
     using the "ta" library.
     :param ldf: low data frame
-    :return: λdf enriched with atr
+    :return: ldf enriched with atr
     """
     ldf['atr'] = average_true_range(ldf['high'], ldf['low'], ldf['close'], window=14, fillna=False)
     return ldf
