@@ -3,7 +3,7 @@ import time
 import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
-    volume, add_order, cancel_order, get_condition
+    volume, add_order, cancel_order, get_condition, get_order_info
 
 logging.basicConfig(level=logging.INFO)
 
@@ -149,7 +149,19 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
             if buy_flag:
                 if closing_price > limit:
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
+
                     # TODO order check
+                    # tx = add_order(order_type,
+                    #                cond, fiat_balance, closing_price, crypto_currency, fiat_currency)['"txid"']
+                    # time.sleep(10)
+                    # while True:
+                    #     order_info = get_order_info(tx)['status']
+                    #     if order_info == 'closed':
+                    #         log = 'Order closed.'
+                    #         break
+                    #     else:
+                    #         time.sleep(10)
+
                     pillow = middle_f['low'] - m_atr
                     beeper(cond)
                     time.sleep(10)
@@ -177,7 +189,19 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                 if closing_price < stop:
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
                     # TODO order check
+                    # tx = add_order(order_type,
+                    #                cond, fiat_balance, closing_price, crypto_currency, fiat_currency)['"txid"']
+                    # time.sleep(10)
+                    # while True:
+                    #     order_info = get_order_info(tx)['status']
+                    #     if order_info == 'closed':
+                    #         log = 'Order closed.'
+                    #         break
+                    #     else:
+                    #         time.sleep(10)
+
                     beeper(cond)
+                    time.sleep(10)
                     break
                 else:
                     if new_stop >= stop:
