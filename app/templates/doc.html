@@ -54,8 +54,11 @@
     Trend momentum and position is detected with the use of stochastic slow indicator.
     Stochastic fast can be used for quicker response but in this case more force signals are generated.
     Stochastic slow is used as it is a 'smothered' version of stoch fast.
-    An additional indicator of strength is added (rsi) for safety reasons, as when current price strength is above safety,
+    An additional indicator of strength is added (RSI) for safety reasons, as when current price strength is above safety,
     price is actually 'overbought' and probability of descent is high.
+    An extra condition of ATR / closing price > 1 is given, to avoid false flags in price consolidation instances.
+    ATR of middle frame is also subtracted by lowest low of last mid-candle, to be used as pillow and avoid
+    false pillow alarm.
 </p>
 <!--    The use of triggers can be applied for %K and %D curves as a safety measure, with opportunity cost.-->
 <!--    (Remains commented in the code)-->
@@ -64,6 +67,8 @@
     When conditions are aligned in the higher frames action limits are set,
     according to the last low frame closed candle range.
     Next time fragment of candle price gives action flag or sets new limits.
+    Low frame current candle ATR is added to the limit and subtracted to stop-loss, so current volatility
+    of the price is taken into consideration to avoid false transactions.
 </p>
 <a href="https://en.wikipedia.org/wiki/Alexander_Elder">Wiki/Elder</a>,
 
