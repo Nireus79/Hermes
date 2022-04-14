@@ -44,7 +44,7 @@ def update():
 
 @app.route('/start')
 def starter():
-    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50))
+    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, 4))
     trading.daemon = True
     trading.start()
     return render_template('overview.html')
