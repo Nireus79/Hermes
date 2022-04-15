@@ -154,7 +154,7 @@ def mid_frame_indicators(mdf):
     mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
     mdf['%atr'] = (mdf['atr']/mdf['close'])*100
     mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < 70 and x['%atr'] > 0.5, axis=1)
-    mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
+    mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80 and x['%atr'] > 0.5, axis=1)
     return mdf
 
 
