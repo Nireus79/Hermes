@@ -377,7 +377,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor):
     version of stoch fast. An additional indicator of strength is added (RSI) for safety reasons, as when current price
     strength is above safety, price is actually 'overbought' and probability of descent is high.
     ATR detects the volatility of the price. ATR% is ATR related with the closing price.
-    An extra condition of ATR / closing price > 1 is given, to avoid false flags in price consolidation instances.
+    An extra condition of %ATR > 0.5 is given, to avoid false flags in price consolidation instances.
     ATR of middle frame is also subtracted by lowest low of last mid-candle, to be used as pillow and avoid
     false pillow alarm.
     Low frame.
