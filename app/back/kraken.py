@@ -134,7 +134,6 @@ def high_frame_indicators(hdf):
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['EMA30'] = hdf['close'].rolling(30).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
-    # hdf['atr'] = average_true_range(hdf['high'], hdf['low'], hdf['close'], window=14, fillna=False)
     hdf['trend'] = hdf.apply(lambda x: (x['EMA13'] > x['EMA30']) and x['macd'] > 0, axis=1)
     return hdf
 
@@ -153,7 +152,7 @@ def mid_frame_indicators(mdf):
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
     mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
     mdf['%atr'] = (mdf['atr']/mdf['close'])*100  # closing price percentage ATR
-    mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < 70 and x['%atr'] > 0.5, axis=1)
+    mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < 70 and x['%atr'] > 1, axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
     return mdf
 
