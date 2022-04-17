@@ -7,6 +7,28 @@
 {% block body %}
     <p>Select mode and trading assets of your choice.</p>
     <form action="#" method="post">
+        <select name="divider" class="form-select" aria-label="Default select example">
+          <option selected>Low frame divider</option>
+          <option value=1>Ignore</option>
+          <option value=2>/2</option>
+          <option value=4>/4</option>
+          <option value=6>/6</option>
+        </select>
+        <select name="rsi" class="form-select" aria-label="Default select example">
+          <option selected>Max RSI</option>
+          <option value=100>Ignore</option>
+          <option value=70>Default 70</option>
+          <option value=80>80</option>
+          <option value=90>90</option>
+        </select>
+        <select name="volatility" class="form-select" aria-label="Default select example">
+          <option selected>Min volatility</option>
+          <option value=0>Ignore</option>
+          <option value=0.5>Default 0.5%</option>
+          <option value=1>1%</option>
+          <option value=1.5>1.5%</option>
+        </select>
+        <br>
         <select name="mode" class="form-select" aria-label="Default select example">
           <option selected>Select mode</option>
           <option value="simulator">Simulator</option>

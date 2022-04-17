@@ -9,6 +9,9 @@ from app.back.kraken import time_stamp
 asset_a = None
 asset_b = None
 mode = None
+divider = None
+rsi = None
+volatility = None
 
 
 @app.route('/')
@@ -19,11 +22,14 @@ def main():
 
 @app.route('/control', methods=['POST', 'GET'])
 def control():
-    global asset_a, asset_b, mode
+    global asset_a, asset_b, mode, divider, rsi, volatility
     if request.method == 'POST':
         asset_a = request.form['assetA']
         asset_b = request.form['assetB']
         mode = request.form['mode']
+        divider = float(request.form['divider'])
+        rsi = float(request.form['rsi'])
+        volatility = float(request.form['volatility'])
     return render_template('control.html')
 
 
@@ -39,12 +45,15 @@ def update():
     dt['crypto_currency'] = asset_a
     dt['fiat_currency'] = asset_b
     dt['mode'] = mode
+    dt['divider'] = divider
+    dt['rsi'] = rsi
+    dt['volatility'] = volatility
     return jsonify(dt)
 
 
 @app.route('/start')
 def starter():
-    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, 4))
+    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 31, divider, rsi, volatility))
     trading.daemon = True
     trading.start()
     return render_template('overview.html')

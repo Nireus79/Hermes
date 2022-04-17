@@ -138,7 +138,7 @@ def high_frame_indicators(hdf):
     return hdf
 
 
-def mid_frame_indicators(mdf):
+def mid_frame_indicators(mdf, max_rsi, min_vol):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
     adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, macd),
@@ -152,7 +152,8 @@ def mid_frame_indicators(mdf):
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
     mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
     mdf['%atr'] = (mdf['atr']/mdf['close'])*100
-    mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < 70 and x['%atr'] > 1, axis=1)
+    mdf['buy flag'] = mdf.apply(
+        lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < max_rsi and x['%atr'] > min_vol, axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
     return mdf
 
