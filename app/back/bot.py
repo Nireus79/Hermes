@@ -75,25 +75,27 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                 places market sell order for the asset.
                 Conditions are reevaluated until order is closed.
             else:
-                waits 1 / 6 of low frame duration to reevaluate:
+                waits part or full time by choice, of low frame duration to reevaluate:
                     if new closing price is higher than stop-loss:
                         if new lower low of low frame is higher than previous set:
                             sets new stop-loss equal to new lower-low.
                         else:
-                            waits 1 / 6 of low frame period.
+                            waits part or full time by choice, of low frame period.
         When intending to buy asset
             if closing price exceeds set limit level:
                 places a market buy asset for the asset
                 and sets mid-frame last candle low as pillow.
                 Conditions are reevaluated until order is closed.
             else:
-                waits 1 / 6 of low frame duration to reevaluate.
+                waits part or full time by choice, of low frame duration to reevaluate.
                     if new closing price is lower than limit:
                         if new higher high of low frame is higher than previous set:
                             sets new limit equal to new higher high.
                         else:
-                            waits 1 / 6 of low frame period.
-    :param time_divisor:
+                            waits part or full time by choice, of low frame period.
+    :param min_vol: minimum volatility in mid-frame
+    :param max_rsi: maximum rsi in mid-frame
+    :param time_divisor: reevaluation of low frame
     :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
@@ -228,7 +230,9 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     Same as order_manager.
     No actual order is set.
     User is just informed for the action he has to take.
-    :param time_divisor:
+    :param min_vol: minimum volatility in mid-frame
+    :param max_rsi: maximum rsi in mid-frame
+    :param time_divisor: reevaluation of low frame
     :param mode: zero or consulting
     :param mid: The middle time frame instance, used to check if buy/sell flag is still True.
     :param low: The low time frame instance, used to set limit/stop-loss borders.
@@ -374,10 +378,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     Mid-frame.
     Trend momentum and position is detected with the use of stochastic slow indicator. Stochastic fast can be used for
     quicker response but in this case more force signals are generated. Stochastic slow is used as it is a 'smothered'
-    version of stoch fast. An additional indicator of strength is added (RSI) for safety reasons, as when current price
-    strength is above safety, price is actually 'overbought' and probability of descent is high.
+    version of stoch fast. An additional indicator of strength is added (RSI) as choice for safety reasons,
+    as when current price strength is above safety, price is actually 'overbought' and probability of descent is high.
     ATR detects the volatility of the price. ATR% is ATR related with the closing price.
-    An extra condition of %ATR > 1 is given, to avoid false buy flags in price consolidation instances.
+    An extra condition of %ATR is given as choice, to avoid false buy flags in price consolidation instances.
     ATR of middle frame is also subtracted by lowest low of last mid-candle, to be used as pillow and avoid
     false pillow alarm.
     Low frame.
@@ -429,9 +433,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 second pillow condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
 
-    :param min_vol:
-    :param max_rsi:
-    :param time_divisor:
+    :param min_vol: minimum volatility in mid-frame
+    :param max_rsi: maximum rsi in mid-frame
+    :param time_divisor: reevaluation of low frame
     :param mode: trading / consulting
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
