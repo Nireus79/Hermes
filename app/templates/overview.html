@@ -32,7 +32,8 @@
             $('#pillow').text('Pillow: '+data.pillow);
             $('#limit').text('Buy limit: '+data.limit);
             $('#stop').text('Stop loss: '+data.stop);
-            $('#log').text('Log: '+data.log);
+            $('#logs').html(data.logs);
+            $('#log').html('Log: '+data.log);
             console.log(data)
           });
         };
@@ -119,6 +120,8 @@
         <br>
         <span id="pillow"></span>
         <br>
+        <br>
+        <div id="logs"></div>
         <br>
         <span id="log"></span>
         <br>
