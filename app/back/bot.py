@@ -511,6 +511,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         # Pillow set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
         pillow = closing_price * 0.96
+        # TODO delete %atr logging
         logging.info('%atr: {}'.format(mid_frame_indicators(i15m_frame.get_frame(), max_rsi, min_vol)['%atr'][-1]))
         if condition == 'buy':
             if trend_24h:

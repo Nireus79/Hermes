@@ -5,6 +5,7 @@ from app.back.kraken import cancel_order
 from app import app
 from flask import render_template, request, jsonify
 from app.back.kraken import time_stamp
+import logging
 
 asset_a = None
 asset_b = None
@@ -12,6 +13,10 @@ mode = None
 divider = None
 rsi = None
 volatility = None
+
+# Flask logs
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 @app.route('/')
@@ -54,6 +59,7 @@ def update():
 @app.route('/start')
 def starter():
     trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 31, divider, rsi, volatility))
+    # MINIMUM DEPTH 31. Never less.
     trading.daemon = True
     trading.start()
     return render_template('overview.html')
