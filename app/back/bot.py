@@ -13,7 +13,7 @@ limit = None
 closing_price = None
 pillow = 0
 log = 'Please set control parameters to start.'
-logs = ['Please set control parameters to start.']
+logs = ['Please set control parameters to start.', '<br>']
 trend_24h = None
 trend_4h = None
 trend_1h = None
@@ -117,7 +117,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
     m_atr = middle_f['atr']
@@ -128,14 +128,14 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
     closing_price = low_f['close']
     log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
         .format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     log = 'Wait {}min.'.format(low.interval / time_divisor)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     time.sleep(low.candle / time_divisor)
     while True:
         middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
@@ -151,7 +151,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
             cancel_order()
             log = '{} Break ordering.'.format(time_stamp(time.time()))
             logging.info(log)
-            logs.append(log)
+            logs.append(log+'<br>')
             break
         elif cond == 'buy':
             if buy_flag:
@@ -166,7 +166,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                     #     order_info = get_order_info(tx)['status']
                     #     if order_info == 'closed':
                     #         log = 'Order closed.'
-                    #         logs.append(log)
+                    #         logs.append(log+'<br>')
                     #         break
                     #     else:
                     #         time.sleep(10)
@@ -181,18 +181,18 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                         log = '{} limit set to {}. Wait {}min' \
                             .format(time_stamp(time.time()), limit, low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
                     else:
                         log = '{} Closing price under limit. Wait {}min.' \
                             .format(time_stamp(time.time()), low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 beeper('break')
                 time.sleep(10)
                 break
@@ -208,7 +208,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                     #     order_info = get_order_info(tx)['status']
                     #     if order_info == 'closed':
                     #         log = 'Order closed.'
-                    #         logs.append(log)
+                    #         logs.append(log+'<br>')
                     #         break
                     #     else:
                     #         time.sleep(10)
@@ -222,18 +222,18 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                         log = '{} Stop loss set to {}. Wait {}min' \
                             .format(time_stamp(time.time()), stop, low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
                     else:
                         log = '{} Closing price over stop. Wait {}min.' \
                             .format(time_stamp(time.time()), low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 beeper('break')
                 time.sleep(10)
                 break
@@ -261,7 +261,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
     m_atr = middle_f['atr']
@@ -273,19 +273,19 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. ' \
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
             .format(time_stamp(time.time()), limit, low.interval / time_divisor)
         logging.info(log)
-        logs.append(log)
+        logs.append(log+'<br>')
     elif cond == 'sell':
         log = '{} Please give sell order when price under {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, low.interval / time_divisor)
         logging.info(log)
-        logs.append(log)
+        logs.append(log+'<br>')
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     time.sleep(low.candle / time_divisor)
     while True:
         middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
@@ -301,21 +301,21 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
         if exit_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
-            logs.append(log)
+            logs.append(log+'<br>')
             break
         if cond == 'buy':
             if buy_flag:
                 if closing_price > limit:
                     log = '{} Closing price exceeded limit. Please add buy order'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     beeper(cond)
                     time.sleep(10)
                     if mode == 'simulator':
                         logging.info('')
                         log = '{} Bought at: {}'.format(time_stamp(time.time()), closing_price)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         condition = 'sell'
                     break
                 elif closing_price <= limit:
@@ -325,18 +325,18 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                         log = '{} New limit set to {}. Please wait {}min.' \
                             .format(time_stamp(time.time()), limit, low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
                     else:
                         log = '{} Closing price not exceeded limit. Please wait {}min.'.format(
                             time_stamp(time.time()), low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 beeper('break')
                 time.sleep(10)
                 break
@@ -346,14 +346,14 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                     log = '{} Closing price under stop loss level. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     beeper(cond)
                     time.sleep(10)
                     if mode == 'simulator':
                         logging.info('')
                         log = '{} Sold at: {}'.format(time_stamp(time.time()), closing_price)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         condition = 'buy'
                     break
                 elif closing_price >= stop:
@@ -363,18 +363,18 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                         log = '{} New stop-loss set to {}. Please wait {}min.' \
                             .format(time_stamp(time.time()), stop, low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
                     else:
                         log = '{} Closing price over stop-loss level. Please wait {}min.'.format(
                             time_stamp(time.time()), low.interval / time_divisor)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(low.candle / time_divisor)
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 beeper('break')
                 time.sleep(10)
                 break
@@ -519,19 +519,19 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
           ' Mode is {}. Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.' \
         .format(time_stamp(time.time()), condition, mode, max_rsi, min_vol, time_divisor)
     logging.info(log)
-    logs.append(log)
+    logs.append(log+'<br>')
     while True:
         if exit_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break trading.'.format(time_stamp(time.time()))
             logging.info(log)
-            logs.append(log)
+            logs.append(log+'<br>')
             break
         if mode == 'consulting' or mode == 'trading':
             condition = get_condition(crypto_currency, fiat_currency)
         log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
         logging.info(log)
-        logs.append(log)
+        logs.append(log+'<br>')
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
         high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
         high_frame_1h = high_frame_indicators(i1h_frame.get_frame())
@@ -556,15 +556,15 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             if trend_24h:
                 log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 log = '{} mid 4hour frame buy flag is {}. mid 4hour frame sell flag is {}.' \
                     .format(time_stamp(time.time()), buy_flag_4h, sell_flag_4h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if buy_flag_4h:
                     log = '{} 4hour momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if mode == 'trading':
                         order_manager('market', i4h_frame, i1h_frame, condition,
                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -573,18 +573,18 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 elif buy_flag_4h is not True:
                     log = '{} 4hour momentum is not strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if trend_4h:
                         logging.info('{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h))
                         logging.info(log)
                         log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
                             .format(time_stamp(time.time()), buy_flag_1h, buy_flag_1h)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         if buy_flag_1h:
                             log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             if mode == 'trading':
                                 order_manager('market', i1h_frame, i15m_frame, condition,
                                               fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -593,19 +593,19 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         elif buy_flag_1h is not True:
                             log = '{} 1hour momentum is not strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             if trend_1h:
                                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                                 logging.info(log)
-                                logs.append(log)
+                                logs.append(log+'<br>')
                                 log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                                     .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                                 logging.info(log)
-                                logs.append(log)
+                                logs.append(log+'<br>')
                                 if buy_flag_15m:
                                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                     logging.info(log)
-                                    logs.append(log)
+                                    logs.append(log+'<br>')
                                     if mode == 'trading':
                                         order_manager('market', i15m_frame, i5m_frame, condition,
                                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -616,30 +616,30 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                     log = '{} 15 min momentum is not strong. Wait 5 minutes.' \
                                         .format(time_stamp(time.time()))
                                     logging.info(log)
-                                    logs.append(log)
+                                    logs.append(log+'<br>')
                                     time.sleep(i5m_frame.candle)
                             elif trend_1h is not True:
                                 log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
                                     .format(time_stamp(time.time()), trend_1h)
                                 logging.info(log)
-                                logs.append(log)
+                                logs.append(log+'<br>')
                                 time.sleep(i5m_frame.candle)
                     elif trend_4h is not True:
                         log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         if trend_1h:
                             log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                                 .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             if buy_flag_15m:
                                 log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                 logging.info(log)
-                                logs.append(log)
+                                logs.append(log+'<br>')
                                 if mode == 'trading':
                                     order_manager('market', i15m_frame, i5m_frame, condition,
                                                   fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -650,26 +650,26 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 log = '{} 15 min momentum is not strong. Wait 5 minutes.' \
                                     .format(time_stamp(time.time()))
                                 logging.info(log)
-                                logs.append(log)
+                                logs.append(log+'<br>')
                                 time.sleep(i5m_frame.candle)
                         elif trend_1h is not True:
                             log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
                                 .format(time_stamp(time.time()), trend_1h)
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             time.sleep(i5m_frame.candle)
             elif trend_4h:
                 log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
                     .format(time_stamp(time.time()), buy_flag_1h, buy_flag_1h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if buy_flag_1h:
                     log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if mode == 'trading':
                         order_manager('limit', i1h_frame, i15m_frame, condition,
                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -678,19 +678,19 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 elif buy_flag_1h is not True:
                     log = '{} 1hour momentum is not strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if trend_1h:
                         log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                             .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         if buy_flag_15m:
                             log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             if mode == 'trading':
                                 order_manager('market', i15m_frame, i5m_frame, condition,
                                               fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -699,26 +699,26 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         elif buy_flag_15m is not True:
                             log = '{} 15min momentum is not strong. Wait 5 minutes.'.format(time_stamp(time.time()))
                             logging.info(log)
-                            logs.append(log)
+                            logs.append(log+'<br>')
                             time.sleep(i5m_frame.candle)
                     elif trend_1h is not True:
                         log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
                             .format(time_stamp(time.time()), trend_1h)
                         logging.info(log)
-                        logs.append(log)
+                        logs.append(log+'<br>')
                         time.sleep(i5m_frame.candle)
             elif trend_1h:
                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                     .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if buy_flag_15m:
                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if mode == 'trading':
                         order_manager('market', i15m_frame, i5m_frame, condition,
                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -727,19 +727,19 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 elif buy_flag_15m is not True:
                     log = '{} 15min momentum is not strong. Wait 5 minutes.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     time.sleep(i5m_frame.candle)
             else:
                 log = '{} All high frames trends are negative. No buying opportunity. Wait 5 minutes.' \
                     .format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 time.sleep(i5m_frame.candle)
         elif condition == 'sell':
             if i5m_frame.get_frame().iloc[-1]['close'] < pillow:  # pillow
                 log = '{} Warning. Pillow activated. Sell your asset.'.format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if mode == 'trading':
                     order_manager('market', i15m_frame, i5m_frame, condition,
                                   fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -748,15 +748,15 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             elif trend_24h:
                 log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 log = '{} mid 4hour frame buy flag is {}. mid 4hour frame sell flag is {}.' \
                     .format(time_stamp(time.time()), buy_flag_4h, sell_flag_4h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if sell_flag_4h:
                     log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if mode == 'trading':
                         order_manager('market', i4h_frame, i1h_frame, condition,
                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -766,7 +766,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     log = '{} 4hour momentum is not weak. Wait {} minutes.' \
                         .format(time_stamp(time.time()), i4h_frame.interval / 12)
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     time.sleep(i4h_frame.candle / 12)
             elif trend_4h:
                 log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
@@ -774,11 +774,11 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
                     .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if sell_flag_1h:
                     log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if mode == 'trading':
                         order_manager('market', i1h_frame, i15m_frame, condition,
                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -787,20 +787,20 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 elif sell_flag_1h is not True:
                     log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval / 12)
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     time.sleep(i1h_frame.candle / 12)
             elif trend_1h:
                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
                     .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if sell_flag_15m:
                     log = '{} 15min momentum is weak.'.format(time_stamp(time.time()))
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     if mode == 'trading':
                         order_manager('market', i15m_frame, i5m_frame, condition,
                                       fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
@@ -810,20 +810,20 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     log = '{} 15min momentum not weak. Wait {} minutes.' \
                         .format(time_stamp(time.time()), i15m_frame.interval / 12)
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     time.sleep(i15m_frame.candle / 12)
             else:
                 log = '{} All high frames trends are negative.' \
                     .format(time_stamp(time.time()))
                 logging.info(log)
-                logs.append(log)
+                logs.append(log+'<br>')
                 if mode == 'trading':
                     order_manager('market', i15m_frame, i5m_frame, condition,
                                   fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
                 elif mode == 'consulting' or mode == 'simulator':
                     log = 'Please sell your asset.'
                     logging.info(log)
-                    logs.append(log)
+                    logs.append(log+'<br>')
                     limit_manager(mode, i15m_frame, i5m_frame, condition, time_divisor, max_rsi, min_vol)
                     time.sleep(10)
 
