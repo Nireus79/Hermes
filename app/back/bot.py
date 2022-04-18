@@ -313,6 +313,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                     time.sleep(10)
                     if mode == 'simulator':
                         logging.info('')
+                        logs.append('<br>')
                         log = '{} Bought at: {}'.format(time_stamp(time.time()), closing_price)
                         logging.info(log)
                         logs.append(log+'<br>')
@@ -351,6 +352,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                     time.sleep(10)
                     if mode == 'simulator':
                         logging.info('')
+                        logs.append('<br>')
                         log = '{} Sold at: {}'.format(time_stamp(time.time()), closing_price)
                         logging.info(log)
                         logs.append(log+'<br>')
@@ -516,7 +518,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     closing_price = i5m_frame.get_frame().iloc[-1]['close']
     pillow = closing_price * 0.96
     log = '{} Operation start. Condition is {}.' \
-          ' Mode is {}. Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.' \
+          ' Mode is {}.<br>Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.' \
         .format(time_stamp(time.time()), condition, mode, max_rsi, min_vol, time_divisor)
     logging.info(log)
     logs.append(log+'<br>')
