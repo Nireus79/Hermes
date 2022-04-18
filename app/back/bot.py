@@ -746,7 +746,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
 
 def data_feed():
     return {'log': log,
-            'trade': trade,
             'condition': condition,
             'crypto_balance': crypto_balance,
             'fiat_balance': fiat_balance,
