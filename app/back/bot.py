@@ -13,6 +13,7 @@ limit = None
 closing_price = None
 pillow = 0
 log = None
+trade = 'No trade'
 trend_24h = None
 trend_4h = None
 trend_1h = None
@@ -243,6 +244,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     global stop
     global limit
     global log
+    global trade
     global closing_price
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
@@ -288,9 +290,10 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                     logging.info(log)
                     beeper(cond)
                     logging.info('')
-                    logging.info('{} BUY. {}'.format(time_stamp(time.time()), closing_price))
+                    logging.info(trade)
                     time.sleep(10)
                     if mode == 'simulator':
+                        trade = '{} Bought at: {}'.format(time_stamp(time.time()), closing_price)
                         condition = 'sell'
                     break
                 elif closing_price <= limit:
@@ -320,9 +323,10 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                     logging.info(log)
                     beeper(cond)
                     logging.info('')
-                    logging.info('{} SELL. {}'.format(time_stamp(time.time()), closing_price))
+                    logging.info(trade)
                     time.sleep(10)
                     if mode == 'simulator':
+                        trade = '{} Sold at: {}'.format(time_stamp(time.time()), closing_price)
                         condition = 'buy'
                     break
                 elif closing_price >= stop:
@@ -435,7 +439,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
 
     :param min_vol: minimum volatility in mid-frame
     :param max_rsi: maximum rsi in mid-frame
-    :param time_divisor: reevaluation of low frame
+    :param time_divisor: evaluations of per low frame period
     :param mode: trading / consulting
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
@@ -491,7 +495,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             break
         if mode == 'consulting' or mode == 'trading':
             condition = get_condition(crypto_currency, fiat_currency)
-        log = '{} Condition is {}. Mode is {}.'.format(time_stamp(time.time()), condition, mode)
+        log = '{} Condition is {}. Mode is {}. Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.'\
+            .format(time_stamp(time.time()), condition, mode, max_rsi, min_vol, time_divisor)
         logging.info(log)
         high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
         high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
@@ -745,6 +750,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
 
 def data_feed():
     return {'log': log,
+            'trade': trade,
             'condition': condition,
             'crypto_balance': crypto_balance,
             'fiat_balance': fiat_balance,
