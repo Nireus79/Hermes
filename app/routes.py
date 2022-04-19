@@ -63,8 +63,7 @@ def update():
 
 @app.route('/start')
 def starter():
-    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 31, divider, rsi, volatility))
-    # MINIMUM DEPTH 31. Never less.
+    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, divider, rsi, volatility))
     trading.daemon = True
     trading.start()
     return render_template('overview.html')
