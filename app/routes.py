@@ -43,6 +43,11 @@ def doc():
     return render_template('doc.html')
 
 
+@app.route('/history')
+def history():
+    return render_template('history.html')
+
+
 @app.route('/update', methods=['GET'])
 def update():
     dt = data_feed()

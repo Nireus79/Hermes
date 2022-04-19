@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block body %}
+    <script type="text/javascript">
+        var intervalID = setInterval(update_values, 1000);
+
+        function update_values() {
+            $.getJSON($SCRIPT_ROOT + '/update',
+
+          function(data) {
+
+            $('#logs').html(data.logs);
+
+            console.log(data)
+          });
+        };
+    </script>
+        <div id="logs"></div>
+{% endblock %}

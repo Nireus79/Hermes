@@ -20,8 +20,6 @@
                 padding: 2px;
             }
             #logs{
-                width:750px;
-                height:150px;
                 overflow:scroll;
                 margin: 10px;
                 border: 1px solid white;
@@ -58,6 +56,9 @@
                   </li>
                   <li class="nav-item">
                       <a class="nav-link" href="{{ url_for('control') }}">Control</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('history') }}">History</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link" href="{{ url_for('doc') }}">User's manual</a>
