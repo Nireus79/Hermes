@@ -813,7 +813,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log+'<br>')
                     time.sleep(i15m_frame.candle / 12)
             else:
-                log = '{} All high frames trends are negative.' \
+                log = '{} All high-frame trends are negative.' \
                     .format(time_stamp(time.time()))
                 logging.info(log)
                 logs.append(log+'<br>')
