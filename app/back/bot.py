@@ -14,6 +14,7 @@ closing_price = None
 pillow = 0
 log = 'Please set control parameters to start.'
 logs = []
+trades = []
 trend_24h = None
 trend_4h = None
 trend_1h = None
@@ -173,6 +174,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
 
                     pillow = middle_f['low'] - m_atr
                     beeper(cond)
+                    log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+                    trades.append(log + '<br>')
                     time.sleep(10)
                     break
                 else:
@@ -214,6 +217,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                     #         time.sleep(10)
 
                     beeper(cond)
+                    log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+                    trades.append(log + '<br>')
                     time.sleep(10)
                     break
                 else:
@@ -317,6 +322,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                         log = '{} Bought at: {}'.format(time_stamp(time.time()), closing_price)
                         logging.info(log)
                         logs.append(log+'<br>')
+                        trades.append(log + '<br>')
                         condition = 'sell'
                     break
                 elif closing_price <= limit:
@@ -356,6 +362,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
                         log = '{} Sold at: {}'.format(time_stamp(time.time()), closing_price)
                         logging.info(log)
                         logs.append(log+'<br>')
+                        trades.append(log + '<br>')
                         condition = 'buy'
                     break
                 elif closing_price >= stop:
@@ -831,6 +838,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
 def data_feed():
     return {'log': log,
             'logs': logs,
+            'trades': trades,
             'condition': condition,
             'crypto_balance': crypto_balance,
             'fiat_balance': fiat_balance,

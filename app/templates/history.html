@@ -14,10 +14,14 @@
           function(data) {
 
             $('#logs').html(data.logs);
+            $('#trades').html(data.trades);
 
             console.log(data)
           });
         };
     </script>
+        <h4>Trades</h4>
+        <div id="trades"></div>
+        <h4>Events</h4>
         <div id="logs"></div>
 {% endblock %}
