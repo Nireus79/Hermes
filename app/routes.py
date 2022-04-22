@@ -63,10 +63,26 @@ def update():
 
 @app.route('/start')
 def starter():
-    trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, divider, rsi, volatility))
-    trading.daemon = True
-    trading.start()
-    return render_template('overview.html')
+    if mode is None:
+        logging.info('Mode not set.')
+        return render_template('control.html')
+    elif asset_a is None or asset_b is None:
+        logging.info('Set assets.')
+        return render_template('control.html')
+    elif divider is None:
+        logging.info('Set low frame evaluations.')
+        return render_template('control.html')
+    elif rsi is None:
+        logging.info('Set rsi.')
+        return render_template('control.html')
+    elif volatility is None:
+        logging.info('Set %atr.')
+        return render_template('control.html')
+    else:
+        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, divider, rsi, volatility))
+        trading.daemon = True
+        trading.start()
+        return render_template('overview.html')
 
 
 @app.route('/stop')
