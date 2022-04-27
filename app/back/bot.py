@@ -835,19 +835,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     time.sleep(10)
 
 
-# Condition to buy are True when High-frame trend AND mid-frame momentum are True.
-# So user needs to see the result of the alignment and NOT the mid-frame buy flag at the front end.
-front_buy4 = False
-front_buy1 = False
-front_buy15 = False
-if trend_24h is True and buy_flag_4h is True:
-    front_buy4 = True
-if trend_4h is True and buy_flag_1h is True:
-    front_buy1 = True
-if trend_1h is True and buy_flag_15m is True:
-    front_buy15 = True
-
-
 def data_feed():
     return {'log': log,
             'logs': logs,
