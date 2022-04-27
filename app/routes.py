@@ -7,12 +7,13 @@ from flask import render_template, request, jsonify
 from app.back.kraken import time_stamp
 import logging
 
+# Default values given as preset
 asset_a = None
 asset_b = None
 mode = None
-divider = None
-rsi = None
-volatility = None
+divider = 4
+rsi = 70
+volatility = 0.5
 
 # Flask logs
 log = logging.getLogger('werkzeug')
