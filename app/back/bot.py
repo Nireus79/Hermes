@@ -849,10 +849,10 @@ def data_feed():
             'trend_24h': str(trend_24h),
             'trend_4h': str(trend_4h),
             'trend_1h': str(trend_1h),
-            'buy_flag_4h': str(front_buy4),
+            'buy_flag_4h': str(buy_flag_4h),
             'sell_flag_4h': str(sell_flag_4h),
-            'buy_flag_1h': str(front_buy1),
+            'buy_flag_1h': str(buy_flag_1h),
             'sell_flag_1h': str(sell_flag_1h),
-            'buy_flag_15m': str(front_buy15),
+            'buy_flag_15m': str(buy_flag_15m),
             'sell_flag_15m': str(sell_flag_15m)
             }
