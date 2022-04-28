@@ -30,12 +30,19 @@ def main():
 def control():
     global asset_a, asset_b, mode, divider, rsi, volatility
     if request.method == 'POST':
-        asset_a = request.form['assetA']
-        asset_b = request.form['assetB']
-        mode = request.form['mode']
-        divider = float(request.form['divider'])
-        rsi = float(request.form['rsi'])
-        volatility = float(request.form['volatility'])
+        try:
+            asset_a = request.form['assetA']
+            asset_b = request.form['assetB']
+            mode = request.form['mode']
+            divider = float(request.form['divider'])
+            rsi = float(request.form['rsi'])
+            volatility = float(request.form['volatility'])
+        except Exception as e:
+            logging.info(e)
+
+    else:
+        render_template('control.html')
+
     return render_template('control.html')
 
 

@@ -19,13 +19,13 @@ trend_24h = None
 trend_4h = None
 trend_1h = None
 buy_flag_4h = None
-front_buy_flag_4h = None
+front_buy_flag_4h = False
 sell_flag_4h = None
 buy_flag_1h = None
-front_buy_flag_1h = None
+front_buy_flag_1h = False
 sell_flag_1h = None
 buy_flag_15m = None
-front_buy_flag_15m = None
+front_buy_flag_15m = False
 sell_flag_15m = None
 crypto_balance = None
 fiat_balance = None
@@ -838,11 +838,11 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     time.sleep(10)
 
 
-def front_buy_flag():
+def front_buy_flags():
     """
     Conditions to buy are aligned when
     Trend on high-frame AND momentum in mid-frame are positive.
-    User needs to see that at the front end, not the mid-frame buy flag.
+    User needs to see that at the front end, not the internal mid-frame buy flag.
     :return: Buy flags for the front end
     """
     global front_buy_flag_4h
@@ -857,7 +857,7 @@ def front_buy_flag():
 
 
 def data_feed():
-    front_buy_flag()
+    front_buy_flags()
     return {'log': log,
             'logs': logs,
             'trades': trades,
