@@ -19,13 +19,10 @@ trend_24h = None
 trend_4h = None
 trend_1h = None
 buy_flag_4h = None
-front_buy_flag_4h = False
 sell_flag_4h = None
 buy_flag_1h = None
-front_buy_flag_1h = False
 sell_flag_1h = None
 buy_flag_15m = None
-front_buy_flag_15m = False
 sell_flag_15m = None
 crypto_balance = None
 fiat_balance = None
@@ -285,13 +282,9 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
             .format(time_stamp(time.time()), limit, low.interval / time_divisor)
-        logging.info(log)
-        logs.append(log + '<br>')
     elif cond == 'sell':
         log = '{} Please give sell order when price under {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, low.interval / time_divisor)
-        logging.info(log)
-        logs.append(log + '<br>')
     logging.info(log)
     logs.append(log + '<br>')
     time.sleep(low.candle / time_divisor)
@@ -838,26 +831,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     time.sleep(10)
 
 
-def front_buy_flags():
-    """
-    Conditions to buy are aligned when
-    Trend on high-frame AND momentum in mid-frame are positive.
-    User needs to see that at the front end, not the internal mid-frame buy flag.
-    :return: Buy flags for the front end
-    """
-    global front_buy_flag_4h
-    global front_buy_flag_1h
-    global front_buy_flag_15m
-    if trend_24h is True and buy_flag_4h is True:
-        front_buy_flag_4h = True
-    if trend_4h is True and buy_flag_1h is True:
-        front_buy_flag_1h = True
-    if trend_1h is True and buy_flag_15m is True:
-        front_buy_flag_15m = True
-
-
 def data_feed():
-    front_buy_flags()
     return {'log': log,
             'logs': logs,
             'trades': trades,
@@ -871,10 +845,10 @@ def data_feed():
             'trend_24h': str(trend_24h),
             'trend_4h': str(trend_4h),
             'trend_1h': str(trend_1h),
-            'buy_flag_4h': str(front_buy_flag_4h),
+            'buy_flag_4h': str(buy_flag_4h),
             'sell_flag_4h': str(sell_flag_4h),
-            'buy_flag_1h': str(front_buy_flag_1h),
+            'buy_flag_1h': str(buy_flag_1h),
             'sell_flag_1h': str(sell_flag_1h),
-            'buy_flag_15m': str(front_buy_flag_15m),
+            'buy_flag_15m': str(buy_flag_15m),
             'sell_flag_15m': str(sell_flag_15m)
             }
