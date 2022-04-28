@@ -19,10 +19,13 @@ trend_24h = None
 trend_4h = None
 trend_1h = None
 buy_flag_4h = None
+front_buy_flag_4h = False
 sell_flag_4h = None
 buy_flag_1h = None
+front_buy_flag_1h = False
 sell_flag_1h = None
 buy_flag_15m = None
+front_buy_flag_15m = False
 sell_flag_15m = None
 crypto_balance = None
 fiat_balance = None
@@ -491,10 +494,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global trend_4h
     global trend_1h
     global buy_flag_4h
+    global front_buy_flag_4h
     global sell_flag_4h
     global buy_flag_1h
+    global front_buy_flag_1h
     global sell_flag_1h
     global buy_flag_15m
+    global front_buy_flag_15m
     global sell_flag_15m
     global crypto_balance
     global fiat_balance
@@ -552,6 +558,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
         buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
         sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
+        if trend_24h is True and buy_flag_4h is True:
+            front_buy_flag_4h = True
+        if trend_4h is True and buy_flag_1h is True:
+            front_buy_flag_1h = True
+        if trend_1h is True and buy_flag_15m is True:
+            front_buy_flag_15m = True
         # Pillow set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
         pillow = closing_price * 0.96
@@ -845,10 +857,10 @@ def data_feed():
             'trend_24h': str(trend_24h),
             'trend_4h': str(trend_4h),
             'trend_1h': str(trend_1h),
-            'buy_flag_4h': str(buy_flag_4h),
+            'buy_flag_4h': str(front_buy_flag_4h),
             'sell_flag_4h': str(sell_flag_4h),
-            'buy_flag_1h': str(buy_flag_1h),
+            'buy_flag_1h': str(front_buy_flag_1h),
             'sell_flag_1h': str(sell_flag_1h),
-            'buy_flag_15m': str(buy_flag_15m),
+            'buy_flag_15m': str(front_buy_flag_15m),
             'sell_flag_15m': str(sell_flag_15m)
             }
