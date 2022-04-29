@@ -37,6 +37,10 @@ mid_frame_4h = None
 mid_frame_1h = None
 mid_frame_15m = None
 
+high_chart = None
+mid_chart = None
+low_chart = None
+
 feed = None
 
 exit_event = threading.Event()
@@ -512,6 +516,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global mid_frame_15m
     global pillow
     global closing_price
+    global high_chart
+    global mid_chart
+    global low_chart
     if mode == 'simulator':
         condition = 'buy'
     elif mode == 'consulting' or mode == 'trading':
@@ -836,9 +843,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     order_manager('market', i15m_frame, i5m_frame, condition,
                                   fiat_currency, crypto_currency, time_divisor, max_rsi, min_vol)
                 elif mode == 'consulting' or mode == 'simulator':
-                    log = 'Please sell your asset.'
-                    logging.info(log)
-                    logs.append(log + '<br>')
                     limit_manager(mode, i15m_frame, i5m_frame, condition, time_divisor, max_rsi, min_vol)
                     time.sleep(10)
 
