@@ -73,6 +73,32 @@ def beeper(cond):
         winsound.Beep(240, 2000)
 
 
+def front_flags(t1, t2, t3, f1, f2, f3):
+    """
+    Signal to buy is true for the user when trend is positive on high-frame AND momentum is strong on mid-frame.
+    So user needs to see a true buy flag as signal when conditions above are fulfilled. Not the internal buy flag
+    indicating just mid-frame momentum.
+    True internal sell flags indicate sell signal for the user anyway, so are not modified.
+    :param t1: High-frame 24h trend
+    :param t2: High-frame 4h trend
+    :param t3: High-frame 1h trend
+    :param f1: Mid-frame 4h momentum
+    :param f2: Mid-frame 1h momentum
+    :param f3: Mid-frame 15m momentum
+    :return: Buy signals for 24h, 4h, 1h frames.
+    """
+    ff1 = False
+    ff2 = False
+    ff3 = False
+    if t1 is True and f1 is True:
+        ff1 = True
+    if t2 is True and f2 is True:
+        ff2 = True
+    if t3 is True and f3 is True:
+        ff3 = True
+    return ff1, ff2, ff3
+
+
 def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, time_divisor, max_rsi, min_vol):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
@@ -567,12 +593,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
         buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
         sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
-        if trend_24h is True and buy_flag_4h is True:
-            front_buy_flag_4h = True
-        if trend_4h is True and buy_flag_1h is True:
-            front_buy_flag_1h = True
-        if trend_1h is True and buy_flag_15m is True:
-            front_buy_flag_15m = True
+        front_buy_flag_4h, front_buy_flag_1h, front_buy_flag_15m = front_flags(trend_24h, trend_4h, trend_1h,
+                                                                               buy_flag_4h, buy_flag_1h, buy_flag_15m)
         # Pillow set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
         pillow = closing_price * 0.96
