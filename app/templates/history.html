@@ -5,21 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <script type="text/javascript">
-        var intervalID = setInterval(update_values, 1000);
-
-        function update_values() {
-            $.getJSON($SCRIPT_ROOT + '/update',
-
-          function(data) {
-
-            $('#logs').html(data.logs);
-            $('#trades').html(data.trades);
-
-            console.log(data)
-          });
-        };
-    </script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/update_history.js')}}"></script>
         <h4>Trades</h4>
         <div id="trades"></div>
         <h4>Events</h4>
