@@ -37,9 +37,9 @@ mid_frame_4h = None
 mid_frame_1h = None
 mid_frame_15m = None
 
-high_chart = None
-mid_chart = None
-low_chart = None
+high_chart_data = None
+mid_chart_data = None
+low_chart_data = None
 
 feed = None
 
@@ -122,6 +122,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
     global limit
     global log
     global closing_price
+    global low_chart_data
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -270,6 +271,7 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     global limit
     global log
     global closing_price
+    global low_chart_data
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -516,9 +518,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global mid_frame_15m
     global pillow
     global closing_price
-    global high_chart
-    global mid_chart
-    global low_chart
+    global high_chart_data
+    global mid_chart_data
+    global low_chart_data
     if mode == 'simulator':
         condition = 'buy'
     elif mode == 'consulting' or mode == 'trading':
