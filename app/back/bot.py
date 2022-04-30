@@ -90,13 +90,17 @@ def front_flags(t1, t2, t3, f1, f2, f3):
     ff1 = False
     ff2 = False
     ff3 = False
-    if t1 is True and f1 is True:
+    if t1 and f1:
         ff1 = True
-    if t2 is True and f2 is True:
+    if t2 and f2:
         ff2 = True
-    if t3 is True and f3 is True:
+    if t3 and f3:
         ff3 = True
     return ff1, ff2, ff3
+
+
+# def candle_data(frame):
+#     initial = frame.to_json()
 
 
 def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, time_divisor, max_rsi, min_vol):
