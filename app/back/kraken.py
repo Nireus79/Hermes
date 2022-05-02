@@ -170,6 +170,23 @@ def low_frame_indicators(ldf):
     return ldf
 
 
+def candle_data(frame):
+    frame['x'] = frame['time']
+    del frame['time']
+    frame['o'] = frame['open']
+    del frame['open']
+    frame['h'] = frame['high']
+    del frame['high']
+    frame['l'] = frame['low']
+    del frame['low']
+    frame['c'] = frame['close']
+    del frame['close']
+    del frame['vwap']
+    del frame['volume']
+    del frame['count']
+    return frame.to_json(orient='records')
+
+
 class Api:
     """
     crypto: the name of crypto

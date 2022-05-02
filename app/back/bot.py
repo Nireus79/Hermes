@@ -3,7 +3,7 @@ import time
 import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
-    volume, add_order, cancel_order, get_condition, get_order_info
+    volume, add_order, cancel_order, get_condition, get_order_info, candle_data
 
 logging.basicConfig(level=logging.INFO)
 
@@ -565,6 +565,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
         front_buy_flag_4h, front_buy_flag_1h, front_buy_flag_15m = front_flags(trend_24h, trend_4h, trend_1h,
                                                                                buy_flag_4h, buy_flag_1h, buy_flag_15m)
+        logging.info(candle_data(i24h_frame.get_frame()))
         # Pillow set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
         pillow = closing_price * 0.96
@@ -848,10 +849,6 @@ def data_feed():
             'condition': condition,
             'crypto_balance': crypto_balance,
             'fiat_balance': fiat_balance,
-            'price': closing_price,
-            'stop': stop,
-            'limit': limit,
-            'pillow': pillow,
             'trend_24h': str(trend_24h),
             'trend_4h': str(trend_4h),
             'trend_1h': str(trend_1h),
@@ -860,5 +857,9 @@ def data_feed():
             'buy_flag_1h': str(front_buy_flag_1h),
             'sell_flag_1h': str(sell_flag_1h),
             'buy_flag_15m': str(front_buy_flag_15m),
-            'sell_flag_15m': str(sell_flag_15m)
+            'sell_flag_15m': str(sell_flag_15m),
+            'price': closing_price,
+            'stop': stop,
+            'limit': limit,
+            'pillow': pillow
             }
