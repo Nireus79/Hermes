@@ -37,9 +37,9 @@ mid_frame_4h = None
 mid_frame_1h = None
 mid_frame_15m = None
 
-high_chart_data = None
-mid_chart_data = None
-low_chart_data = None
+# high_chart_data = None
+# mid_chart_data = None
+# low_chart_data = None
 
 feed = None
 
@@ -99,10 +99,6 @@ def front_flags(t1, t2, t3, f1, f2, f3):
     return ff1, ff2, ff3
 
 
-# def candle_data(frame):
-#     initial = frame.to_json()
-
-
 def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, time_divisor, max_rsi, min_vol):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
@@ -146,13 +142,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
     After setting a buy order, a safety "pillow" level is stored as a safety parameter.
     It is the 'low' of mid-frame candle minus mid-frame atr.
     """
-    global pillow
-    global condition
-    global stop
-    global limit
-    global log
-    global closing_price
-    global low_chart_data
+    global pillow, condition, stop, limit, log, closing_price
+    # global low_chart_data
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -295,13 +286,8 @@ def limit_manager(mode, mid, low, cond, time_divisor, max_rsi, min_vol):
     :param low: The low time frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
-    global pillow
-    global condition
-    global stop
-    global limit
-    global log
-    global closing_price
-    global low_chart_data
+    global pillow, condition, stop, limit, log, closing_price
+    # global low_chart_data
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -524,33 +510,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             After every buy of asset A, a safety level is set on the lowest low of mid-frame candle minus atr,
             so volatility is calculated in this case.
     """
-    global condition
-    global log
-    global trend_24h
-    global trend_4h
-    global trend_1h
-    global buy_flag_4h
-    global front_buy_flag_4h
-    global sell_flag_4h
-    global buy_flag_1h
-    global front_buy_flag_1h
-    global sell_flag_1h
-    global buy_flag_15m
-    global front_buy_flag_15m
-    global sell_flag_15m
-    global crypto_balance
-    global fiat_balance
-    global high_frame_24h
-    global high_frame_4h
-    global high_frame_1h
-    global mid_frame_4h
-    global mid_frame_1h
-    global mid_frame_15m
-    global pillow
-    global closing_price
-    global high_chart_data
-    global mid_chart_data
-    global low_chart_data
+    global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
+        buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
+        crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
+        mid_frame_15m, pillow, closing_price
+    # global high_chart_data
+    # global mid_chart_data
+    # global low_chart_data
     if mode == 'simulator':
         condition = 'buy'
     elif mode == 'consulting' or mode == 'trading':
