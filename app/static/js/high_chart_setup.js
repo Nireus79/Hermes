@@ -1,38 +1,48 @@
-        // setup
-//        const startingDate = luxon.DateTime.fromRFC2822('01 Aug 2021 00:00 GMT'); startingDate.valueOf()
-//        const date2 = luxon.DateTime.fromRFC2822('02 Aug 2021 00:00 GMT'); date2.valueOf
-        const data = {
-//                          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                          datasets: [{
-                                        label: 'High frame',
-                                        data: [
-                                            {
-                                                x: 0,
-                                                o: 1,
-                                                h: 1.5,
-                                                l: 0.75,
-                                                c: 1.25
-                                            },
-                                            {
-                                                x: 1,
-                                                o: 1.25,
-                                                h: 1.5,
-                                                l: 0.5,
-                                                c: 0.9
-                                            }
-                                            ]
-                                      }]
-                        };
+//newData = []
+highFrame = 'High frame'
 
-        // config
-        const config = {
-          type: 'candlestick',
-          data,
-          options: {}
-        };
+var intervalID = setInterval(update_values, 1000);
 
-        // render init block
-        const myChart = new Chart(
-                                    document.getElementById('HighFrame'),
-                                    config
-                                   );
+function update_values() {
+    $.getJSON($SCRIPT_ROOT + '/update',
+
+        function(data_update) {
+             newData = data_update.high_chart_data
+             highFrame = data_update.runningHighFrame
+             console.log(newData)
+             return newData
+        }
+    );
+};
+
+
+// setup
+const data = {
+    datasets: [{
+        label: highFrame,
+        data: update_values()
+    }]
+};
+// config
+const config = {
+    type: 'candlestick',
+    data,
+    options: {}
+};
+// init block
+const myChart = new Chart(
+    document.getElementById('HighFrame'),
+    config
+);
+
+//function destroy(){
+//    myChart.destroy();
+//};
+//function render(){
+//    myChart.render(
+//    myChart = new Chart(
+//    document.getElementById('HighFrame'),
+//    config
+//    );
+//};
+//});
