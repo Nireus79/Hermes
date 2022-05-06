@@ -170,7 +170,10 @@ def low_frame_indicators(ldf):
     return ldf
 
 
-def candle_data(frame):
+def high_data(frame):
+    ema13 = frame['EMA13'].tolist()
+    ema30 = frame['EMA30'].tolist()
+    macd = frame['macd'].tolist()
     frame['x'] = frame['time']
     del frame['time']
     frame['o'] = frame['open']
@@ -184,7 +187,39 @@ def candle_data(frame):
     del frame['vwap']
     del frame['volume']
     del frame['count']
-    return frame.to_json(orient='records')
+    del frame['EMA13']
+    del frame['EMA30']
+    del frame['macd']
+    del frame['trend']
+    return frame.to_json(orient='records'), ema13, ema30, macd
+
+
+def mid_data(frame):
+    d = frame['%D'].tolist()
+    ds = frame['%DS'].tolist()
+    rs = frame['rsi'].tolist()
+    percent_atr = frame['%atr'].tolist()
+    frame['x'] = frame['time']
+    del frame['time']
+    frame['o'] = frame['open']
+    del frame['open']
+    frame['h'] = frame['high']
+    del frame['high']
+    frame['l'] = frame['low']
+    del frame['low']
+    frame['c'] = frame['close']
+    del frame['close']
+    del frame['vwap']
+    del frame['volume']
+    del frame['count']
+    del frame['%K']
+    del frame['%D']
+    del frame['%DS']
+    del frame['rsi']
+    del frame['%atr']
+    del frame['buy flag']
+    del frame['sell flag']
+    return frame.to_json(orient='records'), d, ds, rs, percent_atr
 
 
 class Api:

@@ -25,8 +25,8 @@ function update_values() {
         function(data_update) {
              newData = JSON.parse(data_update.high_chart_data);
              highFrame = data_update.runningHighFrame;
-//             console.log(newData)
-//             console.log(highFrame)
+             console.log(newData)
+             console.log(highFrame)
              myChart.data.datasets[0].label = 'High frame: '+highFrame;
              myChart.data.datasets[0].data = newData;
              myChart.update();
