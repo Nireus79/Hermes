@@ -1,3 +1,4 @@
+import json
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -191,7 +192,7 @@ def high_data(frame):
     del frame['EMA30']
     del frame['macd']
     del frame['trend']
-    return frame.to_json(orient='records'), ema13, ema30, macd
+    return frame.to_json(orient='records'), json.dumps(ema13), json.dumps(ema30), json.dumps(macd)
 
 
 def mid_data(frame):
@@ -219,7 +220,7 @@ def mid_data(frame):
     del frame['%atr']
     del frame['buy flag']
     del frame['sell flag']
-    return frame.to_json(orient='records'), d, ds, rs, percent_atr
+    return frame.to_json(orient='records'), json.dumps(d), json.dumps(ds), json.dumps(rs), json.dumps(percent_atr)
 
 
 class Api:
