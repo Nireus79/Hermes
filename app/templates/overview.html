@@ -19,6 +19,23 @@
         <span id="crypto_balance"></span>
         <span id="fiat_balance"></span>
         <br>
+        <div class="chartBox1" id="Charts">
+            <canvas id="HighFrameCandles" width="10" height="1"></canvas>
+            <span id="high_ema13"></span>
+            <span id="high_ema30"></span>
+            <span id="high_macd"></span>
+            <br>
+            <canvas id="MidFrameCandles" width="10" height="1"></canvas>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.3.2/luxon.min.js" integrity="sha512-REDACTED" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.2"></script>
+            <script src="{{url_for('static', filename='financial.js')}}" ></script>
+            <script src="{{url_for('static', filename='js/chart_setup.js')}}"></script>
+            <span id="mid_d"></span>
+            <span id="mid_ds"></span>
+            <span id="mid_rs"></span>
+            <span id="mid_tr"></span>
+        </div>
         <table border="1">
             <thead>
                 <tr>
@@ -81,17 +98,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <div class="chartBox1" id="HighChart">
-            <canvas id="HighFrame" width="9" height="1"></canvas>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.3.2/luxon.min.js" integrity="sha512-REDACTED" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.2"></script>
-            <script src="{{url_for('static', filename='financial.js')}}" ></script>
-            <script src="{{url_for('static', filename='js/high_chart_setup.js')}}"></script>
-        </div>
-
-
         <br>
         <span id="price"></span>
         <br>

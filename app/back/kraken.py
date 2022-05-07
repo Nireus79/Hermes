@@ -152,7 +152,7 @@ def mid_frame_indicators(mdf, max_rsi, min_vol):
     mdf['%DS'] = mdf['%D'].rolling(3).mean()  # Stochastic slow.
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
     mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
-    mdf['%atr'] = (mdf['atr']/mdf['close'])*100
+    mdf['%atr'] = (mdf['atr'] / mdf['close']) * 100
     mdf['buy flag'] = mdf.apply(
         lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < max_rsi and x['%atr'] > min_vol, axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
@@ -192,7 +192,10 @@ def high_data(frame):
     del frame['EMA30']
     del frame['macd']
     del frame['trend']
-    return frame.to_json(orient='records'), json.dumps(ema13), json.dumps(ema30), json.dumps(macd)
+    return frame.to_json(orient='records'),\
+           json.dumps(ema13).replace("NaN", "0"),\
+           json.dumps(ema30).replace("NaN", "0"),\
+           json.dumps(macd).replace("NaN", "0")
 
 
 def mid_data(frame):
@@ -220,7 +223,11 @@ def mid_data(frame):
     del frame['%atr']
     del frame['buy flag']
     del frame['sell flag']
-    return frame.to_json(orient='records'), json.dumps(d), json.dumps(ds), json.dumps(rs), json.dumps(percent_atr)
+    return frame.to_json(orient='records'), \
+           json.dumps(d).replace("NaN", "0"), \
+           json.dumps(ds).replace("NaN", "0"), \
+           json.dumps(rs).replace("NaN", "0"),\
+           json.dumps(percent_atr).replace("NaN", "0")
 
 
 class Api:

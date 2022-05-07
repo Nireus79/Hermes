@@ -1,9 +1,7 @@
 var intervalID = setInterval(update_values, 1000);
-
-        function update_values() {
-            $.getJSON($SCRIPT_ROOT + '/update',
-
-            function(data) {
+function update_values() {
+    $.getJSON($SCRIPT_ROOT + '/update',
+        function(data) {
                 $('#current_time').text('Current time: '+data.current_time);
                 $('#mode').text('Mode: '+data.mode);
                 $('#volatility').text('Min %ATR: '+data.volatility);
@@ -28,6 +26,19 @@ var intervalID = setInterval(update_values, 1000);
                 $('#limit').text('Buy limit: '+data.limit);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
-//                console.log(data)
-          });
-        };
+                ema13 = JSON.parse(data.high_ema13)
+                $('#high_ema13').html('EMA13: '+ema13[ema13.length - 1]);
+                ema30 = JSON.parse(data.high_ema30)
+                $('#high_ema30').html('EMA30: '+ema30[ema30.length - 1]);
+                macd = JSON.parse(data.high_macd)
+                $('#high_macd').html('MACD: '+macd[macd.length - 1]);
+                d = JSON.parse(data.mid_d)
+                $('#mid_d').html('Stochastic %D: '+d[d.length - 1]);
+                ds = JSON.parse(data.mid_ds)
+                $('#mid_ds').html('Stochastic %DS: '+ds[ds.length - 1]);
+                rsi = JSON.parse(data.mid_rs)
+                $('#mid_rs').html('RSI: '+rsi[rsi.length - 1]);
+                tr = JSON.parse(data.mid_p_atr)
+                $('#mid_tr').html('%ATR: '+tr[tr.length - 1]);
+        });
+};

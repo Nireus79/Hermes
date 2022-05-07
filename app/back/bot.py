@@ -964,7 +964,7 @@ def data_feed():
             'mid_d': mid_d,
             'mid_ds': mid_ds,
             'mid_rs': mid_rs,
-            'mid_%atr': mid_p_atr,
+            'mid_p_atr': mid_p_atr,
             'price': closing_price,
             'stop': stop,
             'limit': limit,
