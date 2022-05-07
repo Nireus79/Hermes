@@ -1,4 +1,3 @@
-import json
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -224,10 +223,10 @@ def mid_data(frame):
     del frame['buy flag']
     del frame['sell flag']
     return frame.to_json(orient='records'), d, ds, rs, percent_atr
-           # json.dumps(d).replace("NaN", "0"), \
-           # json.dumps(ds).replace("NaN", "0"), \
-           # json.dumps(rs).replace("NaN", "0"),\
-           # json.dumps(percent_atr).replace("NaN", "0")
+    # json.dumps(d).replace("NaN", "0"), \
+    # json.dumps(ds).replace("NaN", "0"), \
+    # json.dumps(rs).replace("NaN", "0"),\
+    # json.dumps(percent_atr).replace("NaN", "0")
 
 
 class Api:
