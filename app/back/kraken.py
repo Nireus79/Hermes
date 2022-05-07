@@ -172,9 +172,9 @@ def low_frame_indicators(ldf):
 
 
 def high_data(frame):
-    ema13 = frame['EMA13'].tolist()
-    ema30 = frame['EMA30'].tolist()
-    macd = frame['macd'].tolist()
+    ema13 = frame.iloc[-1]['EMA13']
+    ema30 = frame.iloc[-1]['EMA30']
+    macd = frame.iloc[-1]['macd']
     frame['x'] = frame['time']
     del frame['time']
     frame['o'] = frame['open']
@@ -192,17 +192,17 @@ def high_data(frame):
     del frame['EMA30']
     del frame['macd']
     del frame['trend']
-    return frame.to_json(orient='records'),\
-           json.dumps(ema13).replace("NaN", "0"),\
-           json.dumps(ema30).replace("NaN", "0"),\
-           json.dumps(macd).replace("NaN", "0")
+    return frame.to_json(orient='records'), ema13, ema30, macd
+    #        json.dumps(ema13).replace("NaN", "0"),\
+    #        json.dumps(ema30).replace("NaN", "0"),\
+    #        json.dumps(macd).replace("NaN", "0")
 
 
 def mid_data(frame):
-    d = frame['%D'].tolist()
-    ds = frame['%DS'].tolist()
-    rs = frame['rsi'].tolist()
-    percent_atr = frame['%atr'].tolist()
+    d = frame.iloc[-1]['%D']
+    ds = frame.iloc[-1]['%DS']
+    rs = frame.iloc[-1]['rsi']
+    percent_atr = frame.iloc[-1]['%atr']
     frame['x'] = frame['time']
     del frame['time']
     frame['o'] = frame['open']
@@ -223,11 +223,11 @@ def mid_data(frame):
     del frame['%atr']
     del frame['buy flag']
     del frame['sell flag']
-    return frame.to_json(orient='records'), \
-           json.dumps(d).replace("NaN", "0"), \
-           json.dumps(ds).replace("NaN", "0"), \
-           json.dumps(rs).replace("NaN", "0"),\
-           json.dumps(percent_atr).replace("NaN", "0")
+    return frame.to_json(orient='records'), d, ds, rs, percent_atr
+           # json.dumps(d).replace("NaN", "0"), \
+           # json.dumps(ds).replace("NaN", "0"), \
+           # json.dumps(rs).replace("NaN", "0"),\
+           # json.dumps(percent_atr).replace("NaN", "0")
 
 
 class Api:

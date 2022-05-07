@@ -27,18 +27,12 @@ function update_values() {
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
                 ema13 = JSON.parse(data.high_ema13)
-                $('#high_ema13').html('EMA13: '+ema13[ema13.length - 1]);
-                ema30 = JSON.parse(data.high_ema30)
-                $('#high_ema30').html('EMA30: '+ema30[ema30.length - 1]);
-                macd = JSON.parse(data.high_macd)
-                $('#high_macd').html('MACD: '+macd[macd.length - 1]);
-                d = JSON.parse(data.mid_d)
-                $('#mid_d').html('Stochastic %D: '+d[d.length - 1]);
-                ds = JSON.parse(data.mid_ds)
-                $('#mid_ds').html('Stochastic %DS: '+ds[ds.length - 1]);
-                rsi = JSON.parse(data.mid_rs)
-                $('#mid_rs').html('RSI: '+rsi[rsi.length - 1]);
-                tr = JSON.parse(data.mid_p_atr)
-                $('#mid_tr').html('%ATR: '+tr[tr.length - 1]);
+                $('#high_ema13').text('EMA13: '+data.high_ema13);
+                $('#high_ema30').text('EMA30: '+data.high_ema30);
+                $('#high_macd').text('MACD: '+data.high_macd);
+                $('#mid_d').text('Stochastic %D: '+data.mid_d);
+                $('#mid_ds').text('Stochastic %DS: '+data.mid_ds);
+                $('#mid_rs').text('RSI: '+data.mid_rs);
+                $('#mid_tr').text('%ATR: '+data.mid_p_atr);
         });
 };
