@@ -47,6 +47,7 @@ function update_values() {
              MidCandleChart.data.datasets[0].label = 'Middle frame: '+data_update.runningMidFrame;
              MidCandleChart.data.datasets[0].data = JSON.parse(data_update.mid_chart_data);
              HighCandleChart.update();
+             MidCandleChart.update();
         }
     );
 };
