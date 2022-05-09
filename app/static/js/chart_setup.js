@@ -10,7 +10,13 @@ const high_candle_data = {
 const config_high_candle_chart = {
     type: 'candlestick',
     data: high_candle_data,
-    options: {}
+    options: {
+        scales: {
+            x: {
+                type: 'time'
+            }
+        }
+    }
 };
 // init block
 const HighCandleChart = new Chart(
@@ -29,7 +35,13 @@ const mid_candle_data = {
 const config_mid_candle_chart = {
     type: 'candlestick',
     data: mid_candle_data,
-    options: {}
+    options: {
+        scales: {
+            x: {
+                type: 'time'
+            }
+        }
+    }
 };
 // init block
 const MidCandleChart = new Chart(

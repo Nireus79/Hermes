@@ -171,10 +171,19 @@ def low_frame_indicators(ldf):
 
 
 def high_data(frame):
+    """
+    Takes a pandas dataframe and creates a json with
+    the needed values for the ChartJS candle charts.
+    Axis X values are all multiplied by 1000.
+    JavaScript Date object however uses milliseconds since 1 January 1970 UTC.
+    Therefore, you should multiply your timestamps by 1000 prior to assign the data to the chart configuration.
+    :param frame: The modified pandas dataframe from high_frame_indicators.
+    :return: json and last running indicators to be displayed.
+    """
     ema13 = frame.iloc[-1]['EMA13']
     ema30 = frame.iloc[-1]['EMA30']
     macd = frame.iloc[-1]['macd']
-    frame['x'] = frame['time']
+    frame['x'] = frame['time'].apply(lambda x: x*1000)
     del frame['time']
     frame['o'] = frame['open']
     del frame['open']
@@ -192,17 +201,17 @@ def high_data(frame):
     del frame['macd']
     del frame['trend']
     return frame.to_json(orient='records'), ema13, ema30, macd
-    #        json.dumps(ema13).replace("NaN", "0"),\
-    #        json.dumps(ema30).replace("NaN", "0"),\
-    #        json.dumps(macd).replace("NaN", "0")
 
 
 def mid_data(frame):
+    """
+    Same as above (high_data)
+    """
     d = frame.iloc[-1]['%D']
     ds = frame.iloc[-1]['%DS']
     rs = frame.iloc[-1]['rsi']
     percent_atr = frame.iloc[-1]['%atr']
-    frame['x'] = frame['time']
+    frame['x'] = frame['time'].apply(lambda x: x*1000)
     del frame['time']
     frame['o'] = frame['open']
     del frame['open']
@@ -223,10 +232,6 @@ def mid_data(frame):
     del frame['buy flag']
     del frame['sell flag']
     return frame.to_json(orient='records'), d, ds, rs, percent_atr
-    # json.dumps(d).replace("NaN", "0"), \
-    # json.dumps(ds).replace("NaN", "0"), \
-    # json.dumps(rs).replace("NaN", "0"),\
-    # json.dumps(percent_atr).replace("NaN", "0")
 
 
 class Api:
