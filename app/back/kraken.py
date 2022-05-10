@@ -180,58 +180,60 @@ def high_data(frame):
     :param frame: The modified pandas dataframe from high_frame_indicators.
     :return: json and last running indicators to be displayed.
     """
-    ema13 = frame.iloc[-1]['EMA13']
-    ema30 = frame.iloc[-1]['EMA30']
-    macd = frame.iloc[-1]['macd']
-    frame['x'] = frame['time'].apply(lambda x: x*1000)
-    del frame['time']
-    frame['o'] = frame['open']
-    del frame['open']
-    frame['h'] = frame['high']
-    del frame['high']
-    frame['l'] = frame['low']
-    del frame['low']
-    frame['c'] = frame['close']
-    del frame['close']
-    del frame['vwap']
-    del frame['volume']
-    del frame['count']
-    del frame['EMA13']
-    del frame['EMA30']
-    del frame['macd']
-    del frame['trend']
-    return frame.to_json(orient='records'), ema13, ema30, macd
+    front_df = frame.copy()
+    ema13 = front_df.iloc[-1]['EMA13']
+    ema30 = front_df.iloc[-1]['EMA30']
+    macd = front_df.iloc[-1]['macd']
+    front_df['x'] = front_df['time'].apply(lambda x: x * 1000)
+    del front_df['time']
+    front_df['o'] = front_df['open']
+    del front_df['open']
+    front_df['h'] = front_df['high']
+    del front_df['high']
+    front_df['l'] = front_df['low']
+    del front_df['low']
+    front_df['c'] = front_df['close']
+    del front_df['close']
+    del front_df['vwap']
+    del front_df['volume']
+    del front_df['count']
+    del front_df['EMA13']
+    del front_df['EMA30']
+    del front_df['macd']
+    del front_df['trend']
+    return front_df.to_json(orient='records'), ema13, ema30, macd
 
 
 def mid_data(frame):
     """
     Same as above (high_data)
     """
-    d = frame.iloc[-1]['%D']
-    ds = frame.iloc[-1]['%DS']
-    rs = frame.iloc[-1]['rsi']
-    percent_atr = frame.iloc[-1]['%atr']
-    frame['x'] = frame['time'].apply(lambda x: x*1000)
-    del frame['time']
-    frame['o'] = frame['open']
-    del frame['open']
-    frame['h'] = frame['high']
-    del frame['high']
-    frame['l'] = frame['low']
-    del frame['low']
-    frame['c'] = frame['close']
-    del frame['close']
-    del frame['vwap']
-    del frame['volume']
-    del frame['count']
-    del frame['%K']
-    del frame['%D']
-    del frame['%DS']
-    del frame['rsi']
-    del frame['%atr']
-    del frame['buy flag']
-    del frame['sell flag']
-    return frame.to_json(orient='records'), d, ds, rs, percent_atr
+    front_df = frame.copy()
+    d = front_df.iloc[-1]['%D']
+    ds = front_df.iloc[-1]['%DS']
+    rs = front_df.iloc[-1]['rsi']
+    percent_atr = front_df.iloc[-1]['%atr']
+    front_df['x'] = front_df['time'].apply(lambda x: x * 1000)
+    del front_df['time']
+    front_df['o'] = front_df['open']
+    del front_df['open']
+    front_df['h'] = front_df['high']
+    del front_df['high']
+    front_df['l'] = front_df['low']
+    del front_df['low']
+    front_df['c'] = front_df['close']
+    del front_df['close']
+    del front_df['vwap']
+    del front_df['volume']
+    del front_df['count']
+    del front_df['%K']
+    del front_df['%D']
+    del front_df['%DS']
+    del front_df['rsi']
+    del front_df['%atr']
+    del front_df['buy flag']
+    del front_df['sell flag']
+    return front_df.to_json(orient='records'), d, ds, rs, percent_atr
 
 
 class Api:
