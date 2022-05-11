@@ -12,6 +12,13 @@ if sys.executable.endswith('pythonw.exe'):
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.path.join(os.getenv('TEMP'), 'stderr-{}'.format(os.path.basename(sys.argv[0]))), "w")
     
+import os
+import sys
+
+if sys.executable.endswith('pythonw.exe'):
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.path.join(os.getenv('TEMP'), 'stderr-{}'.format(os.path.basename(sys.argv[0]))), "w")
+    
 from app import app
 import webbrowser
 
