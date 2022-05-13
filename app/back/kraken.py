@@ -84,8 +84,6 @@ def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
         "pair": pair,
         "price": price
     }, key=api_key, sec=api_sec)
-    logging.info(resp.json())
-    logging.info(resp.json()["txid"])
     return resp.json()
 
 

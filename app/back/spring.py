@@ -35,7 +35,7 @@ auth_header = ','.join([
 product_short_code = 'h1'
 # TODO
 hardware_id = '_your_hardware_id_goes_here_'
-license_key = '_your_license_key_goes_here_'
+license_key = 'REDACTED'
 
 response = requests.get(
     url='{}{}'.format(API_URL, '/api/v4/check_license/'),

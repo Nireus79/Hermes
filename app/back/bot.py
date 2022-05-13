@@ -172,10 +172,10 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
     stop = low_f['low'] - atr
     pillow = middle_f['low'] - m_atr
     closing_price = low_f['close']
-    log = 'Balance: {} crypto, {} money'.format(crypto_balance, fiat_balance)
+    log = 'Balance: {} crypto. {} money'.format(crypto_balance, fiat_balance)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Current price {}. limit {}. Stop loss-Pillow {}.' \
+    log = '{} Current price: {}. limit: {}. Stop loss: {}.' \
         .format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
     logs.append(log + '<br>')
