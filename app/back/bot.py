@@ -251,6 +251,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
             if sell_flag:
                 if closing_price < stop:
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
+
                     # TODO order check
                     tx = add_order(order_type,
                                    cond, fiat_balance, closing_price, crypto_currency, fiat_currency)["txid"]
