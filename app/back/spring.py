@@ -9,8 +9,8 @@ import requests
 API_URL = 'https://api.licensespring.com'
 
 # Can be found in `Account Settings` -> `Settings` -> `Keys`
-shared_key = '_your_shared_key_goes_here_'
-uuid = '_your_uuid_key_goes_here_'
+shared_key = 'REDACTED'
+uuid = 'REDACTED'
 
 
 def sign(secret_key, datestamp):
@@ -32,7 +32,8 @@ auth_header = ','.join([
 ])
 
 # Send request
-product_short_code = '_your_product_short_code_goes_here_'
+product_short_code = 'h1'
+# TODO
 hardware_id = '_your_hardware_id_goes_here_'
 license_key = '_your_license_key_goes_here_'
 
@@ -47,3 +48,8 @@ response = requests.get(
 )
 
 print(response.json())
+
+
+# https://stackoverflow.com/questions/2461141/get-a-unique-computer-id-in-python-on-windows-and-linux/41569262
+# import uuid
+# uuid.UUID(int=uuid.getnode())
