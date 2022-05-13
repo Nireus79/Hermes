@@ -206,8 +206,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
 
                     # TODO order check
-                    tx = add_order(order_type,
-                                   cond, fiat_balance, closing_price, crypto_currency, fiat_currency)["txid"]
+                    tx = add_order(order_type, cond, fiat_balance, closing_price,
+                                   crypto_currency, fiat_currency)["result"]["txid"][0]
                     time.sleep(10)
                     while True:
                         order_info = get_order_info(tx)['status']
@@ -253,8 +253,8 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
 
                     # TODO order check
-                    tx = add_order(order_type,
-                                   cond, fiat_balance, closing_price, crypto_currency, fiat_currency)["txid"]
+                    tx = add_order(order_type, cond, fiat_balance, closing_price,
+                                   crypto_currency, fiat_currency)["result"]["txid"][0]
                     time.sleep(10)
                     while True:
                         order_info = get_order_info(tx)['status']
