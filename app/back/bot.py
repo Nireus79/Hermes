@@ -205,7 +205,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                 if closing_price > limit:
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
 
-                    # TODO order check
+                    # order check
                     tx = add_order(order_type, cond, fiat_balance, closing_price,
                                    crypto_currency, fiat_currency)["result"]["txid"][0]
                     time.sleep(10)
@@ -252,7 +252,7 @@ def order_manager(order_type, mid, low, cond, crypto_currency, fiat_currency, ti
                 if closing_price < stop:
                     add_order(order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
 
-                    # TODO order check
+                    # order check
                     tx = add_order(order_type, cond, fiat_balance, closing_price,
                                    crypto_currency, fiat_currency)["result"]["txid"][0]
                     time.sleep(10)
