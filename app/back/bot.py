@@ -163,7 +163,6 @@ def order_manager(order_type, high_front, mid_front,
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, \
         high_chart_data, high_ema13, high_ema30, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr
-    # global low_chart_data
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -319,7 +318,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data, high_ema13, \
         high_ema30, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr
-    # global low_chart_data
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
