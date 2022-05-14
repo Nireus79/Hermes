@@ -1,5 +1,3 @@
-import logging
-
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -41,20 +39,22 @@ def get_private_balance():
     return resp.json()
 
 
-def get_condition(crypto_currency, fiat_currency):
+def get_condition(crypto_currency, fiat_currency, closing_price):
     """
     Takes the private user's account balance and gives condition to buy or sell to the bot.
-    If balance has no crypto returns condition "buy" for the bot to look for good crypto buy conditions.
-    If balance has crypto returns condition "sell" for the bot to look for good crypto sell conditions.
+    If balance has less crypto value than fiat returns condition "buy"
+    for the bot to look for good crypto buy conditions.
+    If balance has more crypto value than fiat returns condition "sell"
+    for the bot to look for good crypto sell conditions.
     :return: Conditions to buy/sell crypto.
     """
     fiat_currency = 'Z' + fiat_currency
     balance = get_private_balance()
-    crypto = balance['result'][crypto_currency]
-    fiat = balance['result'][fiat_currency]
-    if float(crypto) < float(fiat):
+    crypto_value = float(balance['result'][crypto_currency]) * closing_price
+    fiat = float(balance['result'][fiat_currency])
+    if crypto_value < fiat:
         return 'buy'
-    elif float(crypto) > float(fiat):
+    elif crypto_value >= fiat:
         return 'sell'
 
 
@@ -264,3 +264,10 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
+
+
+# print(add_order('market', 'sell', 1, 9.8, 'DOT', 'EUR'))
+# r = {'error': [], 'result': {'txid': ['OZEUPQ-MGNXU-E5FH4G'], 'descr': {'order': 'sell 1.00000000 DOTEUR @ market'}}}
+#
+# print(r['result']['txid'][0])
+# print(get_order_info('OZEUPQ-MGNXU-E5FH4G')['result']['OZEUPQ-MGNXU-E5FH4G']['status'])
