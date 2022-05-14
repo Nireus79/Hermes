@@ -64,7 +64,6 @@ def volume(crypto_currency, fiat_currency):
             fiat_currency: float(balance['result']['Z' + fiat_currency])}
 
 
-# TODO
 def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
     """
     https://support.kraken.com/hc/en-us/articles/360022839631-Open-Orders
