@@ -634,7 +634,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logging.info('{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h))
                         logging.info(log)
                         log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
-                            .format(time_stamp(time.time()), buy_flag_1h, buy_flag_1h)
+                            .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
                         runningHighFrame = '4Hour'
@@ -737,7 +737,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 logging.info(log)
                 logs.append(log + '<br>')
                 log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
-                    .format(time_stamp(time.time()), buy_flag_1h, buy_flag_1h)
+                    .format(time_stamp(time.time()), buy_flag_1h, sell_flag_1h)
                 logging.info(log)
                 logs.append(log + '<br>')
                 runningHighFrame = '4Hour'
