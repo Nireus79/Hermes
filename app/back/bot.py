@@ -223,7 +223,6 @@ def order_manager(order_type, high_front, mid_front,
                             break
                         else:
                             time.sleep(10)
-
                     pillow = middle_f['low'] - m_atr
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
@@ -751,7 +750,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningLowFrame = '15minutes'
                     if mode == 'trading':
-                        order_manager('limit', high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame, condition,
+                        order_manager('market', high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame, condition,
                                       crypto_currency, fiat_currency, time_divisor, max_rsi, min_vol)
                     elif mode == 'consulting' or mode == 'simulator':
                         limit_manager(mode, high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame,
