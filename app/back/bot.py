@@ -28,7 +28,7 @@ buy_flag_15m = None
 front_buy_flag_15m = False
 sell_flag_15m = None
 crypto_balance = None
-fiat_balance = None
+fiat_balance = 0
 
 high_frame_24h = None
 high_frame_4h = None
@@ -210,19 +210,20 @@ def order_manager(order_type, high_front, mid_front,
                 if closing_price > limit:
                     log = (order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
                     logging.info(log)
-                    tx = add_order(order_type, cond, fiat_balance, closing_price,
-                                   crypto_currency, fiat_currency)["result"]["txid"][0]
+                    asset_vol = fiat_balance / closing_price
+                    tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
+                    # ["result"]["txid"][0]
                     log = tx
                     logging.info(log)
-                    time.sleep(10)
-                    while True:
-                        order_info = get_order_info(tx)['result'][tx]['status']
-                        if order_info == 'closed':
-                            log = 'Order closed.'
-                            logs.append(log + '<br>')
-                            break
-                        else:
-                            time.sleep(10)
+                    # time.sleep(10)
+                    # while True:
+                    #     order_info = get_order_info(tx)['result'][tx]['status']
+                    #     if order_info == 'closed':
+                    #         log = 'Order closed.'
+                    #         logs.append(log + '<br>')
+                    #         break
+                    #     else:
+                    #         time.sleep(10)
                     pillow = middle_f['low'] - m_atr
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
@@ -257,19 +258,19 @@ def order_manager(order_type, high_front, mid_front,
                 if closing_price < stop:
                     log = (order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
                     logging.info(log)
-                    tx = add_order(order_type, cond, crypto_balance, closing_price,
-                                   crypto_currency, fiat_currency)["result"]["txid"][0]
+                    tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+                    # ["result"]["txid"][0]
                     log = tx
                     logging.info(log)
-                    time.sleep(10)
-                    while True:
-                        order_info = get_order_info(tx)['result'][tx]['status']
-                        if order_info == 'closed':
-                            log = 'Order closed.'
-                            logs.append(log + '<br>')
-                            break
-                        else:
-                            time.sleep(10)
+                    # time.sleep(10)
+                    # while True:
+                    #     order_info = get_order_info(tx)['result'][tx]['status']
+                    #     if order_info == 'closed':
+                    #         log = 'Order closed.'
+                    #         logs.append(log + '<br>')
+                    #         break
+                    #     else:
+                    #         time.sleep(10)
                     beeper(cond)
                     log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')

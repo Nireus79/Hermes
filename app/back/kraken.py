@@ -270,3 +270,18 @@ class Api:
 #
 # print(r['result']['txid'][0])
 # print(get_order_info('OZEUPQ-MGNXU-E5FH4G')['result']['OZEUPQ-MGNXU-E5FH4G']['status'])
+
+
+
+# INFO:root:('market', 'buy', 79.1023, 10.9696, 'DOT', 'EUR')
+# Exception in thread Thread-35 (elderbot):
+# Traceback (most recent call last):
+#   File "C:\Users\themi\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1009, in _bootstrap_inner
+#     self.run()
+#   File "C:\Users\themi\AppData\Local\Programs\Python\Python310\lib\threading.py", line 946, in run
+#     self._target(*self._args, **self._kwargs)
+#   File "C:\Users\themi\PycharmProjects\Hermes\app\back\bot.py", line 753, in elderbot
+#     order_manager('market', high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame, condition,
+#   File "C:\Users\themi\PycharmProjects\Hermes\app\back\bot.py", line 213, in order_manager
+#     tx = add_order(order_type, cond, fiat_balance, closing_price,
+# KeyError: 'result'
