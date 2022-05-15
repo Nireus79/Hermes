@@ -204,6 +204,9 @@ def order_manager(order_type, high_front, mid_front,
             logging.info(log)
             logs.append(log + '<br>')
             runningLowFrame = None
+            pillow = 0
+            limit = None
+            stop = 0
             break
         elif cond == 'buy':
             if buy_flag:
@@ -231,6 +234,9 @@ def order_manager(order_type, high_front, mid_front,
                     trades.append(log + '<br>')
                     time.sleep(10)
                     runningLowFrame = None
+                    pillow = 0
+                    limit = None
+                    stop = 0
                     break
                 else:
                     if new_limit <= limit:
@@ -253,6 +259,9 @@ def order_manager(order_type, high_front, mid_front,
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
+                pillow = 0
+                limit = None
+                stop = 0
                 break
         elif cond == 'sell':
             if sell_flag:
@@ -278,6 +287,9 @@ def order_manager(order_type, high_front, mid_front,
                     trades.append(log + '<br>')
                     time.sleep(10)
                     runningLowFrame = None
+                    pillow = 0
+                    limit = None
+                    stop = 0
                     break
                 else:
                     if new_stop >= stop:
@@ -300,6 +312,9 @@ def order_manager(order_type, high_front, mid_front,
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
+                pillow = 0
+                limit = None
+                stop = 0
                 break
 
 
@@ -363,6 +378,9 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
             logging.info(log)
             logs.append(log + '<br>')
             runningLowFrame = None
+            pillow = 0
+            limit = None
+            stop = 0
             break
         if cond == 'buy':
             if buy_flag:
@@ -381,6 +399,9 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         trades.append(log + '<br>')
                         condition = 'sell'
                     runningLowFrame = None
+                    pillow = 0
+                    limit = None
+                    stop = 0
                     break
                 elif closing_price <= limit:
                     if new_limit < limit:
@@ -404,6 +425,9 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
+                pillow = 0
+                limit = None
+                stop = 0
                 break
         elif cond == 'sell':
             if sell_flag:
@@ -423,6 +447,9 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         trades.append(log + '<br>')
                         condition = 'buy'
                     runningLowFrame = None
+                    pillow = 0
+                    limit = None
+                    stop = 0
                     break
                 elif closing_price >= stop:
                     if new_stop > stop:
@@ -446,6 +473,9 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
+                pillow = 0
+                limit = None
+                stop = 0
                 break
 
 
