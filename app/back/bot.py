@@ -208,9 +208,10 @@ def order_manager(order_type, high_front, mid_front,
         elif cond == 'buy':
             if buy_flag:
                 if closing_price > limit:
-                    log = (order_type, cond, fiat_balance, closing_price, crypto_currency, fiat_currency)
-                    logging.info(log)
                     asset_vol = fiat_balance / closing_price
+                    log = 'Setting {} order to {} {} {} using {} {}.'\
+                        .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
+                    logging.info(log)
                     tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
                     # ["result"]["txid"][0]
                     log = tx
@@ -256,7 +257,8 @@ def order_manager(order_type, high_front, mid_front,
         elif cond == 'sell':
             if sell_flag:
                 if closing_price < stop:
-                    log = (order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+                    log = 'Setting {} order to {} {} {} at {}.'\
+                        .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
                     tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
                     # ["result"]["txid"][0]
