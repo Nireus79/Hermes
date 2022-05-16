@@ -99,13 +99,9 @@ def cancel_order():
     or cancel specific order (needs txid)
     resp = kraken_request('/0/private/CancelOrder', {
     "nonce": str(int(1000*time.time())),
-    "txid": "OG5V2Y-RYKVL-DT3V3B"
+    "txid": "OG5V2Y-RYKVL-DT3V3B" EXAMPLE!!! (Give txid as argument)
     }, api_key, api_sec)
     """
-    # resp = kraken_request('/0/private/CancelOrder', {
-    #     "nonce": str(int(1000 * time.time())),
-    #     "txid": tx
-    # }, api_key, api_sec)
     return resp.json()
 
 
