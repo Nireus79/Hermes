@@ -3,7 +3,7 @@ import time
 import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
-    volume, add_order, cancel_order, get_condition, get_order_info, high_data, mid_data
+    volume, add_order, cancel_order, get_condition, high_data, mid_data
 
 logging.basicConfig(level=logging.INFO)
 
@@ -517,7 +517,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     www.elearnmarkets.com
 
     Original strategy dictates to wait the whole time of each candle to set condition flag,
-        but as api provides data in real time, duration is divided to make bot faster.
+        but as api provides data in real time, duration is divided optionally to make bot faster.
         Next, condition (get_condition()) is taken from users account balance
         and bot constantly evaluates the flags in a while loop.
         if condition is 'buy':
