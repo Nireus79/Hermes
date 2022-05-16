@@ -160,6 +160,10 @@ def order_manager(order_type, high_front, mid_front,
     to include the volatility factor and limit false positioning.
     After setting a buy order, a safety "pillow" level is stored as a safety parameter.
     It is the 'low' of mid-frame candle minus mid-frame atr.
+
+    WARNING!!!
+    When setting market order, volume must be set on the amount of the first asset.
+    Then when setting buy order, price must be set on 0.
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, \
         high_chart_data, high_ema13, high_ema30, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr
@@ -215,10 +219,13 @@ def order_manager(order_type, high_front, mid_front,
                     log = 'Setting {} order to {} {} {} using {} {}.'\
                         .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
                     logging.info(log)
-                    tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
+                    tx = add_order(order_type, cond, asset_vol, 0, crypto_currency, fiat_currency)
+                    trades.append(tx)
                     # ["result"]["txid"][0]
                     log = tx
+
                     logging.info(log)
+                    logging.info('')
                     # time.sleep(10)
                     # while True:
                     #     order_info = get_order_info(tx)['result'][tx]['status']
@@ -270,9 +277,13 @@ def order_manager(order_type, high_front, mid_front,
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
                     tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+                    # print(add_order('market', 'sell', 1, 9.8, 'DOT', 'EUR'))
+                    trades.append(tx)
                     # ["result"]["txid"][0]
                     log = tx
+
                     logging.info(log)
+                    logging.info('')
                     # time.sleep(10)
                     # while True:
                     #     order_info = get_order_info(tx)['result'][tx]['status']

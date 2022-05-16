@@ -102,6 +102,10 @@ def cancel_order():
     "txid": "OG5V2Y-RYKVL-DT3V3B"
     }, api_key, api_sec)
     """
+    # resp = kraken_request('/0/private/CancelOrder', {
+    #     "nonce": str(int(1000 * time.time())),
+    #     "txid": tx
+    # }, api_key, api_sec)
     return resp.json()
 
 
@@ -263,25 +267,3 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
-
-
-# print(add_order('market', 'sell', 1, 9.8, 'DOT', 'EUR'))
-# r = {'error': [], 'result': {'txid': ['OZEUPQ-MGNXU-E5FH4G'], 'descr': {'order': 'sell 1.00000000 DOTEUR @ market'}}}
-#
-# print(r['result']['txid'][0])
-# print(get_order_info('OZEUPQ-MGNXU-E5FH4G')['result']['OZEUPQ-MGNXU-E5FH4G']['status'])
-
-
-
-# INFO:root:('market', 'buy', 79.1023, 10.9696, 'DOT', 'EUR')
-# Exception in thread Thread-35 (elderbot):
-# Traceback (most recent call last):
-#   File "C:\Users\themi\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1009, in _bootstrap_inner
-#     self.run()
-#   File "C:\Users\themi\AppData\Local\Programs\Python\Python310\lib\threading.py", line 946, in run
-#     self._target(*self._args, **self._kwargs)
-#   File "C:\Users\themi\PycharmProjects\Hermes\app\back\bot.py", line 753, in elderbot
-#     order_manager('market', high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame, condition,
-#   File "C:\Users\themi\PycharmProjects\Hermes\app\back\bot.py", line 213, in order_manager
-#     tx = add_order(order_type, cond, fiat_balance, closing_price,
-# KeyError: 'result'
