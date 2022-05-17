@@ -96,6 +96,10 @@ def starter():
 @app.route('/stop')
 def stopper():
     signal_handler()
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
     return render_template('overview.html')
 
 

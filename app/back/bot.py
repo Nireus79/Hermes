@@ -53,7 +53,7 @@ mid_p_atr = None
 
 feed = None
 
-exit_event = threading.Event()
+break_event = threading.Event()
 
 
 def signal_handler():
@@ -61,7 +61,7 @@ def signal_handler():
     Setting exit event to allow process end
     within while loops before program stop.
     """
-    exit_event.set()
+    break_event.set()
 
 
 def beeper(cond):
@@ -202,7 +202,7 @@ def order_manager(order_type, high_front, mid_front,
         new_limit = low_f['high'] + atr
         new_stop = low_f['low'] - atr
         closing_price = low_f['close']
-        if exit_event.is_set():  # thread "kill" by user
+        if break_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break ordering.'.format(time_stamp(time.time()))
             logging.info(log)
@@ -361,7 +361,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
         new_stop = low_f['low'] - atr
         pillow = middle_f['low'] - m_atr
         closing_price = low_f['close']
-        if exit_event.is_set():  # thread "kill" by user
+        if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
             logs.append(log + '<br>')
@@ -592,9 +592,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     logging.info(log)
     logs.append(log + '<br>')
     while True:
-        if exit_event.is_set():  # thread "kill" by user
+        if break_event.is_set():  # thread "kill" by user
             cancel_order()
-            log = '{} Break trading.'.format(time_stamp(time.time()))
+            log = '{} Breaking operation.'.format(time_stamp(time.time()))
             logging.info(log)
             logs.append(log + '<br>')
             break
