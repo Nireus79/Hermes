@@ -4,13 +4,22 @@ import hmac
 import time
 from wsgiref.handlers import format_date_time
 
+import subprocess
+
 import requests
 
 API_URL = 'https://api.licensespring.com'
+activation_URL = 'https://api.licensespring.com/api/v4/activate_license'
 
+hardware_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 # Can be found in `Account Settings` -> `Settings` -> `Keys`
+
+# TODO store credentials
 shared_key = 'REDACTED'
 uuid = 'REDACTED'
+
+product_short_code = 'h1'
+license_key = 'REDACTED'
 
 
 def sign(secret_key, datestamp):
@@ -32,24 +41,19 @@ auth_header = ','.join([
 ])
 
 # Send request
-product_short_code = 'h1'
-# TODO
-hardware_id = '_your_hardware_id_goes_here_'
-license_key = 'REDACTED'
-
-response = requests.get(
-    url='{}{}'.format(API_URL, '/api/v4/check_license/'),
-    params={'product': product_short_code, 'hardware_id': hardware_id, 'license_key': license_key},
-    headers={
-        'Date': date_header,
-        'Authorization': auth_header,
-        'Content-Type': 'application/json'
-    }
-)
-
-print(response.json())
 
 
-# https://stackoverflow.com/questions/2461141/get-a-unique-computer-id-in-python-on-windows-and-linux/41569262
-# import uuid
-# uuid.UUID(int=uuid.getnode())
+def authentication():
+    response = requests.get(
+        url='{}{}'.format(API_URL, '/api/v4/check_license/'),
+        params={'product': product_short_code, 'hardware_id': hardware_id, 'license_key': license_key},
+        headers={
+            'Date': date_header,
+            'Authorization': auth_header,
+            'Content-Type': 'application/json'
+        }
+    )
+    return response.json()
+
+
+print(authentication())
