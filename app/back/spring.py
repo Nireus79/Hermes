@@ -3,22 +3,17 @@ import hashlib
 import hmac
 import time
 from wsgiref.handlers import format_date_time
-
 import subprocess
-
 import requests
 
 API_URL = 'https://api.licensespring.com'
-activation_URL = 'https://api.licensespring.com/api/v4/activate_license'
 
 hardware_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 # Can be found in `Account Settings` -> `Settings` -> `Keys`
-
 # TODO store credentials
+product_short_code = 'h1'
 shared_key = 'REDACTED'
 uuid = 'REDACTED'
-
-product_short_code = 'h1'
 license_key = 'REDACTED'
 
 
@@ -40,7 +35,19 @@ auth_header = ','.join([
     'apiKey="%s"' % uuid
 ])
 
+
 # Send request
+def licence_activation():
+    response = requests.post(
+        url='{}{}'.format(API_URL, 'api/v4/activate_license'),
+        params={'product': product_short_code, 'hardware_id': hardware_id, 'license_key': license_key},
+        headers={
+            'Date': date_header,
+            'Authorization': auth_header,
+            'Content-Type': 'application/json'
+        }
+    )
+    return response.json()
 
 
 def authentication():
@@ -56,4 +63,4 @@ def authentication():
     return response.json()
 
 
-print(authentication())
+# print(licence_activation())
