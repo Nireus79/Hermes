@@ -186,7 +186,7 @@ def order_manager(order_type, high_front, mid_front,
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
     logs.append(log + '<br>')
-    log = 'Wait {}min.'.format(low.interval / time_divisor)
+    log = '{} Wait {}min.'.format(time_stamp(time.time()), low.interval / time_divisor)
     logging.info(log)
     logs.append(log + '<br>')
     time.sleep(low.candle / time_divisor)
