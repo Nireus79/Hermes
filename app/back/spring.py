@@ -7,7 +7,7 @@ shared_key = 'REDACTED'
 product = "h1"
 license_key = 'REDACTED'
 
-api_client = APIClient(api_key="_your_api_key_", shared_key="_your_shared_key_")
+api_client = APIClient(api_key=api_key, shared_key=shared_key)
 
 # Activate key based license
 activate_key = api_client.activate_license(product=product, license_key=license_key)
