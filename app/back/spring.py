@@ -1,3 +1,12 @@
+from licensespring.api import APIClient
+
+api_client = APIClient(api_key="_your_api_key_", shared_key="_your_shared_key_")
+
+
+
+
+
+
 import base64
 import hashlib
 import hmac
