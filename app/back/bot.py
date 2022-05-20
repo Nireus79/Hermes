@@ -573,7 +573,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
         mid_frame_15m, pillow, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame, \
         runningLowFrame, high_ema13, high_ema30, high_macd, mid_d, mid_ds, mid_rs, mid_p_atr
-    # TODO activate licence
+    # TODO activate licence check
     licence = True  # check()['license_active']
     if licence:
         log = 'Your product licence is active. Thank you for using Hermes.'
