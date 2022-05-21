@@ -1,15 +1,12 @@
+import os
 from licensespring.api import APIClient
 
 # https://docs.licensespring.com/docs/apiclient-usage-examples
-
-# TODO store credentials
-api_key = 'REDACTED'
-shared_key = 'REDACTED'
-
+spring_api_key = os.environ['spring_api_key']
+spring_shared_key = os.environ['spring_license_key']
+spring_license_key = os.environ['spring_shared_key']
 product = "h1"
-license_key = 'REDACTED'
-
-api_client = APIClient(api_key=api_key, shared_key=shared_key)
+api_client = APIClient(api_key=spring_api_key, shared_key=spring_shared_key)
 
 
 # Activate key based license
@@ -45,7 +42,7 @@ def activation():
     # 'product_name': 'Hermes',
     # 'short_code': 'h1',
     # 'authorization_method': 'license-key'}}
-    activate_key = api_client.activate_license(product=product, license_key=license_key)
+    activate_key = api_client.activate_license(product=product, license_key=spring_license_key)
     return activate_key
 
 
@@ -65,7 +62,7 @@ def check():
     # '', 'license_signature':
     # 'REDACTED
     # REDACTED'}
-    check_key = api_client.check_license(product=product, license_key=license_key)
+    check_key = api_client.check_license(product=product, license_key=spring_license_key)
     return check_key
 
 
