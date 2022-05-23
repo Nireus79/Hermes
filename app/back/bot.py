@@ -181,9 +181,6 @@ def order_manager(order_type, high_front, mid_front,
     stop = low_f['low'] - atr
     pillow = middle_f['low'] - m_atr
     closing_price = low_f['close']
-    vol = volume(crypto_currency, fiat_currency)
-    crypto_balance = float(vol[crypto_currency])
-    fiat_balance = float(vol[fiat_currency])
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
     logs.append(log + '<br>')
@@ -585,10 +582,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         logs.append(log + '<br>')
         if mode == 'simulator':
             condition = 'buy'
-        elif mode == 'consulting' or mode == 'trading':
-            vol = volume(crypto_currency, fiat_currency)
-            crypto_balance = float(vol[crypto_currency])
-            fiat_balance = float(vol[fiat_currency])
         i24h_frame = Api(crypto_currency, fiat_currency, 1440, depth)
         i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
         i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
@@ -611,6 +604,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 break
             if mode == 'consulting' or mode == 'trading':
                 condition = get_condition(crypto_currency, fiat_currency, closing_price)
+                vol = volume(crypto_currency, fiat_currency)
+                crypto_balance = float(vol[crypto_currency])
+                fiat_balance = float(vol[fiat_currency])
             log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
             logging.info(log)
             logs.append(log + '<br>')
