@@ -167,7 +167,8 @@ def order_manager(order_type, high_front, mid_front,
     Then when setting buy order, price must be set on 0.
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, \
-        high_chart_data, high_ema13, high_ema30, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr
+        high_chart_data, high_ema13, high_ema30, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr,\
+        crypto_balance, fiat_balance
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -180,6 +181,9 @@ def order_manager(order_type, high_front, mid_front,
     stop = low_f['low'] - atr
     pillow = middle_f['low'] - m_atr
     closing_price = low_f['close']
+    vol = volume(crypto_currency, fiat_currency)
+    crypto_balance = float(vol[crypto_currency])
+    fiat_balance = float(vol[fiat_currency])
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
     logs.append(log + '<br>')
