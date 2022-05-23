@@ -164,7 +164,8 @@ def order_manager(order_type, high_front, mid_front,
 
     WARNING!!!
     When setting market order, volume must be set on the amount of the first asset.
-    Then when setting buy order, price must be set on 0.
+    When setting buy order, vol = (money - money * max kraken fee) / crypto price
+    When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, \
         high_chart_data, high_ema13, high_ema30, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr,\
