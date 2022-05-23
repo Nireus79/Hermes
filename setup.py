@@ -1,21 +1,27 @@
 from cx_Freeze import setup, Executable
 
-build_exe_options = {
-    'packages': ['static', 'templates', 'js', 'styles'],
-    'include_files': ['main.css', 'financial.js', 'hermes_logo.png', 'hw.ico']
-}
+include_files = ['Hermes/files/templates/', 'Hermes/files/static/']
 
-target = Executable(
-    script='run.py',
-    base='Win32GUI',
-    icon='hw.ico'
-)
+include = ['jinja2', 'jinja2.ext', ]
 
+target = Executable(script="run.py",
+                    base="Win32GUI",
+                    targetName="Hermes",
+                    icon="hw.ico"
+                    )
 setup(
-    name='Hermes',
-    version='0.1',
-    description='Crypto trading bot',
-    author='Themis Angelopoulos',
-    options={'build.exe': build_exe_options},
-    executables=[target]
+    name="Hermes",
+    version="0.1",
+    author="Themis Angelopoulos",
+    description="Forex trading bot",
+    options={
+        'build_exe': {
+            'include_files': include_files,
+            'includes': include,
+            'build_exe': "build"
+        }
+    },
+    executables=[target],  # requires=['flask']
 )
+
+#  https://gist.github.com/jorgegarciadev/a68714ef51ddeb1cdcf4
