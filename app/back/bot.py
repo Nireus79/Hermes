@@ -3,7 +3,7 @@ import time
 import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
-    volume, add_order, cancel_order, get_condition, high_data, mid_data
+    add_order, cancel_order, get_condition, high_data, mid_data
 from app.back.spring import check
 
 logging.basicConfig(level=logging.INFO)
@@ -603,10 +603,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 logs.append(log + '<br>')
                 break
             if mode == 'consulting' or mode == 'trading':
-                condition = get_condition(crypto_currency, fiat_currency, closing_price)
-                vol = volume(crypto_currency, fiat_currency)
-                crypto_balance = float(vol[crypto_currency])
-                fiat_balance = float(vol[fiat_currency])
+                condition, crypto_currency, fiat_currency = get_condition(crypto_currency, fiat_currency, closing_price)
             log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
             logging.info(log)
             logs.append(log + '<br>')
