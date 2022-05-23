@@ -217,7 +217,8 @@ def order_manager(order_type, high_front, mid_front,
         elif cond == 'buy':
             if buy_flag:
                 if closing_price > limit:
-                    asset_vol = (fiat_balance / closing_price) * 0.974  # kraken max trading fee: 0.0026 * asset_vol
+                    asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
+                    # kraken max trading fee: 0.0026 * asset_vol
                     log = 'Setting {} order to {} {} {} using {} {}.' \
                         .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
                     logging.info(log)
