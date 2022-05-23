@@ -603,7 +603,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 logs.append(log + '<br>')
                 break
             if mode == 'consulting' or mode == 'trading':
-                condition, crypto_currency, fiat_currency = get_condition(crypto_currency, fiat_currency, closing_price)
+                condition, crypto_balance, fiat_balance = get_condition(crypto_currency, fiat_currency, closing_price)
             log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
             logging.info(log)
             logs.append(log + '<br>')
