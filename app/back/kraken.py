@@ -50,12 +50,13 @@ def get_condition(crypto_currency, fiat_currency, closing_price):
     """
     fiat_currency = 'Z' + fiat_currency
     balance = get_private_balance()
-    crypto_value = float(balance['result'][crypto_currency]) * closing_price
+    crypto_balance = float(balance['result'][crypto_currency])
+    crypto_value = crypto_balance * closing_price
     fiat = float(balance['result'][fiat_currency])
     if crypto_value < fiat:
-        return 'buy', crypto_value, fiat
+        return 'buy', crypto_balance, fiat
     elif crypto_value >= fiat:
-        return 'sell', crypto_value, fiat
+        return 'sell', crypto_balance, fiat
 
 
 def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
