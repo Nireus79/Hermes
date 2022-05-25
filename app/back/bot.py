@@ -224,10 +224,8 @@ def order_manager(order_type, high_front, mid_front,
                         .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
                     logging.info(log)
                     tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
-                    trades.append(tx)
                     log = tx
                     logging.info(log)
-                    logging.info('')
                     pillow = middle_f['low'] - m_atr
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
@@ -270,10 +268,8 @@ def order_manager(order_type, high_front, mid_front,
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
                     tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
-                    trades.append(tx)
                     log = tx
                     logging.info(log)
-                    logging.info('')
                     beeper(cond)
                     log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
