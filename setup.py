@@ -102,7 +102,10 @@ packages = ['absl-py',
             'zope.event',
             'zope.interface']
 
-include_files = []  # packages tried in files before
+include_files = ['app\static\js\\financial.js', 'app\static\js\hermes_logo.js', 'app\static\js\hw.ico',
+                 'app\static\js\chart_setup.js', 'app\static\js\update_history.js', 'app\static\js\update_overview.js',
+                 'app\static\styles\main.css', 'app\\templates\\base.html', 'app\\templates\control.html',
+                 'app\\templates\doc.html', 'app\\templates\history.html', 'app\\templates\overview.html']
 
 include = []
 
@@ -125,5 +128,3 @@ setup(
     },
     executables=[target],
 )
-
-#  https://gist.github.com/jorgegarciadev/a68714ef51ddeb1cdcf4
