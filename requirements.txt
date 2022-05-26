@@ -26,7 +26,7 @@ gen-exe==0.2.1
 gevent==21.12.0
 gevent-websocket==0.10.1
 google-auth==2.6.6
-google-auth-oauthlib==0.5.1
+google-auth-oauthlib==0.4.1
 greenlet==1.1.2
 grpcio==1.46.3
 idna==3.3
