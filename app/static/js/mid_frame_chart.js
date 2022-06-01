@@ -1,15 +1,29 @@
 var options = {
-          series: [{
-          name: 'line',
-          type: 'line',
-          data: []
-        }, {
-          name: 'candle',
+          series: [
+          {
+          name: 'Middle candlestick',
           type: 'candlestick',
           data: []
-        }],
+        },{
+          name: 'Stock%D',
+          type: 'line',
+          data: []
+        },{
+          name: 'Stock%DS',
+          type: 'line',
+          data: []
+        },{
+          name: 'RSI',
+          type: 'line',
+          data: []
+        },{
+          name: '%ATR',
+          type: 'line',
+          data: []
+        },
+        ],
           chart: {
-          height: 300,
+          height: 250,
           type: 'line',
         },
         title: {

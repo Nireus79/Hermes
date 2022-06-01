@@ -26,16 +26,7 @@ function update_values() {
                 $('#limit').text('Buy limit: '+data.limit);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
-                ema13 = JSON.parse(data.high_ema13)
-                $('#high_ema13').text('EMA13: '+data.high_ema13);
-                $('#high_ema30').text('EMA30: '+data.high_ema30);
-                $('#high_macd').text('MACD: '+data.high_macd);
-                $('#mid_d').text('Stochastic %D: '+data.mid_d);
-                $('#mid_ds').text('Stochastic %DS: '+data.mid_ds);
-                $('#mid_rs').text('RSI: '+data.mid_rs);
-                $('#mid_tr').text('%ATR: '+data.mid_p_atr);
-                $('#running_high').text('High frame: '+data.runningHighFrame);
-                $('#running_mid').text('Middle frame: '+data.runningMidFrame);
+
 //                console.log(data)
         });
 };

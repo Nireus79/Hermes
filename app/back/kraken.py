@@ -169,41 +169,6 @@ def low_frame_indicators(ldf):
 
 def high_data(frame):
     """
-    FOR USE IN CHARTJS
-    Takes a pandas dataframe and creates a json with
-    the needed values for the ChartJS candle charts.
-    Axis X values are all multiplied by 1000.
-    JavaScript Date object however uses milliseconds since 1 January 1970 UTC.
-    Therefore, you should multiply your timestamps by 1000 prior to assign the data to the chart configuration.
-    :param frame: The modified pandas dataframe from high_frame_indicators.
-    :return: json and last running indicators to be displayed.
-    """
-    front_df = frame.copy()
-    ema13 = front_df.iloc[-1]['EMA13']
-    ema30 = front_df.iloc[-1]['EMA30']
-    macd = front_df.iloc[-1]['macd']
-    front_df['x'] = front_df['time'].apply(lambda x: x * 1000)
-    del front_df['time']
-    front_df['o'] = front_df['open']
-    del front_df['open']
-    front_df['h'] = front_df['high']
-    del front_df['high']
-    front_df['l'] = front_df['low']
-    del front_df['low']
-    front_df['c'] = front_df['close']
-    del front_df['close']
-    del front_df['vwap']
-    del front_df['volume']
-    del front_df['count']
-    del front_df['EMA13']
-    del front_df['EMA30']
-    del front_df['macd']
-    del front_df['trend']
-    return front_df.to_json(orient='records'), ema13, ema30, macd
-
-
-def high(frame):
-    """
         FOR USE IN APEXCHARTS
         Takes a pandas dataframe and creates a tuple of lists with
         the needed values for the apexcharts candle charts.
@@ -212,7 +177,7 @@ def high(frame):
         Therefore, you should multiply your timestamps by 1000 prior to assign the data to the chart configuration.
         :param frame: The modified pandas dataframe from high_frame_indicators.
         :return: json and last running indicators to be displayed.
-        """
+    """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
     front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
@@ -246,39 +211,7 @@ def high(frame):
 
 def mid_data(frame):
     """
-    Same as above (high_data) FOR USE IN CHARTJS
-    """
-    front_df = frame.copy()
-    d = front_df.iloc[-1]['%D']
-    ds = front_df.iloc[-1]['%DS']
-    rs = front_df.iloc[-1]['rsi']
-    percent_atr = front_df.iloc[-1]['%atr']
-    front_df['x'] = front_df['time'].apply(lambda x: x * 1000)
-    del front_df['time']
-    front_df['o'] = front_df['open']
-    del front_df['open']
-    front_df['h'] = front_df['high']
-    del front_df['high']
-    front_df['l'] = front_df['low']
-    del front_df['low']
-    front_df['c'] = front_df['close']
-    del front_df['close']
-    del front_df['vwap']
-    del front_df['volume']
-    del front_df['count']
-    del front_df['%K']
-    del front_df['%D']
-    del front_df['%DS']
-    del front_df['rsi']
-    del front_df['%atr']
-    del front_df['buy flag']
-    del front_df['sell flag']
-    return front_df.to_json(orient='records'), d, ds, rs, percent_atr
-
-
-def mid(frame):
-    """
-        Same as above (high_data) FOR USE IN APEXCHARTS
+    Same as above (high) FOR USE IN APEXCHARTS
     """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
