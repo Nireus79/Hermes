@@ -34,6 +34,8 @@ function update_values() {
                 $('#mid_ds').text('Stochastic %DS: '+data.mid_ds);
                 $('#mid_rs').text('RSI: '+data.mid_rs);
                 $('#mid_tr').text('%ATR: '+data.mid_p_atr);
+                $('#running_high').text('High frame: '+data.runningHighFrame);
+                $('#running_mid').text('Middle frame: '+data.runningMidFrame);
 //                console.log(data)
         });
 };

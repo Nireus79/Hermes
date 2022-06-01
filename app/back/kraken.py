@@ -169,6 +169,7 @@ def low_frame_indicators(ldf):
 
 def high_data(frame):
     """
+    FOR USE IN CHARTJS
     Takes a pandas dataframe and creates a json with
     the needed values for the ChartJS candle charts.
     Axis X values are all multiplied by 1000.
@@ -201,9 +202,51 @@ def high_data(frame):
     return front_df.to_json(orient='records'), ema13, ema30, macd
 
 
+def high(frame):
+    """
+        FOR USE IN APEXCHARTS
+        Takes a pandas dataframe and creates a tuple of lists with
+        the needed values for the apexcharts candle charts.
+        Axis X values are all multiplied by 1000.
+        JavaScript Date object however uses milliseconds since 1 January 1970 UTC.
+        Therefore, you should multiply your timestamps by 1000 prior to assign the data to the chart configuration.
+        :param frame: The modified pandas dataframe from high_frame_indicators.
+        :return: json and last running indicators to be displayed.
+        """
+    front_df = frame.copy()
+    front_df = front_df.fillna(0)
+    front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
+    data_list = front_df.values.tolist()
+    candle_data = []
+    ema13_data = []
+    ema30_data = []
+    macd_data = []
+    for i in data_list:
+        candle_data.append({
+            'x': i[0],
+            'y': [i[1], i[2], i[3], i[4]]
+        })
+    for i in data_list:
+        ema13_data.append({
+            'x': i[0],
+            'y': i[8]
+        })
+    for i in data_list:
+        ema30_data.append({
+            'x': i[0],
+            'y': i[9]
+        })
+    for i in data_list:
+        macd_data.append({
+            'x': i[0],
+            'y': i[10]
+        })
+    return candle_data, ema13_data, ema30_data, macd_data
+
+
 def mid_data(frame):
     """
-    Same as above (high_data)
+    Same as above (high_data) FOR USE IN CHARTJS
     """
     front_df = frame.copy()
     d = front_df.iloc[-1]['%D']
@@ -231,6 +274,47 @@ def mid_data(frame):
     del front_df['buy flag']
     del front_df['sell flag']
     return front_df.to_json(orient='records'), d, ds, rs, percent_atr
+
+
+def mid(frame):
+    """
+        Same as above (high_data) FOR USE IN APEXCHARTS
+    """
+    front_df = frame.copy()
+    front_df = front_df.fillna(0)
+    front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
+    data_list = front_df.values.tolist()
+    candle_data = []
+    stoch_d_data = []
+    stoch_ds_data = []
+    rsi_data = []
+    atr_data = []
+    for i in data_list:
+        candle_data.append({
+            'x': i[0],
+            'y': [i[1], i[2], i[3], i[4]]
+        })
+    for i in data_list:
+        stoch_d_data.append({
+            'x': i[0],
+            'y': i[9]
+        })
+    for i in data_list:
+        stoch_ds_data.append({
+            'x': i[0],
+            'y': i[10]
+        })
+    for i in data_list:
+        rsi_data.append({
+            'x': i[0],
+            'y': i[11]
+        })
+    for i in data_list:
+        atr_data.append({
+            'x': i[0],
+            'y': i[12]
+        })
+    return candle_data, stoch_d_data, stoch_ds_data, rsi_data, atr_data
 
 
 class Api:

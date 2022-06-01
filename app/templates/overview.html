@@ -1,42 +1,61 @@
 {% extends "base.html" %}
+{% block script %}
+<!--    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0"></script>-->
 
+<!--    chartjs-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.1/dist/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0"></script>
+    <script src="{{url_for('static', filename='financial.js')}}" ></script>
+
+{% endblock %}
 {% block title %}
     Hermes
 {% endblock %}
 
 {% block body %}
     <script type="text/javascript" src="{{url_for('static', filename='js/update_overview.js')}}"></script>
-        <span id="current_time"></span>
-        <span id="mode"></span>
-        <span id="volatility"></span>
-        <span id="rsi"></span>
-        <span id="evaluations"></span>
+    <span id="current_time"></span>
+    <span id="mode"></span>
+    <span id="volatility"></span>
+    <span id="rsi"></span>
+    <span id="evaluations"></span>
 
-        <span id="condition"></span>
-        <span id="fiat_currency"></span>
-        <span id="crypto_currency"></span>
-        <span>Balance:</span>
-        <span id="crypto_balance"></span>
-        <span id="fiat_balance"></span>
+    <span id="condition"></span>
+    <span id="fiat_currency"></span>
+    <span id="crypto_currency"></span>
+    <span>Balance:</span>
+    <span id="crypto_balance"></span>
+    <span id="fiat_balance"></span>
+    <br>
+
+<!--    <div id="high_frame_chart"></div>-->
+<!--    <script type="text/javascript" src="{{url_for('static', filename='js/high_frame_chart.js')}}"></script>-->
+<!--    <div id="mid_frame_chart"></div>-->
+<!--    <script type="text/javascript" src="{{url_for('static', filename='js/mid_frame_chart.js')}}"></script>-->
+<!--    chartjs-->
+    <div class="chartBox1" id="Charts">
+        <canvas id="HighFrameCandles" width="9" height="1"></canvas>
+        <span id="running_high"></span>
+        <span id="high_ema13"></span>
+        <span id="high_ema30"></span>
+        <span id="high_macd"></span>
         <br>
-        <div class="chartBox1" id="Charts">
-            <canvas id="HighFrameCandles" width="9" height="1"></canvas>
-            <span id="high_ema13"></span>
-            <span id="high_ema30"></span>
-            <span id="high_macd"></span>
-            <br>
-            <canvas id="MidFrameCandles" width="9" height="1"></canvas>
-            <span id="mid_d"></span>
-            <span id="mid_ds"></span>
-            <span id="mid_rs"></span>
-            <span id="mid_tr"></span>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.3.2/luxon.min.js" integrity="sha512-REDACTED" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.2"></script>
-            <script src="{{url_for('static', filename='financial.js')}}" ></script>
-            <script src="{{url_for('static', filename='js/chart_setup.js')}}"></script>
-        </div>
+        <canvas id="MidFrameCandles" width="9" height="1"></canvas>
+        <span id="running_mid"></span>
+        <span id="mid_d"></span>
+        <span id="mid_ds"></span>
+        <span id="mid_rs"></span>
+        <span id="mid_tr"></span>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.js" integrity="sha512-REDACTED" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.3.2/luxon.min.js" integrity="sha512-REDACTED" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.2"></script>
+        <script src="{{url_for('static', filename='financial.js')}}" ></script>
+        <script src="{{url_for('static', filename='js/chart_setup.js')}}"></script>
+    </div>
+    <div>
         <table border="1">
             <thead>
                 <tr>
@@ -99,19 +118,20 @@
                 </tr>
             </tbody>
         </table>
-        <br>
-        <span id="price"></span>
-        <br>
-        <span id="limit"></span>
-        <br>
-        <span id="stop"></span>
-        <br>
-        <span id="pillow"></span>
-        <br>
-        <br>
-        <span id="log"></span>
-        <br>
-        <br>
-        <a href='/stop'><input type='button' value='Stop bot'></a>
-        <a href='/cancel'><input type='button' value='Cancel active order'></a>
+    </div>
+
+    <span id="price"></span>
+    <br>
+    <span id="limit"></span>
+    <br>
+    <span id="stop"></span>
+    <br>
+    <span id="pillow"></span>
+    <br>
+    <br>
+    <span id="log"></span>
+    <br>
+    <br>
+    <a href='/stop'><input type='button' value='Stop bot'></a>
+    <a href='/cancel'><input type='button' value='Cancel active order'></a>
 {% endblock %}
