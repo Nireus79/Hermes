@@ -1,7 +1,7 @@
 var options = {
           series: [
           {
-          name: 'Middle candlestick',
+          name: 'candlestick',
           type: 'candlestick',
           data: []
         },{
@@ -23,7 +23,7 @@ var options = {
         },
         ],
           chart: {
-          height: 200,
+          height: 300,
           type: 'line',
         },
         title: {

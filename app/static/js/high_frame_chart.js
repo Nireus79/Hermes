@@ -1,7 +1,7 @@
 var options = {
           series: [
           {
-          name: 'High candlestick',
+          name: 'candlestick',
           type: 'candlestick',
           data: []
         },{
@@ -19,7 +19,7 @@ var options = {
         }
         ],
           chart: {
-          height: 200,
+          height: 300,
           type: 'line',
         },
         title: {
@@ -63,9 +63,15 @@ function update_values() {
 //           console.log(data_update.high_ema30)
 //           console.log(data_update.high_macd)
             high_frame_chart.updateSeries([{
+              name: 'candlestick',
               data: data_update.high_chart_data
-            }])
-
+            },{
+              name: 'EMA13:',
+              data: data_update.high_ema13
+            },{
+              name: 'EMA30:',
+              data: data_update.high_ema30
+            }]);
         }
     );
 };

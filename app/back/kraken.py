@@ -192,15 +192,17 @@ def high_data(frame):
             'y': [i[1], i[2], i[3], i[4]]
         })
     for i in data_list:
-        ema13_data.append({
-            'x': i[0],
-            'y': i[8]
-        })
+        if i[8] != 0:
+            ema13_data.append({
+                'x': i[0],
+                'y': round(i[8], 4)
+            })
     for i in data_list:
-        ema30_data.append({
-            'x': i[0],
-            'y': i[9]
-        })
+        if i[9] != 0:
+            ema30_data.append({
+                'x': i[0],
+                'y': round(i[9], 4)
+            })
     for i in data_list:
         macd_data.append({
             'x': i[0],
