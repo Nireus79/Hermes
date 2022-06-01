@@ -23,7 +23,7 @@ var options = {
         },
         ],
           chart: {
-          height: 250,
+          height: 200,
           type: 'line',
         },
         title: {
@@ -54,3 +54,15 @@ var options = {
 
 var mid_frame_chart = new ApexCharts(document.querySelector("#mid_frame_chart"), options);
 mid_frame_chart.render();
+
+var intervalID = setInterval(update_values, 1000);
+
+function update_values() {
+    $.getJSON($SCRIPT_ROOT + '/update',
+        function(data_update) {
+            mid_frame_chart.updateSeries([{
+              data: data_update.mid_chart_data
+            }])
+        }
+    );
+};
