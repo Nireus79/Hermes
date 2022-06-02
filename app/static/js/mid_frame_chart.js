@@ -3,27 +3,35 @@ var options = {
           {
           name: 'candlestick',
           type: 'candlestick',
-          data: []
-        },{
-          name: 'Stock%D',
-          type: 'line',
-          data: []
-        },{
-          name: 'Stock%DS',
-          type: 'line',
-          data: []
-        },{
-          name: 'RSI',
-          type: 'line',
-          data: []
-        },{
-          name: '%ATR',
-          type: 'line',
-          data: []
-        },
+          data: []}
+//        },{
+//          name: 'Stock%D',
+//          type: 'line',
+//          data: []
+//        },{
+//          name: 'Stock%DS',
+//          type: 'line',
+//          data: []
+//        },{
+//          name: 'RSI',
+//          type: 'line',
+//          data: []
+//        },{
+//          name: '%ATR',
+//          type: 'line',
+//          data: []
+//        }
         ],
+//        yaxis: [
+//          {
+//            seriesName: 'TEAM A'
+//          },
+//          {
+//            seriesName: 'TEAM B'
+//          }
+//        ],
           chart: {
-          height: 300,
+          height: 250,
           type: 'line',
         },
         title: {
@@ -61,8 +69,22 @@ function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
             mid_frame_chart.updateSeries([{
-              data: data_update.mid_chart_data
-            }])
+              name: 'Mid frame: ' + data_update.runningMidFrame,
+              data: data_update.mid_chart_data}
+//            },{
+//              name: 'Stoch %D: ',
+//              data: data_update.mid_d
+//            },{
+//              name: 'Stoch %DS: ',
+//              data: data_update.mid_ds
+//            },{
+//              name: 'RSI: ',
+//              data: data_update.mid_rs
+//            },{
+//              name: '%ATR: ',
+//              data: data_update.mid_p_atr
+//            }
+            ])
         }
     );
 };

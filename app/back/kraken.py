@@ -206,7 +206,7 @@ def high_data(frame):
     for i in data_list:
         macd_data.append({
             'x': i[0],
-            'y': i[10]
+            'y': round(i[10], 4)
         })
     return candle_data, ema13_data, ema30_data, macd_data
 
@@ -230,25 +230,29 @@ def mid_data(frame):
             'y': [i[1], i[2], i[3], i[4]]
         })
     for i in data_list:
-        stoch_d_data.append({
-            'x': i[0],
-            'y': i[9]
-        })
+        if i[9] != 0:
+            stoch_d_data.append({
+                'x': i[0],
+                'y': round(i[9], 4)
+            })
     for i in data_list:
-        stoch_ds_data.append({
-            'x': i[0],
-            'y': i[10]
-        })
+        if i[10] != 0:
+            stoch_ds_data.append({
+                'x': i[0],
+                'y': round(i[10], 4)
+            })
     for i in data_list:
-        rsi_data.append({
-            'x': i[0],
-            'y': i[11]
-        })
+        if i[11] != 0:
+            rsi_data.append({
+                'x': i[0],
+                'y': round(i[11], 4)
+            })
     for i in data_list:
-        atr_data.append({
-            'x': i[0],
-            'y': i[12]
-        })
+        if i[12] != 0:
+            atr_data.append({
+                'x': i[0],
+                'y': round(i[12], 4)
+            })
     return candle_data, stoch_d_data, stoch_ds_data, rsi_data, atr_data
 
 

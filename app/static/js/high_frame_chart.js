@@ -1,7 +1,7 @@
 var options = {
           series: [
           {
-          name: 'candlestick',
+          name: 'High frame',
           type: 'candlestick',
           data: []
         },{
@@ -12,14 +12,29 @@ var options = {
           name: 'EMA30',
           type: 'line',
           data: []
-        },{
-          name: 'MACD',
-          type: 'line',
-          data: []
-        }
+          }
+//        },{
+//          name: 'MACD',
+//          type: 'bar',
+//          data: []
+//        }
         ],
+//      yaxis: [
+//        {
+//          seriesName: 'High frame'
+//        },
+//        {
+//          seriesName: 'High frame'
+//        },
+//        {
+//          seriesName: 'High frame'
+//        },
+//        {
+//          seriesName: 'MACD'
+//        }
+//      ],
           chart: {
-          height: 300,
+          height: 250,
           type: 'line',
         },
         title: {
@@ -57,21 +72,20 @@ var intervalID = setInterval(update_values, 1000);
 function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
-
-//           console.log(data_update.high_chart_data)
-//           console.log(data_update.high_ema13)
-//           console.log(data_update.high_ema30)
-//           console.log(data_update.high_macd)
             high_frame_chart.updateSeries([{
-              name: 'candlestick',
+              name: 'High frame: ' + data_update.runningHighFrame,
               data: data_update.high_chart_data
             },{
-              name: 'EMA13:',
+              name: 'EMA13: ',
               data: data_update.high_ema13
             },{
-              name: 'EMA30:',
-              data: data_update.high_ema30
-            }]);
+              name: 'EMA30: ',
+              data: data_update.high_ema30}
+//            },{
+//              name: 'MACD: ',
+//              data: data_update.high_macd
+//            }
+            ]);
         }
     );
 };
