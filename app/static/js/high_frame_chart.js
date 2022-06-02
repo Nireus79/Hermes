@@ -14,7 +14,7 @@ var options = {
           data: []
           }
         ],
-          chart: {
+        chart: {
           height: 250,
           type: 'line',
         },
@@ -42,7 +42,7 @@ var options = {
         xaxis: {
           type: 'datetime'
         }
-        };
+     };
 
 var high_frame_chart = new ApexCharts(document.querySelector("#high_frame_chart"), options);
 
