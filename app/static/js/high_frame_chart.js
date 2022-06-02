@@ -13,26 +13,7 @@ var options = {
           type: 'line',
           data: []
           }
-//        },{
-//          name: 'MACD',
-//          type: 'bar',
-//          data: []
-//        }
         ],
-//      yaxis: [
-//        {
-//          seriesName: 'High frame'
-//        },
-//        {
-//          seriesName: 'High frame'
-//        },
-//        {
-//          seriesName: 'High frame'
-//        },
-//        {
-//          seriesName: 'MACD'
-//        }
-//      ],
           chart: {
           height: 250,
           type: 'line',
@@ -80,11 +61,8 @@ function update_values() {
               data: data_update.high_ema13
             },{
               name: 'EMA30: ',
-              data: data_update.high_ema30}
-//            },{
-//              name: 'MACD: ',
-//              data: data_update.high_macd
-//            }
+              data: data_update.high_ema30
+              }
             ]);
         }
     );
