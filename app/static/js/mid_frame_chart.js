@@ -7,11 +7,11 @@ var options = {
           }
           ],
           chart: {
-          height: 250,
+          height: 230,
           type: 'line',
         },
         title: {
-          text: 'Middle frame',
+          text: 'Momentum frame',
           align: 'left'
         },
         stroke: {

@@ -1,25 +1,51 @@
 var options = {
           series: [
           {
-          name: 'High frame',
+          name: 'Trend frame: ',
           type: 'candlestick',
           data: []
         },{
-          name: 'EMA13',
+          name: 'EMA13: ',
           type: 'line',
           data: []
         },{
-          name: 'EMA30',
+          name: 'EMA30: ',
+          type: 'line',
+          data: []
+          },{
+          name: 'MACD: ',
           type: 'line',
           data: []
           }
         ],
+        yaxis: [{
+            seriesName: 'Trend frame: ',
+            show: true,
+            title: {
+                text: 'Price'
+            }
+        },{
+            seriesName: 'EMA13: ',
+            show: false
+        },{
+            seriesName: 'EMA30: ',
+            show: false
+        },{
+            seriesName: 'MACD: ',
+            opposite: true,
+            show: true,
+            title: {
+                text: 'macd'
+            }
+        }
+        ],
         chart: {
-          height: 250,
+          height: 230,
           type: 'line',
+          stacked: false
         },
         title: {
-          text: 'High frame',
+          text: 'Trend frame',
           align: 'left'
         },
         stroke: {
@@ -54,14 +80,17 @@ function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
             high_frame_chart.updateSeries([{
-              name: 'High frame: ' + data_update.runningHighFrame,
+              name: 'Trend frame: ' + data_update.runningHighFrame,
               data: data_update.high_chart_data
             },{
-              name: 'EMA13: ',
+              name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
               data: data_update.high_ema13
             },{
-              name: 'EMA30: ',
+              name: 'EMA30: ' + data_update.high_ema30[data_update.high_ema30.length - 1]['y'],
               data: data_update.high_ema30
+              },{
+              name: 'MACD: ' + data_update.high_macd[data_update.high_macd.length - 1]['y'],
+              data: data_update.high_macd
               }
             ]);
         }
