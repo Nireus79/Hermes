@@ -1,8 +1,25 @@
 var options = {
           series: [
           {
-          name: 'candlestick',
+          name: 'Momentum frame: ',
           type: 'candlestick',
+          data: []
+          },
+          {
+          name: 'Stochastic %D: ',
+          type: 'line',
+          data: []
+          },{
+          name: 'Stochastic %DS: ',
+          type: 'line',
+          data: []
+          },{
+          name: 'RSI: ',
+          type: 'line',
+          data: []
+          },{
+          name: '%ATR: ',
+          type: 'line',
           data: []
           }
           ],
@@ -45,8 +62,20 @@ function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
             mid_frame_chart.updateSeries([{
-              name: 'Mid frame: ' + data_update.runningMidFrame,
+              name: 'Momentum frame: ' + data_update.runningMidFrame,
               data: data_update.mid_chart_data
+              },{
+              name: 'Stochastic %D: ' + data_update.mid_d[data_update.mid_d.length - 1]['y']
+
+              },{
+              name: 'Stochastic %DS: ' + data_update.mid_ds[data_update.mid_ds.length - 1]['y']
+
+              },{
+              name: 'RSI: ' + data_update.mid_rs[data_update.mid_rs.length - 1]['y']
+
+              },{
+              name: '%ATR: ' + data_update.mid_p_atr[data_update.mid_p_atr.length - 1]['y']
+
               }
             ])
         }
