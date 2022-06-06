@@ -249,10 +249,10 @@ def mid_data(frame):
                 'y': round(i[11], 4)
             })
     for i in data_list:
-        if i[12] != 0:
+        if i[13] != 0:
             atr_data.append({
                 'x': i[0],
-                'y': round(i[12], 4)
+                'y': round(i[13], 4)
             })
     return candle_data, stoch_d_data, stoch_ds_data, rsi_data, atr_data
 

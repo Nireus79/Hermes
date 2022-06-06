@@ -66,16 +66,12 @@ function update_values() {
               data: data_update.mid_chart_data
               },{
               name: 'Stochastic %D: ' + data_update.mid_d[data_update.mid_d.length - 1]['y']
-
               },{
               name: 'Stochastic %DS: ' + data_update.mid_ds[data_update.mid_ds.length - 1]['y']
-
               },{
               name: 'RSI: ' + data_update.mid_rs[data_update.mid_rs.length - 1]['y']
-
               },{
               name: '%ATR: ' + data_update.mid_p_atr[data_update.mid_p_atr.length - 1]['y']
-
               }
             ])
         }
