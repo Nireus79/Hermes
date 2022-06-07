@@ -982,6 +982,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
 
 
 def data_feed():
+    if len(logs) > 300:
+        del logs[0]
     return {
         'log': log,
         'logs': logs,
