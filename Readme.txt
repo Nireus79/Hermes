@@ -12,9 +12,9 @@ Combination 1: High 24hours - mid 4 hours - low 1 hour.
 Combination 2: High 4 hours - mid 1 hour - low 15 min.
 Combination 3: High 1 hour - mid 15 min - low 5 min.
 Evaluation phases
-1) Trend. The long-term trend is evaluated. – Alex Elder calls this as being the tide, and it's evaluation gives the general trend direction.
-2) Correction. The medium-term trend is evaluated. – This trend is also known as the wave, gives the trend momentum strength and position.
-3) Specification. - The short-term trend – It is also referred to as the ripple used to set limits of buy and stop loss. Exact entry point is corrected by closely monitoring price movement.
+1) Trend. The long-term trend is evaluated. ï¿½ Alex Elder calls this as being the tide, and it's evaluation gives the general trend direction.
+2) Correction. The medium-term trend is evaluated. ï¿½ This trend is also known as the wave, gives the trend momentum strength and position.
+3) Specification. - The short-term trend ï¿½ It is also referred to as the ripple used to set limits of buy and stop loss. Exact entry point is corrected by closely monitoring price movement.
 High frame.
 General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc. According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback, entering the bullish zone.
 In our case a preset combination of 13p EMA, 30p EMA and macd indicators is used to determine the high frame trend.
@@ -22,12 +22,12 @@ Mid frame.
 Trend momentum and position is detected with the use of stochastic slow indicator. Stochastic fast can be used for quicker response but in this case more force signals are generated. Stochastic slow is used as it is a 'smothered' version of stoch fast. An additional indicator of strength is added (RSI) as choice for safety reasons, as when current price strength is above safety, price is actually 'overbought' and probability of descent is high. An extra condition of %ATR is given as choice, to avoid false buy flags in price consolidation instances. ATR of middle frame is also subtracted by lowest low of last mid-candle, to be used as pillow and avoid false pillow alarm.
 Low frame.
 When conditions are aligned in the higher frames action limits are set, according to the last low frame closed candle range. Next time fragment of candle price gives action flag or sets new limits. Low frame current candle ATR is added to the limit and subtracted to stop-loss, so current volatility of the price is taken into consideration to avoid false transactions. Reevaluation of limits can be taken after a full low frame candle period or this period can be half, one fourth or one sixth of that time by user's choice.
-Wiki/Elder, elder.com, tradingstrategyguides.com, www.elearnmarkets.com
+Wiki/Elder, elder.com
 Instructions.
 Setting up your credentials:
 (This process needs to be done only once.)
-1) Go to kraken.com and log in or create a new account.
-2) Then proceed to support: How to generate an API key pair
+1) Go to kraken.com and log in or create a new account.
+2) Then proceed to support: How to generate an API key pair
 and follow instructions to create your personal API key and Secret Key.
 These are essential for your app operation. The app will use them access your account.
 3) Carefully save your Api Key and secret. If you loose them you will have to generate new.
