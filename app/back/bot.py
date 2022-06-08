@@ -52,8 +52,6 @@ mid_ds = None
 mid_rs = None
 mid_p_atr = None
 
-feed = None
-
 break_event = threading.Event()
 
 
