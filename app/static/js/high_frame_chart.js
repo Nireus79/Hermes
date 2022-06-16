@@ -18,27 +18,6 @@ var options = {
           data: []
           }
         ],
-//        yaxis: [{
-//            seriesName: 'Trend frame: ',
-//            show: true,
-//            title: {
-//                text: 'Price'
-//            }
-//        },{
-//            seriesName: 'EMA13: ',
-//            show: false
-//        },{
-//            seriesName: 'EMA30: ',
-//            show: false
-//        },{
-//            seriesName: 'MACD: ',
-//            opposite: true,
-//            show: true,
-//            title: {
-//                text: 'macd'
-//            }
-//        }
-//        ],
         chart: {
           height: 230,
           type: 'line',
@@ -90,7 +69,6 @@ function update_values() {
               data: data_update.high_ema30
               },{
               name: 'MACD: ' + data_update.high_macd[data_update.high_macd.length - 1]['y'],
-//              data: data_update.high_macd
               }
             ]);
         }
