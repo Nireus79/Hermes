@@ -122,7 +122,7 @@ def time_stamp(unix):
 def high_frame_indicators(hdf):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
-    adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, macd),
+    adding columns to each row with the technical indicators of ohlc (EMA13, EMA30),
     using the "ta" library.
     Then after comparing the indicators of the last df row, is adding columns with triggers and buy/sell flags.
     : param hdf: raw api dataframe
@@ -131,7 +131,7 @@ def high_frame_indicators(hdf):
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['EMA30'] = hdf['close'].rolling(30).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
-    hdf['trend'] = hdf.apply(lambda x: (x['EMA13'] > x['EMA30']) and x['macd'] > 0, axis=1)
+    hdf['trend'] = hdf.apply(lambda x: (x['EMA13'] > x['close']) and x['macd'] > 0, axis=1)
     return hdf
 
 
