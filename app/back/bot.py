@@ -492,7 +492,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc.
     According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback,
     entering the bullish zone.
-    In our case a preset combination of 13p EMA, 30p EMA and macd indicators is used to determine the high frame trend.
+    In our case a preset combination of 13p EMA and macd indicators is used to determine the high frame trend.
     Mid-frame.
     Trend momentum and position is detected with the use of stochastic slow indicator. Stochastic fast can be used for
     quicker response but in this case more force signals are generated. Stochastic slow is used as it is a 'smothered'

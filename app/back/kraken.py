@@ -122,14 +122,13 @@ def time_stamp(unix):
 def high_frame_indicators(hdf):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
-    adding columns to each row with the technical indicators of ohlc (EMA13, EMA30),
+    adding columns to each row with the technical indicators of ohlc (EMA13, macd),
     using the "ta" library.
     Then after comparing the indicators of the last df row, is adding columns with triggers and buy/sell flags.
     : param hdf: raw api dataframe
     :return: hdf enriched with technical indicators and flags
     """
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
-    # hdf['EMA30'] = hdf['close'].rolling(30).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
     hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['macd'] > 0, axis=1)
     return hdf
@@ -138,7 +137,7 @@ def high_frame_indicators(hdf):
 def mid_frame_indicators(mdf, max_rsi, min_vol):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
-    adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, macd),
+    adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, rsi, %atr),
     using the "ta" library.
     : param mdf: raw api dataframe
     :return: mdf enriched with technical indicators and flags
@@ -184,7 +183,6 @@ def high_data(frame):
     data_list = front_df.values.tolist()
     candle_data = []
     ema13_data = []
-    # ema30_data = []
     macd_data = []
     for i in data_list:
         candle_data.append({
@@ -197,12 +195,6 @@ def high_data(frame):
                 'x': i[0],
                 'y': round(i[8], 4)
             })
-    # for i in data_list:
-    #     if i[9] != 0:
-    #         ema30_data.append({
-    #             'x': i[0],
-    #             'y': round(i[9], 4)
-    #         })
     for i in data_list:
         if i[10] != 0:
             macd_data.append({
