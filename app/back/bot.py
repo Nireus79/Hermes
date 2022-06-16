@@ -45,7 +45,6 @@ high_chart_data = None
 mid_chart_data = None
 # low_chart_data = None
 high_ema13 = None
-high_ema30 = None
 high_macd = None
 mid_d = None
 mid_ds = None
@@ -1004,7 +1003,6 @@ def data_feed():
         'high_chart_data': high_chart_data,
         'mid_chart_data': mid_chart_data,
         'high_ema13': high_ema13,
-        'high_ema30': high_ema30,
         'high_macd': high_macd,
         'mid_d': mid_d,
         'mid_ds': mid_ds,
