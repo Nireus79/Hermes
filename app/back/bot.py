@@ -118,7 +118,7 @@ def order_manager(order_type, high_front, mid_front,
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
     order_manager is setting limit and stop loss levels.
-    Then starts monitoring periodically closing price in 1/10 time fragments of current running low time frame duration:
+    Then starts monitoring periodically closing price at current running low time frame duration:
 
         When intending to sell asset
             if closing price lower than set stop-loss level:
