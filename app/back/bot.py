@@ -894,10 +894,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                           time_divisor, max_rsi, min_vol)
                     elif sell_flag_4h is not True:
                         log = '{} 4hour momentum is not weak. Wait {} minutes.' \
-                            .format(time_stamp(time.time()), i4h_frame.interval)
+                            .format(time_stamp(time.time()), i4h_frame.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i4h_frame.candle)
+                        time.sleep(i4h_frame.candle / 12)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -921,10 +921,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             limit_manager(mode, high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame,
                                           condition, time_divisor, max_rsi, min_vol)
                     elif sell_flag_1h is not True:
-                        log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval)
+                        log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i1h_frame.candle)
+                        time.sleep(i1h_frame.candle / 12)
                 elif trend_1h:
                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                     logging.info(log)
@@ -950,10 +950,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                           time_divisor, max_rsi, min_vol)
                     elif sell_flag_15m is not True:
                         log = '{} 15min momentum not weak. Wait {} minutes.' \
-                            .format(time_stamp(time.time()), i15m_frame.interval)
+                            .format(time_stamp(time.time()), i15m_frame.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i15m_frame.candle)
+                        time.sleep(i15m_frame.candle / 12)
                 else:
                     log = '{} All high-frame trends are negative.' \
                         .format(time_stamp(time.time()))
