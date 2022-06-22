@@ -61,7 +61,7 @@ function update_values() {
               name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
               data: data_update.high_ema13
             },{
-              name: 'MACD: ' + data_update.high_macd[data_update.high_macd.length - 1]['y'],
+              name: 'MACD: ' + data_update.high_macd
               }
             ]);
         }

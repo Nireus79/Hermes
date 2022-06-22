@@ -183,7 +183,7 @@ def high_data(frame):
     data_list = front_df.values.tolist()
     candle_data = []
     ema13_data = []
-    macd_data = []
+    macd_data = round(data_list[-1][9], 4)
     for i in data_list:
         candle_data.append({
             'x': i[0],
@@ -195,11 +195,6 @@ def high_data(frame):
                 'x': i[0],
                 'y': round(i[8], 4)
             })
-    for i in data_list:
-        macd_data.append({
-            'x': i[0],
-            'y': round(i[9], 4)
-        })
     return candle_data, ema13_data, macd_data
 
 
@@ -212,34 +207,14 @@ def mid_data(frame):
     front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
     data_list = front_df.values.tolist()
     candle_data = []
-    stoch_d_data = []
-    stoch_ds_data = []
-    rsi_data = []
-    atr_data = []
+    stoch_d_data = round(data_list[-1][9], 4)
+    stoch_ds_data = round(data_list[-1][10], 4)
+    rsi_data = round(data_list[-1][11], 4)
+    atr_data = round(data_list[-1][13], 4)
     for i in data_list:
         candle_data.append({
             'x': i[0],
             'y': [i[1], i[2], i[3], i[4]]
-        })
-    for i in data_list:
-        stoch_d_data.append({
-            'x': i[0],
-            'y': round(i[9], 4)
-        })
-    for i in data_list:
-        stoch_ds_data.append({
-            'x': i[0],
-            'y': round(i[10], 4)
-        })
-    for i in data_list:
-        rsi_data.append({
-            'x': i[0],
-            'y': round(i[11], 4)
-        })
-    for i in data_list:
-        atr_data.append({
-            'x': i[0],
-            'y': round(i[13], 4)
         })
     return candle_data, stoch_d_data, stoch_ds_data, rsi_data, atr_data
 
