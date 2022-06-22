@@ -1,5 +1,3 @@
-import logging
-
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
