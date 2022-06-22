@@ -1,3 +1,5 @@
+import logging
+
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -196,11 +198,10 @@ def high_data(frame):
                 'y': round(i[8], 4)
             })
     for i in data_list:
-        if i[10] != 0:
-            macd_data.append({
-                'x': i[0],
-                'y': round(i[10], 4)
-            })
+        macd_data.append({
+            'x': i[0],
+            'y': round(i[10], 4)
+        })
     return candle_data, ema13_data, macd_data
 
 
@@ -223,29 +224,25 @@ def mid_data(frame):
             'y': [i[1], i[2], i[3], i[4]]
         })
     for i in data_list:
-        if i[9] != 0:
-            stoch_d_data.append({
-                'x': i[0],
-                'y': round(i[9], 4)
-            })
+        stoch_d_data.append({
+            'x': i[0],
+            'y': round(i[9], 4)
+        })
     for i in data_list:
-        if i[10] != 0:
-            stoch_ds_data.append({
-                'x': i[0],
-                'y': round(i[10], 4)
-            })
+        stoch_ds_data.append({
+            'x': i[0],
+            'y': round(i[10], 4)
+        })
     for i in data_list:
-        if i[11] != 0:
-            rsi_data.append({
-                'x': i[0],
-                'y': round(i[11], 4)
-            })
+        rsi_data.append({
+            'x': i[0],
+            'y': round(i[11], 4)
+        })
     for i in data_list:
-        if i[13] != 0:
-            atr_data.append({
-                'x': i[0],
-                'y': round(i[13], 4)
-            })
+        atr_data.append({
+            'x': i[0],
+            'y': round(i[13], 4)
+        })
     return candle_data, stoch_d_data, stoch_ds_data, rsi_data, atr_data
 
 
