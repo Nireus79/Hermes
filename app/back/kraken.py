@@ -198,7 +198,7 @@ def high_data(frame):
     for i in data_list:
         macd_data.append({
             'x': i[0],
-            'y': round(i[10], 4)
+            'y': round(i[9], 4)
         })
     return candle_data, ema13_data, macd_data
 
