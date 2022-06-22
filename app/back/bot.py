@@ -623,7 +623,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             closing_price = i5m_frame.get_frame().iloc[-1]['close']
             pillow = closing_price * 0.96
             if condition == 'buy':
-                if trend_24h:
+                if trend_24h and trend_4h and trend_1h:
                     log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
                     logging.info(log)
                     logs.append(log + '<br>')
@@ -650,7 +650,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         log = '{} 4hour momentum is not strong.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
-                        if trend_4h:
+                        if trend_4h and trend_1h:
                             logging.info('{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h))
                             logging.info(log)
                             log = '{} mid 1hour frame buy flag is {}. mid 1hour frame sell flag is {}.' \
@@ -753,7 +753,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 logging.info(log)
                                 logs.append(log + '<br>')
                                 time.sleep(i5m_frame.candle)
-                elif trend_4h:
+                elif trend_4h and trend_1h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
                     logs.append(log + '<br>')
