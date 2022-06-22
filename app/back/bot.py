@@ -174,7 +174,6 @@ def order_manager(order_type, high_front, mid_front,
     middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
     m_atr = middle_f['atr']
-    # atr = low_f['atr']
     limit = low_f['high'] + m_atr
     stop = low_f['low'] - m_atr
     pillow = middle_f['low'] - m_atr
@@ -198,7 +197,6 @@ def order_manager(order_type, high_front, mid_front,
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
         m_atr = middle_f['atr']
-        # atr = low_f['atr']
         new_limit = low_f['high'] + m_atr
         new_stop = low_f['low'] - m_atr
         closing_price = low_f['close']
@@ -328,7 +326,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
     m_atr = middle_f['atr']
     pillow = middle_f['low'] - m_atr
-    # atr = low_f['atr']
     limit = low_f['high'] + m_atr
     stop = low_f['low'] - m_atr
     closing_price = low_f['close']
@@ -353,7 +350,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
         m_atr = middle_f['atr']
-        # atr = low_f['atr']
         new_limit = low_f['high'] + m_atr
         new_stop = low_f['low'] - m_atr
         pillow = middle_f['low'] - m_atr
