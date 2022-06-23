@@ -52,6 +52,8 @@ mid_ds = None
 mid_rs = None
 mid_p_atr = None
 
+buy_price = 0
+
 break_event = threading.Event()
 
 
@@ -167,19 +169,19 @@ def order_manager(order_type, high_front, mid_front,
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, \
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, \
-        crypto_balance, fiat_balance
+        crypto_balance, fiat_balance, buy_price
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     logs.append(log + '<br>')
     middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-    low_f = low_frame_indicators(low.get_frame()).iloc[-1]
+    low_f = low_frame_indicators(low.get_frame())
     m_atr = middle_f['atr']
-    l_atr = low_f['atr']
-    limit = low_f['high'] + l_atr
-    stop = low_f['low'] - l_atr
-    pillow = middle_f['low'] - m_atr
-    closing_price = low_f['close']
+    l_atr = low_f.iloc[-1]['atr']
+    limit = low_f.iloc[-1]['high'] + l_atr
+    stop = low_f.iloc[-1]['low'] - l_atr
+    pillow = low_f.iloc[-2]['low'] - m_atr
+    closing_price = low_f.iloc[-1]['close']
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
     logs.append(log + '<br>')
@@ -195,14 +197,14 @@ def order_manager(order_type, high_front, mid_front,
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr = \
             chart_data(high_front, mid_front)
         middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-        low_f = low_frame_indicators(low.get_frame()).iloc[-1]
+        low_f = low_frame_indicators(low.get_frame())
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
         m_atr = middle_f['atr']
-        l_atr = low_f['atr']
-        new_limit = low_f['high'] + l_atr
-        new_stop = low_f['low'] - l_atr
-        closing_price = low_f['close']
+        l_atr = low_f.iloc[-1]['atr']
+        new_limit = low_f.iloc[-1]['high'] + l_atr
+        new_stop = low_f.iloc[-1]['low'] - l_atr
+        closing_price = low_f.iloc[-1]['close']
         if break_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break ordering.'.format(time_stamp(time.time()))
@@ -222,9 +224,10 @@ def order_manager(order_type, high_front, mid_front,
                         .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
                     logging.info(log)
                     tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
+                    buy_price = closing_price
                     log = tx
                     logging.info(log)
-                    pillow = middle_f['low'] - m_atr
+                    pillow = low_f.iloc[-2]['low'] - l_atr
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
@@ -261,7 +264,13 @@ def order_manager(order_type, high_front, mid_front,
                 break
         elif cond == 'sell':
             if sell_flag:
-                if closing_price < stop:
+                if buy_price > closing_price > pillow:
+                    log = '{} Within possible pullback. Wait {}min' \
+                        .format(time_stamp(time.time()), low.interval / time_divisor)
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    time.sleep(low.candle / time_divisor)
+                elif buy_price < closing_price < stop:
                     log = 'Setting {} order to {} {} {} at {}.' \
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
