@@ -174,13 +174,11 @@ def order_manager(order_type, high_front, mid_front,
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     logs.append(log + '<br>')
-    middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
     low_f = low_frame_indicators(low.get_frame())
-    m_atr = middle_f['atr']
     l_atr = low_f.iloc[-1]['atr']
     limit = low_f.iloc[-1]['high'] + l_atr
     stop = low_f.iloc[-1]['low'] - l_atr
-    pillow = low_f.iloc[-2]['low'] - m_atr
+    pillow = low_f.iloc[-2]['low'] - l_atr
     closing_price = low_f.iloc[-1]['close']
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
@@ -200,7 +198,6 @@ def order_manager(order_type, high_front, mid_front,
         low_f = low_frame_indicators(low.get_frame())
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
-        m_atr = middle_f['atr']
         l_atr = low_f.iloc[-1]['atr']
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
@@ -265,7 +262,7 @@ def order_manager(order_type, high_front, mid_front,
         elif cond == 'sell':
             if sell_flag:
                 if buy_price > closing_price > pillow:
-                    log = '{} Within possible pullback. Wait {}min' \
+                    log = '{} Closing price within possible pullback. Wait {}min' \
                         .format(time_stamp(time.time()), low.interval / time_divisor)
                     logging.info(log)
                     logs.append(log + '<br>')
@@ -329,19 +326,17 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     :param cond: Condition sell/buy
     """
     global pillow, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data,\
-        high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr
+        high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, buy_price
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     logs.append(log + '<br>')
-    middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
-    m_atr = middle_f['atr']
-    l_atr = low_f['atr']
-    pillow = middle_f['low'] - l_atr
-    limit = low_f['high'] + l_atr
-    stop = low_f['low'] - m_atr
-    closing_price = low_f['close']
+    l_atr = low_f.iloc[-1]['atr']
+    pillow = low_f.iloc[-1]['low'] - l_atr
+    limit = low_f.iloc[-1]['high'] + l_atr
+    stop = low_f.iloc[-1]['low'] - l_atr
+    closing_price = low_f.iloc[-1]['close']
     log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. ' \
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
@@ -359,15 +354,14 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr = \
             chart_data(high_front, mid_front)
         middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-        low_f = low_frame_indicators(low.get_frame()).iloc[-1]
+        low_f = low_frame_indicators(low.get_frame())
         buy_flag = middle_f['buy flag']
         sell_flag = middle_f['sell flag']
-        m_atr = middle_f['atr']
-        l_atr = low_f['atr']
-        new_limit = low_f['high'] + l_atr
-        new_stop = low_f['low'] - l_atr
-        pillow = middle_f['low'] - m_atr
-        closing_price = low_f['close']
+        l_atr = low_f.iloc[-1]['atr']
+        new_limit = low_f.iloc[-1]['high'] + l_atr
+        new_stop = low_f.iloc[-1]['low'] - l_atr
+        pillow = low_f.iloc[-1]['low'] - l_atr
+        closing_price = low_f.iloc[-1]['close']
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
@@ -389,12 +383,13 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         logging.info('')
                         logs.append('<br>')
                         log = '{} Bought at: {}'.format(time_stamp(time.time()), closing_price)
+                        buy_price = closing_price
                         logging.info(log)
                         logs.append(log + '<br>')
                         trades.append(log + '<br>')
                         condition = 'sell'
                     runningLowFrame = None
-                    pillow = 0
+                    pillow = low_f.iloc[-2]['low'] - l_atr
                     limit = None
                     stop = 0
                     break
@@ -426,8 +421,12 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 break
         elif cond == 'sell':
             if sell_flag:
-                if closing_price < stop:
-                    log = '{} Closing price under stop loss level. Please add sell order' \
+                if buy_price > closing_price > pillow:
+                    log = '{} Closing price within possible pullback. Please wait {} minutes' \
+                        .format(time_stamp(time.time()), time.sleep(low.interval / time_divisor))
+                    time.sleep(low.candle / time_divisor)
+                elif buy_price < closing_price < stop:
+                    log = '{} Closing price under stop loss. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
