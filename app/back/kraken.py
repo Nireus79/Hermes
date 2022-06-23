@@ -252,9 +252,3 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
-
-
-i24h_frame = Api('DOT', 'EUR', 1440, 50)
-high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
-print(high_frame_24h.iloc[-1])
-
