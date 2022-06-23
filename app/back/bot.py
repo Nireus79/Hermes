@@ -124,9 +124,12 @@ def order_manager(order_type, high_front, mid_front,
     Then starts monitoring periodically closing price at current running low time frame duration:
 
         When intending to sell asset
-            if closing price lower than set stop-loss level:
+            if closing price lower than set stop-loss level over buy price:
                 places market sell order for the asset.
                 Conditions are reevaluated until order is closed.
+            elif closing price is between pillow and buy price zone:
+                waits part or full time by choice, of low frame period
+                as this zone is considered zone of possible price pullback.
             else:
                 waits part or full time by choice, of low frame duration to reevaluate:
                     if new closing price is higher than stop-loss:
@@ -139,6 +142,7 @@ def order_manager(order_type, high_front, mid_front,
                 places a market buy asset for the asset
                 and sets mid-frame last candle low as pillow.
                 Conditions are reevaluated until order is closed.
+                Pillow is set on the low of previous low frame candle - atr
             else:
                 waits part or full time by choice, of low frame duration to reevaluate.
                     if new closing price is lower than limit:
@@ -178,7 +182,6 @@ def order_manager(order_type, high_front, mid_front,
     l_atr = low_f.iloc[-1]['atr']
     limit = low_f.iloc[-1]['high'] + l_atr
     stop = low_f.iloc[-1]['low'] - l_atr
-    pillow = low_f.iloc[-2]['low'] - l_atr
     closing_price = low_f.iloc[-1]['close']
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
@@ -208,7 +211,6 @@ def order_manager(order_type, high_front, mid_front,
             logging.info(log)
             logs.append(log + '<br>')
             runningLowFrame = None
-            pillow = 0
             limit = None
             stop = 0
             break
@@ -230,7 +232,6 @@ def order_manager(order_type, high_front, mid_front,
                     trades.append(log + '<br>')
                     time.sleep(10)
                     runningLowFrame = None
-                    pillow = 0
                     limit = None
                     stop = 0
                     break
@@ -255,19 +256,12 @@ def order_manager(order_type, high_front, mid_front,
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
-                pillow = 0
                 limit = None
                 stop = 0
                 break
         elif cond == 'sell':
             if sell_flag:
-                if buy_price > closing_price > pillow:
-                    log = '{} Closing price within possible pullback. Wait {}min' \
-                        .format(time_stamp(time.time()), low.interval / time_divisor)
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    time.sleep(low.candle / time_divisor)
-                elif buy_price < closing_price < stop:
+                if closing_price < pillow or buy_price < closing_price < stop:
                     log = 'Setting {} order to {} {} {} at {}.' \
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
@@ -279,10 +273,17 @@ def order_manager(order_type, high_front, mid_front,
                     trades.append(log + '<br>')
                     time.sleep(10)
                     runningLowFrame = None
-                    pillow = 0
+                    # Pillow set to 4% loss, in case of connection when condition is already 'sell'
+                    pillow = closing_price * 0.96
                     limit = None
                     stop = 0
                     break
+                elif buy_price > closing_price > pillow:
+                    log = '{} Closing price within possible pullback. Wait {}min' \
+                        .format(time_stamp(time.time()), low.interval / time_divisor)
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    time.sleep(low.candle / time_divisor)
                 else:
                     if new_stop >= stop:
                         stop = new_stop
@@ -304,13 +305,13 @@ def order_manager(order_type, high_front, mid_front,
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
-                pillow = 0
                 limit = None
                 stop = 0
                 break
 
 
 def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max_rsi, min_vol):
+    # TODO Pillow as order_manager
     """
     Same as order_manager.
     No actual order is set.
@@ -630,9 +631,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
             front_buy_flag_4h, front_buy_flag_1h, front_buy_flag_15m = \
                 front_flags(trend_24h, trend_4h, trend_1h, buy_flag_4h, buy_flag_1h, buy_flag_15m)
-            # Pillow set to 4% loss, in case of connection when condition is already 'sell'
-            closing_price = i5m_frame.get_frame().iloc[-1]['close']
-            pillow = closing_price * 0.96
             if condition == 'buy':
                 if trend_24h:
                     log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
