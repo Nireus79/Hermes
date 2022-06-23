@@ -128,9 +128,10 @@ def high_frame_indicators(hdf):
     : param hdf: raw api dataframe
     :return: hdf enriched with technical indicators and flags
     """
+    hdf['EMA9'] = hdf['close'].rolling(9).mean()
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
-    hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['macd'] > 0, axis=1)
+    hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA9'] > x['EMA13'] and x['macd'] > 0, axis=1)
     return hdf
 
 
@@ -182,8 +183,9 @@ def high_data(frame):
     front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
     data_list = front_df.values.tolist()
     candle_data = []
+    ema9_data = []
     ema13_data = []
-    macd_data = round(data_list[-1][9], 4)
+    macd_data = round(data_list[-1][10], 4)
     for i in data_list:
         candle_data.append({
             'x': i[0],
@@ -191,11 +193,17 @@ def high_data(frame):
         })
     for i in data_list:
         if i[8] != 0:
-            ema13_data.append({
+            ema9_data.append({
                 'x': i[0],
                 'y': round(i[8], 4)
             })
-    return candle_data, ema13_data, macd_data
+    for i in data_list:
+        if i[9] != 0:
+            ema13_data.append({
+                'x': i[0],
+                'y': round(i[9], 4)
+            })
+    return candle_data, ema9_data, ema13_data, macd_data
 
 
 def mid_data(frame):
@@ -244,3 +252,9 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
+
+
+i24h_frame = Api('DOT', 'EUR', 1440, 50)
+high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
+print(high_frame_24h.iloc[-1])
+

@@ -5,6 +5,11 @@ var options = {
           type: 'candlestick',
           data: []
         },{
+          name: 'EMA9: ',
+          type: 'line',
+          data: []
+        },
+        {
           name: 'EMA13: ',
           type: 'line',
           data: []
@@ -58,6 +63,10 @@ function update_values() {
               name: 'Trend frame: ' + data_update.runningHighFrame,
               data: data_update.high_chart_data
             },{
+              name: 'EMA9: ' + data_update.high_ema9[data_update.high_ema9.length - 1]['y'],
+              data: data_update.high_ema9
+            },
+            {
               name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
               data: data_update.high_ema13
             },{

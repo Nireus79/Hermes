@@ -44,7 +44,8 @@
     General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc.
     According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback,
     entering the bullish zone.<br>
-    In our case a preset combination of 13p EMA and macd indicators is used to determine the high frame trend.
+    In our case a preset combination of 9p EMA, 13p EMA and macd indicators  (Closing > EMA9 > EMA13 and macd > 0)
+    is used to determine the high frame trend.
 </p>
 <!--    That makes evaluation faster, entering the buy zone more early. Use of 200 EMA (current price above 200ema)-->
 <!--    is much safer but also slow. Use of 9-20-50ema combination is very accurate but also very sensitive.-->
@@ -53,7 +54,7 @@
 <p>
     Trend momentum and position is detected with the use of stochastic slow indicator.
     Stochastic fast can be used for quicker response but in this case more force signals are generated.
-    Stochastic slow is used as it is a 'smothered' version of stoch fast.
+    Stochastic slow is used as it is a 'smothered' version of stoch fast. (d > ds > 20 buy Flag / d < ds < 80 sell Flag)
     An additional indicator of strength is added (RSI) as choice for safety reasons,
     as when current price strength is above safety,
     price is actually 'overbought' and probability of descent is high.
