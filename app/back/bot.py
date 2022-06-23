@@ -172,14 +172,14 @@ def order_manager(order_type, high_front, mid_front,
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     logs.append(log + '<br>')
-    middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-    low_f = low_frame_indicators(low.get_frame()).iloc[-1]
-    m_atr = middle_f['atr']
-    l_atr = low_f['atr']
-    limit = low_f['high'] + l_atr
-    stop = low_f['low'] - l_atr
-    pillow = middle_f['low'] - m_atr
-    closing_price = low_f['close']
+    middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol)
+    low_f = low_frame_indicators(low.get_frame())
+    m_atr = middle_f.iloc[-1]['atr']
+    l_atr = low_f.iloc[-1]['atr']
+    limit = low_f.iloc[-1]['high'] + l_atr
+    stop = low_f.iloc[-2]['low'] - l_atr  # stop loss and pillow are set according to previous candle low
+    pillow = middle_f.iloc[-2]['low'] - m_atr
+    closing_price = low_f.iloc[-1]['close']
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
     logs.append(log + '<br>')
@@ -194,15 +194,15 @@ def order_manager(order_type, high_front, mid_front,
     while True:
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr = \
             chart_data(high_front, mid_front)
-        middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-        low_f = low_frame_indicators(low.get_frame()).iloc[-1]
-        buy_flag = middle_f['buy flag']
-        sell_flag = middle_f['sell flag']
-        m_atr = middle_f['atr']
-        l_atr = low_f['atr']
-        new_limit = low_f['high'] + l_atr
-        new_stop = low_f['low'] - l_atr
-        closing_price = low_f['close']
+        middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol)
+        low_f = low_frame_indicators(low.get_frame())
+        buy_flag = middle_f.iloc[-1]['buy flag']
+        sell_flag = middle_f.iloc[-1]['sell flag']
+        m_atr = middle_f.iloc[-1]['atr']
+        l_atr = low_f.iloc[-1]['atr']
+        new_limit = low_f.iloc[-1]['high'] + l_atr
+        new_stop = low_f.iloc[-2]['low'] - l_atr  # stop loss is set according to previous candle low
+        closing_price = low_f.iloc[-1]['close']
         if break_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break ordering.'.format(time_stamp(time.time()))
@@ -325,14 +325,14 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
     logs.append(log + '<br>')
-    middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-    low_f = low_frame_indicators(low.get_frame()).iloc[-1]
-    m_atr = middle_f['atr']
-    l_atr = low_f['atr']
-    pillow = middle_f['low'] - l_atr
-    limit = low_f['high'] + l_atr
-    stop = low_f['low'] - m_atr
-    closing_price = low_f['close']
+    middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol)
+    low_f = low_frame_indicators(low.get_frame())
+    m_atr = middle_f.iloc[-1]['atr']
+    l_atr = low_f.iloc[-1]['atr']
+    pillow = middle_f.iloc[-2]['low'] - l_atr
+    limit = low_f.iloc[-1]['high'] + l_atr
+    stop = low_f.iloc[-2]['low'] - m_atr  # stop loss and pillow are set according to previous candle low
+    closing_price = low_f.iloc[-1]['close']
     log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. ' \
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
@@ -349,16 +349,16 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     while True:
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr = \
             chart_data(high_front, mid_front)
-        middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol).iloc[-1]
-        low_f = low_frame_indicators(low.get_frame()).iloc[-1]
-        buy_flag = middle_f['buy flag']
-        sell_flag = middle_f['sell flag']
-        m_atr = middle_f['atr']
-        l_atr = low_f['atr']
-        new_limit = low_f['high'] + l_atr
-        new_stop = low_f['low'] - l_atr
-        pillow = middle_f['low'] - m_atr
-        closing_price = low_f['close']
+        middle_f = mid_frame_indicators(mid.get_frame(), max_rsi, min_vol)
+        low_f = low_frame_indicators(low.get_frame())
+        buy_flag = middle_f.iloc[-1]['buy flag']
+        sell_flag = middle_f.iloc[-1]['sell flag']
+        m_atr = middle_f.iloc[-1]['atr']
+        l_atr = low_f.iloc[-1]['atr']
+        new_limit = low_f.iloc[-1]['high'] + l_atr
+        new_stop = low_f.iloc[-2]['low'] - l_atr
+        pillow = middle_f.iloc[-2]['low'] - m_atr
+        closing_price = low_f.iloc[-1]['close']
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
