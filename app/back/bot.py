@@ -190,10 +190,10 @@ def order_manager(order_type, high_front, mid_front,
         .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Wait {}min.'.format(time_stamp(time.time()), low.interval / time_divisor)
+    log = '{} Wait {}min.'.format(time_stamp(time.time()), low.interval)
     logging.info(log)
     logs.append(log + '<br>')
-    time.sleep(low.candle / time_divisor)
+    time.sleep(low.candle)
     while True:
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr = \
             chart_data(high_front, mid_front)
@@ -350,10 +350,10 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
             .format(time_stamp(time.time()), limit, low.interval / time_divisor)
     elif cond == 'sell':
         log = '{} Please give sell order when price under {}. Wait {}min.' \
-            .format(time_stamp(time.time()), stop, low.interval / time_divisor)
+            .format(time_stamp(time.time()), stop, low.interval)
     logging.info(log)
     logs.append(log + '<br>')
-    time.sleep(low.candle / time_divisor)
+    time.sleep(low.candle)
     while True:
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr = \
             chart_data(high_front, mid_front)
@@ -583,7 +583,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
         mid_frame_15m, pillow, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame, \
-        runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, mid_p_atr
+        runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, mid_p_atr, buy_price
     # TODO activate licence check
     licence = True  # check()['license_active']
     if licence:
@@ -600,6 +600,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         # Pillow set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
         pillow = closing_price * 0.96
+        buy_price = closing_price
         log = '{} Operation start. Condition is {}.' \
               ' Mode is {}. Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.' \
             .format(time_stamp(time.time()), condition, mode, max_rsi, min_vol, time_divisor)
@@ -1024,5 +1025,6 @@ def data_feed():
         'price': closing_price,
         'stop': stop,
         'limit': limit,
-        'pillow': pillow
+        'pillow': pillow,
+        # 'buy_price': buy_price
     }

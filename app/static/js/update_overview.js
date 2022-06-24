@@ -26,7 +26,7 @@ function update_values() {
                 $('#limit').text('Buy limit: '+data.limit);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
-
+//                $('#buy_price').text('Bought at: '+data.buy_price);
 //                console.log(data)
         });
 };
