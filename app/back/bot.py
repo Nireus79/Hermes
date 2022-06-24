@@ -282,8 +282,8 @@ def order_manager(order_type, high_front, mid_front,
                     stop = 0
                     break
                 elif buy_price > closing_price > pillow:
-                    log = '{} Closing price within possible pullback. Wait {}min' \
-                        .format(time_stamp(time.time()), low.interval / time_divisor)
+                    log = '{} Closing price within zone of pillow {} and buy price {}. Possible pullback. Wait {}min' \
+                        .format(time_stamp(time.time()), pillow, buy_price, low.interval / time_divisor)
                     logging.info(log)
                     logs.append(log + '<br>')
                     time.sleep(low.candle / time_divisor)
