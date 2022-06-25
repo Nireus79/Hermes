@@ -122,34 +122,34 @@ def order_manager(order_type, high_front, mid_front,
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
     order_manager is setting limit and stop loss levels.
     Then starts monitoring periodically closing price at current running low time frame duration:
-
-        When intending to sell asset
-            if closing price lower than set stop-loss level over buy price:
-                places market sell order for the asset.
-                Conditions are reevaluated until order is closed.
-            elif closing price is between pillow and buy price zone:
-                waits part or full time by choice, of low frame period
-                as this zone is considered zone of possible price pullback.
-            else:
-                waits part or full time by choice, of low frame duration to reevaluate:
-                    if new closing price is higher than stop-loss:
-                        if new lower low of low frame is higher than previous set:
-                            sets new stop-loss equal to new lower-low.
-                        else:
-                            waits part or full time by choice, of low frame period.
         When intending to buy asset
             if closing price exceeds set limit level:
                 places a market buy asset for the asset
-                and sets mid-frame last candle low as pillow.
                 Conditions are reevaluated until order is closed.
-                Pillow is set on the low of previous low frame candle - atr
-            else:
+                Pillow is set on the low of previous low frame candle - atr as global variable.
+                Buy price is stored as global variable.
+            else: (closing price under limit)
                 waits part or full time by choice, of low frame duration to reevaluate.
                     if new closing price is lower than limit:
                         if new higher high of low frame is higher than previous set:
                             sets new limit equal to new higher high.
                         else:
-                            waits part or full time by choice, of low frame period.
+                            waits one low candle / divisor
+        When intending to sell asset
+            if closing price is under buy price AND over pillow:
+                waits one low candle / divisor
+                as this zone is considered possible pullback zone of the price.
+            elif closing price is over buy price AND lower than set stop-loss level:
+                places market sell order for the asset.
+                Conditions are reevaluated until order is closed.
+            else: (closing price over stop-loss)
+                waits part or full time by choice, of low frame duration to reevaluate:
+                    if new closing price is higher than stop-loss:
+                        if new lower low of low frame is higher than previous set:
+                            sets new stop-loss equal to new lower-low.
+                        else:
+                            waits one low candle / divisor
+
     :param min_vol: minimum volatility in mid-frame
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
@@ -226,7 +226,7 @@ def order_manager(order_type, high_front, mid_front,
                     buy_price = closing_price
                     log = tx
                     logging.info(log)
-                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:  # TODO CHECK
+                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:  # Probably impossible.
                         pillow = low_f.iloc[-2]['low'] - l_atr
                     else:
                         pillow = low_f.iloc[-1]['low'] - l_atr
@@ -314,7 +314,6 @@ def order_manager(order_type, high_front, mid_front,
 
 
 def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max_rsi, min_vol):
-    # TODO Pillow as order_manager
     """
     Same as order_manager.
     No actual order is set.
@@ -337,7 +336,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     logs.append(log + '<br>')
     low_f = low_frame_indicators(low.get_frame()).iloc[-1]
     l_atr = low_f.iloc[-1]['atr']
-    pillow = low_f.iloc[-1]['low'] - l_atr
     limit = low_f.iloc[-1]['high'] + l_atr
     stop = low_f.iloc[-1]['low'] - l_atr
     closing_price = low_f.iloc[-1]['close']
@@ -364,7 +362,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
         l_atr = low_f.iloc[-1]['atr']
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
-        pillow = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
@@ -393,7 +390,11 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         trades.append(log + '<br>')
                         condition = 'sell'
                     runningLowFrame = None
-                    pillow = low_f.iloc[-2]['low'] - l_atr
+                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:  # Probably impossible.
+                        pillow = low_f.iloc[-2]['low'] - l_atr
+                    else:
+                        pillow = low_f.iloc[-1]['low'] - l_atr
+                    buy_price = closing_price
                     limit = None
                     stop = 0
                     break
