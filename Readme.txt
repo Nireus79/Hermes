@@ -1,4 +1,4 @@
-Hermes Elder
+Hermes
 A custom, real time, multiple time frame, consulting-trading bot application,
 interpretation of Alexander Elder's "triple screen" forex market trading strategy.
 The strategy.
