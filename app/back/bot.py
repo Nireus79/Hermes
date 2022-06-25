@@ -574,11 +574,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
     :param depth: the time periods back to be analysed
-    pillow: A safety level is set at the beginning of the process to 4% under current price
-            and is added after every circle. That is for the case of bot starts evaluating sell condition and no other
+    pillow: A safety level is set at the beginning of the process to 4% under current price.
+            That is for the case of bot starts evaluating sell condition and no other
             safety level is stored.
-            After every buy of asset A, a safety level is set on the lowest low of mid-frame candle minus atr,
-            so volatility is calculated in this case.
+            After every buy of asset A, a safety level is set on the lowest low of previous (from buy)
+            low-frame candle minus atr.
+            That is considered as minimum stop loss level price can reach on a pullback.
     """
     global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
         buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
