@@ -22,11 +22,11 @@ function update_values() {
                 $('#buy_flag_15m').text(data.buy_flag_15m);
                 $('#sell_flag_15m').text(data.sell_flag_15m);
                 $('#price').text('Closing price: '+data.price);
-                $('#pillow').text('Risk level: '+data.risk);
+                $('#reward').text('Reward price: '+data.reward);
                 $('#limit').text('Buy limit: '+data.limit);
+                $('#buy_price').text('Buy price: '+data.buy_price);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
-//                $('#buy_price').text('Bought at: '+data.buy_price);
-//                console.log(data)
+                $('#risk').text('Risk level: '+data.risk);
         });
 };

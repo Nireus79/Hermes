@@ -233,7 +233,7 @@ def order_manager(order_type, high_front, mid_front,
                         risk = low_f.iloc[-2]['low'] - l_atr
                     else:
                         risk = low_f.iloc[-1]['low'] - l_atr
-                    r = (buy_price - risk) * 1  # 1 / 2 risk - reward ratio TODO
+                    r = (buy_price - risk) * 0.95  # 1 / 2 risk - reward ratio TODO
                     reward = buy_price + r
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
