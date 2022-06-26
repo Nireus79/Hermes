@@ -1047,6 +1047,7 @@ def data_feed():
         'price': closing_price,
         'stop': stop,
         'limit': limit,
-        'pillow': risk,
-        # 'buy_price': buy_price
+        'risk': risk,
+        'reward': reward,
+        'buy_price': buy_price
     }
