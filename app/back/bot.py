@@ -137,7 +137,7 @@ def order_manager(order_type, high_front, mid_front,
                         else:
                             waits one low candle / divisor
         When intending to sell asset
-            if closing price is under buy price AND over pillow:
+            if closing price is under buy price AND over risk:
                 waits one low candle / divisor
                 as this zone is considered possible pullback zone of the price.
             elif closing price is over buy price AND lower than set stop-loss level:
@@ -189,7 +189,7 @@ def order_manager(order_type, high_front, mid_front,
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Current price: {}. limit: {}. Stop loss: {}. Pillow: {}' \
+    log = '{} Current price: {}. limit: {}. Stop loss: {}. Risk: {}' \
         .format(time_stamp(time.time()), closing_price, limit, stop, risk)
     logging.info(log)
     logs.append(log + '<br>')
@@ -233,7 +233,7 @@ def order_manager(order_type, high_front, mid_front,
                         risk = low_f.iloc[-2]['low'] - l_atr
                     else:
                         risk = low_f.iloc[-1]['low'] - l_atr
-                    r = (buy_price - risk) * 2  # 1 / 2 risk - reward ratio
+                    r = (buy_price - risk) * 1  # 1 / 2 risk - reward ratio TODO
                     reward = buy_price + r
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
@@ -287,7 +287,7 @@ def order_manager(order_type, high_front, mid_front,
                     reward = 0
                     break
                 elif buy_price > closing_price > risk:
-                    log = '{} Closing price within zone of pillow {} and buy price {}. Possible pullback. Wait {}min' \
+                    log = '{} Closing price over risk {} and buy price {}. Possible pullback. Wait {}min' \
                         .format(time_stamp(time.time()), risk, buy_price, low.interval / time_divisor)
                     logging.info(log)
                     logs.append(log + '<br>')
@@ -344,7 +344,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     limit = low_f.iloc[-1]['high'] + l_atr
     stop = low_f.iloc[-1]['low'] - l_atr
     closing_price = low_f.iloc[-1]['close']
-    log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. ' \
+    log = '{} Current price {}. limit: {}. Stop loss: {}. Risk: {}. ' \
         .format(time_stamp(time.time()), closing_price, limit, stop, risk)
     logging.info(log)
     logs.append(log + '<br>')
@@ -521,8 +521,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     as when current price strength is above safety, price is actually 'overbought' and probability of descent is high.
     ATR detects the volatility of the price. ATR% is ATR related with the closing price.
     An extra condition of %ATR is given as choice, to avoid false buy flags in price consolidation instances.
-    ATR of middle frame is also subtracted by lowest low of last mid-candle, to be used as pillow and avoid
-    false pillow alarm.
+    ATR of middle frame is also subtracted by lowest low of low-candle before buy candle,
+    to be used as risk level and avoid false flag.
     Low frame.
     When conditions are aligned in the higher frames action limits are set, according to the last low frame
     closed candle range. Next time fragment of candle price gives action flag or sets new limits.
@@ -558,7 +558,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 bot sleeps for 5 minutes to review conditions.
         elif condition is 'sell':
             if new closing price < stop:
-                pillow
+                Risk
             elif 24 hour high frame and 4 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 1 hour low frame.
                 if NOT waits 1 / 12 of 4 hours.
@@ -569,7 +569,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                 order_manager() kicks in to sell on 5min low frame.
                 if NOT waits 1 / 12 of 15 min.
             elif all high frames trend is negative:
-                second pillow condition is activated.
+                second risk condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
 
     :param min_vol: minimum volatility in mid-frame
@@ -874,8 +874,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     time.sleep(i5m_frame.candle)
             elif condition == 'sell':
                 closing = i5m_frame.get_frame().iloc[-1]['close']
-                if closing < risk:  # pillow
-                    log = '{} Warning. Pillow activated. Sell your asset.'.format(time_stamp(time.time()))
+                if closing < risk:  # Risk
+                    log = '{} Warning. Risk activated. Sell your asset.'.format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
