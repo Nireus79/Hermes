@@ -12,7 +12,6 @@ condition = None
 stop = 0
 limit = None
 closing_price = None
-pillow = 0
 log = 'Please set control parameters to start.'
 logs = []
 trades = []
@@ -54,6 +53,7 @@ mid_p_atr = None
 
 buy_price = 0
 reward = 0
+risk = 0
 break_event = threading.Event()
 
 
@@ -171,7 +171,7 @@ def order_manager(order_type, high_front, mid_front,
     When setting buy order, vol = (money - money * max kraken fee) / crypto price
     When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
-    global pillow, reward, condition, stop, limit, log, closing_price, runningLowFrame, \
+    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, \
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, \
         crypto_balance, fiat_balance, buy_price
     beeper('start')
@@ -187,7 +187,7 @@ def order_manager(order_type, high_front, mid_front,
     logging.info(log)
     logs.append(log + '<br>')
     log = '{} Current price: {}. limit: {}. Stop loss: {}. Pillow: {}' \
-        .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
+        .format(time_stamp(time.time()), closing_price, limit, stop, risk)
     logging.info(log)
     logs.append(log + '<br>')
     log = '{} Wait {}min.'.format(time_stamp(time.time()), low.interval)
@@ -267,7 +267,7 @@ def order_manager(order_type, high_front, mid_front,
                 break
         elif cond == 'sell':
             if sell_flag:
-                if closing_price < pillow or buy_price < closing_price < stop:
+                if closing_price < risk or buy_price < closing_price < stop:
                     log = 'Setting {} order to {} {} {} at {}.' \
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
@@ -279,14 +279,14 @@ def order_manager(order_type, high_front, mid_front,
                     trades.append(log + '<br>')
                     time.sleep(10)
                     runningLowFrame = None
-                    # Pillow set to 4% loss, in case of connection when condition is already 'sell'
-                    pillow = closing_price * 0.96
+                    # risk set to 4% loss, in case of connection when condition is already 'sell'
+                    risk = closing_price * 0.96
                     limit = None
                     stop = 0
                     break
-                elif buy_price > closing_price > pillow:
+                elif buy_price > closing_price > risk:
                     log = '{} Closing price within zone of pillow {} and buy price {}. Possible pullback. Wait {}min' \
-                        .format(time_stamp(time.time()), pillow, buy_price, low.interval / time_divisor)
+                        .format(time_stamp(time.time()), risk, buy_price, low.interval / time_divisor)
                     logging.info(log)
                     logs.append(log + '<br>')
                     time.sleep(low.candle / time_divisor)
@@ -331,7 +331,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     :param low: The low time frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
-    global pillow, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data,\
+    global risk, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data,\
         high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, buy_price
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
@@ -343,7 +343,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     stop = low_f.iloc[-1]['low'] - l_atr
     closing_price = low_f.iloc[-1]['close']
     log = '{} Current price {}. limit: {}. Stop loss: {}. Pillow: {}. ' \
-        .format(time_stamp(time.time()), closing_price, limit, stop, pillow)
+        .format(time_stamp(time.time()), closing_price, limit, stop, risk)
     logging.info(log)
     logs.append(log + '<br>')
     if cond == 'buy':
@@ -371,7 +371,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
             logging.info(log)
             logs.append(log + '<br>')
             runningLowFrame = None
-            pillow = 0
+            risk = 0
             limit = None
             stop = 0
             break
@@ -394,9 +394,9 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         condition = 'sell'
                     runningLowFrame = None
                     if (low_f.iloc[-2]['low'] - l_atr) < buy_price:  # Probably impossible.
-                        pillow = low_f.iloc[-2]['low'] - l_atr
+                        risk = low_f.iloc[-2]['low'] - l_atr
                     else:
-                        pillow = low_f.iloc[-1]['low'] - l_atr
+                        risk = low_f.iloc[-1]['low'] - l_atr
                     buy_price = closing_price
                     limit = None
                     stop = 0
@@ -423,13 +423,13 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
-                pillow = 0
+                risk = 0
                 limit = None
                 stop = 0
                 break
         elif cond == 'sell':
             if sell_flag:
-                if buy_price > closing_price > pillow:
+                if buy_price > closing_price > risk:
                     log = '{} Closing price within possible pullback. Please wait {} minutes' \
                         .format(time_stamp(time.time()), time.sleep(low.interval / time_divisor))
                     time.sleep(low.candle / time_divisor)
@@ -449,7 +449,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         trades.append(log + '<br>')
                         condition = 'buy'
                     runningLowFrame = None
-                    pillow = 0
+                    risk = 0
                     limit = None
                     stop = 0
                     break
@@ -475,7 +475,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
-                pillow = 0
+                risk = 0
                 limit = None
                 stop = 0
                 break
@@ -587,7 +587,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
         buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
-        mid_frame_15m, pillow, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame, \
+        mid_frame_15m, risk, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame, \
         runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, mid_p_atr, buy_price
     # TODO activate licence check
     licence = True  # check()['license_active']
@@ -873,7 +873,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     time.sleep(i5m_frame.candle)
             elif condition == 'sell':
                 closing = i5m_frame.get_frame().iloc[-1]['close']
-                if closing < pillow:  # pillow / risk
+                if closing < risk:  # pillow / risk
                     log = '{} Warning. Pillow activated. Sell your asset.'.format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
@@ -1046,6 +1046,6 @@ def data_feed():
         'price': closing_price,
         'stop': stop,
         'limit': limit,
-        'pillow': pillow,
+        'pillow': risk,
         # 'buy_price': buy_price
     }
