@@ -126,8 +126,9 @@ def order_manager(order_type, high_front, mid_front,
             if closing price exceeds set limit level:
                 places a market buy asset for the asset
                 Conditions are reevaluated until order is closed.
-                Pillow is set on the low of previous low frame candle - atr as global variable.
+                Risk level is set on the low of previous low frame candle - low frame atr as global variable.
                 Buy price is stored as global variable.
+                Reward level is set as the double of (buy price - risk level) + buy price
             else: (closing price under limit)
                 waits part or full time by choice, of low frame duration to reevaluate.
                     if new closing price is lower than limit:
@@ -280,10 +281,10 @@ def order_manager(order_type, high_front, mid_front,
                     trades.append(log + '<br>')
                     time.sleep(10)
                     runningLowFrame = None
-                    # Pillow set to 4% loss, in case of connection when condition is already 'sell'
-                    risk = closing_price * 0.96
+                    risk = closing_price * 0.96  # risk reset to 4% loss
                     limit = None
                     stop = 0
+                    reward = 0
                     break
                 elif buy_price > closing_price > risk:
                     log = '{} Closing price within zone of pillow {} and buy price {}. Possible pullback. Wait {}min' \
@@ -332,7 +333,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
     :param low: The low time frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
-    global risk, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data,\
+    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data,\
         high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, buy_price
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
@@ -384,11 +385,11 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                     logs.append(log + '<br>')
                     beeper(cond)
                     time.sleep(10)
+                    buy_price = closing_price
                     if mode == 'simulator':
                         logging.info('')
                         logs.append('<br>')
                         log = '{} Bought at: {}'.format(time_stamp(time.time()), closing_price)
-                        buy_price = closing_price
                         logging.info(log)
                         logs.append(log + '<br>')
                         trades.append(log + '<br>')
@@ -398,7 +399,8 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                         risk = low_f.iloc[-2]['low'] - l_atr
                     else:
                         risk = low_f.iloc[-1]['low'] - l_atr
-                    buy_price = closing_price
+                    r = (buy_price - risk) * 2  # 1 / 2 risk - reward ratio
+                    reward = buy_price + r
                     limit = None
                     stop = 0
                     break
@@ -424,7 +426,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
-                risk = 0
                 limit = None
                 stop = 0
                 break
@@ -434,7 +435,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                     log = '{} Closing price within possible pullback. Please wait {} minutes' \
                         .format(time_stamp(time.time()), time.sleep(low.interval / time_divisor))
                     time.sleep(low.candle / time_divisor)
-                elif buy_price < closing_price < stop:
+                elif buy_price < closing_price < stop or closing_price < risk:
                     log = '{} Closing price under stop loss. Please add sell order' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
@@ -453,6 +454,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                     risk = 0
                     limit = None
                     stop = 0
+                    reward = 0
                     break
                 elif closing_price >= stop:
                     if new_stop > stop:
@@ -476,7 +478,6 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 beeper('break')
                 time.sleep(10)
                 runningLowFrame = None
-                risk = 0
                 limit = None
                 stop = 0
                 break
@@ -578,7 +579,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
     :param depth: the time periods back to be analysed
-    pillow: A safety level is set at the beginning of the process to 4% under current price.
+    risk: A safety level is set at the beginning of the process to 4% under current price.
             That is for the case of bot starts evaluating sell condition and no other
             safety level is stored.
             After every buy of asset A, a safety level is set on the lowest low of previous (from buy)
@@ -603,9 +604,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
         i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
-        # Pillow set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
-        risk = closing_price * 0.96
+        risk = closing_price * 0.96  # risk set to 4% loss, in case of connection when condition is already 'sell'
         buy_price = closing_price
         log = '{} Operation start. Condition is {}.' \
               ' Mode is {}. Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.' \
@@ -889,7 +889,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     elif mode == 'consulting' or mode == 'simulator':
                         limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
                                       time_divisor, max_rsi, min_vol)
-                elif closing > reward:  # pillow
+                elif closing > reward:
                     log = '{} Warning. Reward activated. Sell your asset.'.format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
