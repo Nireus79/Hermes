@@ -22,7 +22,7 @@ function update_values() {
                 $('#buy_flag_15m').text(data.buy_flag_15m);
                 $('#sell_flag_15m').text(data.sell_flag_15m);
                 $('#price').text('Closing price: '+data.price);
-                $('#pillow').text('Pillow: '+data.pillow);
+                $('#risk').text('Risk level: '+data.risk);
                 $('#limit').text('Buy limit: '+data.limit);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);

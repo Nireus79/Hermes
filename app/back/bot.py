@@ -126,7 +126,7 @@ def order_manager(order_type, high_front, mid_front,
             if closing price exceeds set limit level:
                 places a market buy asset for the asset
                 Conditions are reevaluated until order is closed.
-                Pillow is set on the low of previous low frame candle - atr as global variable.
+                Risk is set on the low of previous low frame candle - atr as global variable.
                 Buy price is stored as global variable.
             else: (closing price under limit)
                 waits part or full time by choice, of low frame duration to reevaluate.
@@ -602,9 +602,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
         i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
-        # Pillow set to 4% loss, in case of connection when condition is already 'sell'
+        # risk set to 4% loss, in case of connection when condition is already 'sell'
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
-        pillow = closing_price * 0.96
+        risk = closing_price * 0.96
         buy_price = closing_price
         log = '{} Operation start. Condition is {}.' \
               ' Mode is {}. Max RSI set to: {}. Min %ATR set to: {}. Low frame evaluations: {}.' \
@@ -1046,6 +1046,6 @@ def data_feed():
         'price': closing_price,
         'stop': stop,
         'limit': limit,
-        'pillow': risk,
+        'risk': risk,
         # 'buy_price': buy_price
     }
