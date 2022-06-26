@@ -53,7 +53,7 @@ mid_rs = None
 mid_p_atr = None
 
 buy_price = 0
-
+reward = 0
 break_event = threading.Event()
 
 
@@ -171,7 +171,7 @@ def order_manager(order_type, high_front, mid_front,
     When setting buy order, vol = (money - money * max kraken fee) / crypto price
     When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
-    global pillow, condition, stop, limit, log, closing_price, runningLowFrame, \
+    global pillow, reward, condition, stop, limit, log, closing_price, runningLowFrame, \
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, \
         crypto_balance, fiat_balance, buy_price
     beeper('start')
@@ -230,6 +230,9 @@ def order_manager(order_type, high_front, mid_front,
                         pillow = low_f.iloc[-2]['low'] - l_atr
                     else:
                         pillow = low_f.iloc[-1]['low'] - l_atr
+                    risk = buy_price - pillow
+                    r = risk * 2
+                    reward = r + buy_price
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
@@ -869,8 +872,24 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         mid_d, mid_ds, mid_rs, mid_p_atr = chart_data(high_frame_1h, mid_frame_15m)
                     time.sleep(i5m_frame.candle)
             elif condition == 'sell':
-                if i5m_frame.get_frame().iloc[-1]['close'] < pillow:  # pillow
+                closing = i5m_frame.get_frame().iloc[-1]['close']
+                if closing < pillow:  # pillow / risk
                     log = '{} Warning. Pillow activated. Sell your asset.'.format(time_stamp(time.time()))
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    runningHighFrame = '1Hour'
+                    runningMidFrame = '15minutes'
+                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
+                        mid_d, mid_ds, mid_rs, mid_p_atr = chart_data(high_frame_1h, mid_frame_15m)
+                    runningLowFrame = '5minutes'
+                    if mode == 'trading':
+                        order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
+                                      crypto_currency, fiat_currency, time_divisor, max_rsi, min_vol)
+                    elif mode == 'consulting' or mode == 'simulator':
+                        limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
+                                      time_divisor, max_rsi, min_vol)
+                elif closing > reward:  # reward
+                    log = '{} Warning. Reward activated. Sell your asset.'.format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
@@ -909,10 +928,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                           time_divisor, max_rsi, min_vol)
                     elif sell_flag_4h is not True:
                         log = '{} 4hour momentum is not weak. Wait {} minutes.' \
-                            .format(time_stamp(time.time()), i4h_frame.interval / 12)
+                            .format(time_stamp(time.time()), i4h_frame.interval / 24)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i4h_frame.candle / 12)
+                        time.sleep(i4h_frame.candle / 24)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -936,10 +955,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             limit_manager(mode, high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame,
                                           condition, time_divisor, max_rsi, min_vol)
                     elif sell_flag_1h is not True:
-                        log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval / 12)
+                        log = '1hour momentum is not weak. Wait {} minutes.'.format(i1h_frame.interval / 24)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i1h_frame.candle / 12)
+                        time.sleep(i1h_frame.candle / 24)
                 elif trend_1h:
                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                     logging.info(log)
@@ -965,10 +984,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                           time_divisor, max_rsi, min_vol)
                     elif sell_flag_15m is not True:
                         log = '{} 15min momentum not weak. Wait {} minutes.' \
-                            .format(time_stamp(time.time()), i15m_frame.interval / 12)
+                            .format(time_stamp(time.time()), i15m_frame.interval / 24)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i15m_frame.candle / 12)
+                        time.sleep(i15m_frame.candle / 24)
                 else:
                     log = '{} All high-frame trends are negative.' \
                         .format(time_stamp(time.time()))
