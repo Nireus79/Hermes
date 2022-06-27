@@ -9,10 +9,6 @@ from app.back.spring import check
 logging.basicConfig(level=logging.INFO)
 
 condition = None
-stop = 0
-limit = None
-closing_price = None
-risk = 0
 log = 'Please set control parameters to start.'
 logs = []
 trades = []
@@ -50,7 +46,10 @@ high_macd = None
 mid_d = None
 mid_ds = None
 mid_rs = None
-
+stop = 0
+limit = 0
+closing_price = None
+risk = 0
 buy_price = 0
 reward = 0
 break_event = threading.Event()
