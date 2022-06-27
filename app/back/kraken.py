@@ -147,8 +147,6 @@ def mid_frame_indicators(mdf, max_rsi):
     mdf['%D'] = mdf['%K'].rolling(3).mean()
     mdf['%DS'] = mdf['%D'].rolling(3).mean()  # Stochastic slow.
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
-    # mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
-    # mdf['%atr'] = (mdf['atr'] / mdf['close']) * 100
     mdf['buy flag'] = mdf.apply(
         lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < max_rsi, axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
@@ -180,7 +178,7 @@ def high_data(frame):
     """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
-    front_df['time'] = front_df['time'].apply(lambda x: x * 1000)  # *1000 javascript time
+    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000)+10800000)  # *1000 javascript time + 3hours
     data_list = front_df.values.tolist()
     candle_data = []
     ema9_data = []
@@ -212,7 +210,7 @@ def mid_data(frame):
     """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
-    front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
+    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000)+10800000)
     data_list = front_df.values.tolist()
     candle_data = []
     stoch_d_data = round(data_list[-1][9], 4)

@@ -8,8 +8,8 @@ function update_values() {
                 $('#rsi').text('Max RSI: '+data.rsi);
                 $('#evaluations').text('Evaluations per low period: '+data.divider);
                 $('#condition').text('Evaluating to '+data.condition+':');
-                $('#crypto_currency').text('for '+data.fiat_currency+'.');
-                $('#fiat_currency').text(''+data.crypto_currency);
+                $('#crypto_currency').text(data.crypto_currency);
+                $('#fiat_currency').text('for  '+data.fiat_currency);
                 $('#crypto_balance').text('asset A: '+data.crypto_balance);
                 $('#fiat_balance').text('asset B: '+data.fiat_balance);
                 $('#trend_24h').text(data.trend_24h);
