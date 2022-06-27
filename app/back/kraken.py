@@ -180,7 +180,7 @@ def high_data(frame):
     """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
-    front_df['time'] = front_df['time'].apply(lambda x: x * 1000)
+    front_df['time'] = front_df['time'].apply(lambda x: x * 1000)  # *1000 javascript time
     data_list = front_df.values.tolist()
     candle_data = []
     ema9_data = []
@@ -203,7 +203,7 @@ def high_data(frame):
                 'x': i[0],
                 'y': round(i[9], 4)
             })
-    return candle_data, ema9_data, ema13_data, macd_data
+    return candle_data[30:], ema9_data[30:], ema13_data[30:], macd_data
 
 
 def mid_data(frame):
@@ -224,7 +224,7 @@ def mid_data(frame):
             'x': i[0],
             'y': [i[1], i[2], i[3], i[4]]
         })
-    return candle_data, stoch_d_data, stoch_ds_data, rsi_data, atr_data
+    return candle_data[30:], stoch_d_data, stoch_ds_data, rsi_data, atr_data
 
 
 class Api:

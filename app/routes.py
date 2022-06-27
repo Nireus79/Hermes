@@ -11,9 +11,10 @@ import logging
 asset_a = None
 asset_b = None
 mode = None
-divider = 4
+divider = 2
 rsi = 70
 volatility = 0.5
+risk_ratio = 2
 
 # Flask logs
 log = logging.getLogger('werkzeug')
@@ -28,7 +29,7 @@ def main():
 
 @app.route('/control', methods=['POST', 'GET'])
 def control():
-    global asset_a, asset_b, mode, divider, rsi, volatility
+    global asset_a, asset_b, mode, divider, rsi, volatility, risk_ratio
     if request.method == 'POST':
         try:
             asset_a = request.form['assetA']
@@ -37,6 +38,7 @@ def control():
             divider = float(request.form['divider'])
             rsi = float(request.form['rsi'])
             volatility = float(request.form['volatility'])
+            risk_ratio = float(request.form['risk'])
         except Exception as e:
             logging.info(e)
 
@@ -87,7 +89,8 @@ def starter():
         logging.info('Set %atr.')
         return render_template('control.html')
     else:
-        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, divider, rsi, volatility))
+        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b,
+                                                          50, divider, rsi, volatility, risk_ratio))
         trading.daemon = True
         trading.start()
         return render_template('overview.html')
