@@ -4,7 +4,6 @@ function update_values() {
         function(data) {
                 $('#current_time').text('Current time: '+data.current_time);
                 $('#mode').text('Mode: '+data.mode);
-                $('#volatility').text('Min %ATR: '+data.volatility);
                 $('#rsi').text('Max RSI: '+data.rsi);
                 $('#evaluations').text('Evaluations per low period: '+data.divider);
                 $('#condition').text('Evaluating to '+data.condition+':');
