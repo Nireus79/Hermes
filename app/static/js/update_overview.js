@@ -4,7 +4,7 @@ function update_values() {
         function(data) {
                 $('#current_time').text('Current time: '+data.current_time);
                 $('#mode').text('Mode: '+data.mode);
-                $('#rr_ratio').text('Risk/Reward ratio: '+data.rr_ratio);
+                $('#rr_ratio').text('Risk/Reward ratio: '+data.rr_ratio+'/1');
                 $('#rsi').text('Max RSI: '+data.rsi);
                 $('#evaluations').text('Evaluations per low period: '+data.divider);
                 $('#condition').text('Evaluating to '+data.condition+':');
@@ -22,9 +22,9 @@ function update_values() {
                 $('#buy_flag_15m').text(data.buy_flag_15m);
                 $('#sell_flag_15m').text(data.sell_flag_15m);
                 $('#price').text('Closing price: '+data.price);
-                $('#reward').text('Reward price: '+data.reward);
+                $('#reward').text('Reward limit: '+data.reward);
                 $('#limit').text('Buy limit: '+data.limit);
-                $('#buy_price').text('Buy price: '+data.buy_price);
+//                $('#buy_price').text('Buy price: '+data.buy_price);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
                 $('#risk').text('Risk level: '+data.risk);

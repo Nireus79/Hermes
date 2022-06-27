@@ -1045,5 +1045,5 @@ def data_feed():
         'limit': limit,
         'risk': risk,
         'reward': reward,
-        'buy_price': buy_price
+        # 'buy_price': buy_price
     }
