@@ -65,6 +65,7 @@ def update():
     dt['mode'] = mode
     dt['divider'] = divider
     dt['rsi'] = rsi
+    dt['rr_ratio'] = risk_ratio
     return jsonify(dt)
 
 

@@ -481,7 +481,7 @@ def limit_manager(mode, high_front, mid_front, mid, low, cond, time_divisor, max
                 break
 
 
-def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi, risk_ratio):
+def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi, rr_ratio):
     """
     Custom, real time, multiple time frame, consulting-trading bot application,
     interpretation of Alexander Elder's "triple screen" forex market trading strategy.
@@ -569,8 +569,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             elif all high frames trend is negative:
                 second risk condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
-
-    :param risk_ratio:
+    :param rr_ratio:
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
     :param mode: trading / consulting
@@ -659,7 +658,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         runningLowFrame = '1Hour'
                         if mode == 'trading':
                             order_manager('market', high_frame_24h, mid_frame_4h, i4h_frame, i1h_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                          crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, high_frame_24h, mid_frame_4h, i4h_frame, i1h_frame,
                                           condition, time_divisor, max_rsi)
@@ -686,7 +685,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 if mode == 'trading':
                                     order_manager('market', high_frame_4h, mid_frame_1h, i1h_frame,
                                                   i15m_frame, condition, crypto_currency, fiat_currency, time_divisor,
-                                                  max_rsi, risk_ratio)
+                                                  max_rsi, rr_ratio)
                                 elif mode == 'consulting' or mode == 'zero':
                                     limit_manager(mode, high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame,
                                                   condition, time_divisor, max_rsi)
@@ -714,7 +713,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                         if mode == 'trading':
                                             order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame,
                                                           condition, crypto_currency, fiat_currency, time_divisor,
-                                                          max_rsi, risk_ratio)
+                                                          max_rsi, rr_ratio)
                                         elif mode == 'consulting' or mode == 'simulator':
                                             limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame,
                                                           condition, time_divisor, max_rsi)
@@ -754,7 +753,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                     if mode == 'trading':
                                         order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame,
                                                       condition, crypto_currency, fiat_currency, time_divisor,
-                                                      max_rsi, risk_ratio)
+                                                      max_rsi, rr_ratio)
                                     elif mode == 'consulting' or mode == 'simulator':
                                         limit_manager(mode, high_frame_1h, mid_frame_15m,
                                                       i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
@@ -789,7 +788,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         runningLowFrame = '15minutes'
                         if mode == 'trading':
                             order_manager('market', high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                          crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame,
                                           condition, time_divisor, max_rsi)
@@ -817,7 +816,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 if mode == 'trading':
                                     order_manager('market', high_frame_1h, mid_frame_15m,
                                                   i15m_frame, i5m_frame, condition, crypto_currency, fiat_currency,
-                                                  time_divisor, max_rsi, risk_ratio)
+                                                  time_divisor, max_rsi, rr_ratio)
                                 elif mode == 'consulting' or mode == 'simulator':
                                     limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame,
                                                   condition, time_divisor, max_rsi)
@@ -851,7 +850,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         runningLowFrame = '5minutes'
                         if mode == 'trading':
                             order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                          crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
                                           time_divisor, max_rsi)
@@ -883,7 +882,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
-                                      crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                      crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                     elif mode == 'consulting' or mode == 'simulator':
                         limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
                                       time_divisor, max_rsi)
@@ -898,7 +897,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
-                                      crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                      crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                     elif mode == 'consulting' or mode == 'simulator':
                         limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
                                       time_divisor, max_rsi)
@@ -921,7 +920,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         runningLowFrame = '1Hour'
                         if mode == 'trading':
                             order_manager('market', high_frame_24h, mid_frame_4h, i4h_frame, i1h_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                          crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, high_frame_24h, mid_frame_4h, i4h_frame, i1h_frame, condition,
                                           time_divisor, max_rsi)
@@ -949,7 +948,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         runningLowFrame = '15minutes'
                         if mode == 'trading':
                             order_manager('market', high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                          crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, high_frame_4h, mid_frame_1h, i1h_frame, i15m_frame,
                                           condition, time_divisor, max_rsi)
@@ -977,7 +976,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         runningLowFrame = '5minutes'
                         if mode == 'trading':
                             order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                          crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
                                           time_divisor, max_rsi)
@@ -999,7 +998,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
-                                      crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio)
+                                      crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
                     elif mode == 'consulting' or mode == 'simulator':
                         limit_manager(mode, high_frame_1h, mid_frame_15m, i15m_frame, i5m_frame, condition,
                                       time_divisor, max_rsi)
