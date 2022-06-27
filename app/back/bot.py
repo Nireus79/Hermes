@@ -629,8 +629,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
             high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
             high_frame_1h = high_frame_indicators(i1h_frame.get_frame())
-            mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame(), max_rsi, min_vol)
-            mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame(), max_rsi, min_vol)
+            mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame(), max_rsi, min_vol*4)
+            mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame(), max_rsi, min_vol*2)
             mid_frame_15m = mid_frame_indicators(i15m_frame.get_frame(), max_rsi, min_vol)
             trend_24h = high_frame_24h.iloc[-1]['trend']
             trend_4h = high_frame_4h.iloc[-1]['trend']
