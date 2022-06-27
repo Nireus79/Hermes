@@ -50,7 +50,7 @@ high_macd = None
 mid_d = None
 mid_ds = None
 mid_rs = None
-mid_p_atr = None
+mid_p_atr = 1
 
 buy_price = 0
 reward = 0
@@ -1016,8 +1016,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
 
 
 def data_feed():
+    min_atr = mid_p_atr
     if len(logs) > 300:
         del logs[:len(logs) - 299]
+    if runningMidFrame == '1Hour':
+        min_atr = mid_p_atr * 2
+    elif runningMidFrame == '4Hour':
+        min_atr = mid_p_atr * 4
     return {
         'log': log,
         'logs': logs,
@@ -1045,7 +1050,7 @@ def data_feed():
         'mid_d': mid_d,
         'mid_ds': mid_ds,
         'mid_rs': mid_rs,
-        'mid_p_atr': mid_p_atr,
+        'mid_p_atr': min_atr,
         'price': closing_price,
         'stop': stop,
         'limit': limit,
