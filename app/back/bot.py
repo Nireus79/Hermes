@@ -593,8 +593,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
         buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
-        mid_frame_15m, risk, reward, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame, \
-        runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, buy_price, low_chart_data
+        mid_frame_15m, risk, reward, closing_price, high_chart_data, mid_chart_data, runningHighFrame,\
+        runningMidFrame, runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, buy_price,\
+        low_chart_data
     # TODO activate licence check
     licence = True  # check()['license_active']
     if licence:
