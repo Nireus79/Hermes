@@ -372,7 +372,7 @@ def limit_manager(mode, high_front, mid_front, low_front, mid, low, cond, time_d
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
         high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, low_chart_data, \
-         = chart_data(high_front, mid_front, low_front)
+            = chart_data(high_front, mid_front, low_front)
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
@@ -593,7 +593,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
         buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
-        mid_frame_15m, risk, reward, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame,\
+        mid_frame_15m, risk, reward, closing_price, high_chart_data, mid_chart_data, runningHighFrame, runningMidFrame, \
         runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, buy_price, low_chart_data
     # TODO activate licence check
     licence = True  # check()['license_active']
