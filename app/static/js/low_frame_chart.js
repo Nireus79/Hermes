@@ -66,20 +66,21 @@ function update_values() {
             low_frame_chart.updateSeries([{
               name: 'Correction frame: ' + data_update.runningLowFrame,
               data: data_update.low_chart_data
-            },{
-              name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
-              data: data_update.low_reward
-            },
-            {
-              name: 'Buy limit: ' + data_update.low_buy_limit[data_update.low_buy_limit.length - 1]['y'],
-              data: data_update.low_buy_limit
-            },{
-              name: 'Stop loss: ' + data_update.low_stop_loss[data_update.low_stop_loss.length - 1]['y'],
-              data: data_update.low_stop_loss
-              },{
-              name: 'Risk level: ' + data_update.low_risk_level[data_update.low_risk_level.length - 1]['y'],
-              data: data_update.low_risk_level
-              }
+            }
+//            ,{
+//              name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
+//              data: data_update.low_reward
+//            },
+//            {
+//              name: 'Buy limit: ' + data_update.low_buy_limit[data_update.low_buy_limit.length - 1]['y'],
+//              data: data_update.low_buy_limit
+//            },{
+//              name: 'Stop loss: ' + data_update.low_stop_loss[data_update.low_stop_loss.length - 1]['y'],
+//              data: data_update.low_stop_loss
+//              },{
+//              name: 'Risk level: ' + data_update.low_risk_level[data_update.low_risk_level.length - 1]['y'],
+//              data: data_update.low_risk_level
+//              }
             ]);
         }
     );
