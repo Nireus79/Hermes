@@ -3,7 +3,7 @@ import time
 import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
-    add_order, cancel_order, get_condition, high_data, mid_data
+    add_order, cancel_order, get_condition, high_data, mid_data, low_data
 from app.back.spring import check
 
 logging.basicConfig(level=logging.INFO)
@@ -111,6 +111,7 @@ def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
 def chart_data(high_frame, mid_frame):
     high_candles, e9, e13, mac = high_data(high_frame)
     mid_candles, d, ds, rs = mid_data(mid_frame)
+    # low_candles = low_data(low_frame)
     return high_candles, e9, e13, mac, mid_candles, d, ds, rs
 
 

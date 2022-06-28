@@ -178,7 +178,7 @@ def high_data(frame):
     """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
-    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000)+10800000)  # *1000 javascript time + 3hours
+    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000) + 10800000)  # *1000 javascript time + 3hours
     data_list = front_df.values.tolist()
     candle_data = []
     ema9_data = []
@@ -210,7 +210,7 @@ def mid_data(frame):
     """
     front_df = frame.copy()
     front_df = front_df.fillna(0)
-    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000)+10800000)
+    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000) + 10800000)
     data_list = front_df.values.tolist()
     candle_data = []
     stoch_d_data = round(data_list[-1][9], 4)
@@ -222,6 +222,23 @@ def mid_data(frame):
             'y': [i[1], i[2], i[3], i[4]]
         })
     return candle_data[30:], stoch_d_data, stoch_ds_data, rsi_data
+
+
+def low_data(frame):
+    """
+    Same as above (mid) FOR USE IN APEXCHARTS
+    """
+    front_df = frame.copy()
+    front_df = front_df.fillna(0)
+    front_df['time'] = front_df['time'].apply(lambda x: (x * 1000) + 10800000)
+    data_list = front_df.values.tolist()
+    candle_data = []
+    for i in data_list:
+        candle_data.append({
+            'x': i[0],
+            'y': [i[1], i[2], i[3], i[4]]
+        })
+    return candle_data[40:]
 
 
 class Api:
