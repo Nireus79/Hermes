@@ -610,7 +610,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
         i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
-        risk = closing_price * 0.96  # risk set to 4% loss, in case of connection when condition is already 'sell'
+        risk = closing_price * 0.96  # r/r set to +-4% , in case of connection when condition is already 'sell'
         reward = closing_price * 1.04
         buy_price = closing_price
         log = '{} Operation start. Condition is {}.' \
