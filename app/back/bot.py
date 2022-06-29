@@ -46,12 +46,12 @@ mid_d = None
 mid_ds = None
 mid_rs = None
 low_chart_data = None
-stop = 0
-limit = 0
+reward = None
+limit = None
+stop = None
+risk = None
+buy_price = None
 closing_price = None
-risk = 0
-buy_price = 0
-reward = 0
 
 break_event = threading.Event()
 
@@ -156,7 +156,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
-    :param high:
+    :param high: high-frame instance
     :param mid: mid-frame instance
     :param low: low-frame instance
     :param cond: buy / sell
@@ -329,9 +329,9 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
     :param mode: zero or consulting
-    :param high:
-    :param mid: The middle time frame instance, used to check if buy/sell flag is still True.
-    :param low: The low time frame instance, used to set limit/stop-loss borders.
+    :param high: The high frame instance, used for chart data.
+    :param mid: The middle frame instance, used to check if buy/sell flag is still True.
+    :param low: The low frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
     global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data, \
