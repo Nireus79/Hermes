@@ -7,10 +7,8 @@ from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, lo
 from app.back.spring import check
 
 logging.basicConfig(level=logging.INFO)
-break_event = threading.Event()
 
 condition = None
-log = 'Please set control parameters to start.'
 trend_24h = None
 trend_4h = None
 trend_1h = None
@@ -29,8 +27,6 @@ risk = None
 buy_price = None
 closing_price = None
 
-logs = []
-trades = []
 front_buy_flag_4h = False
 front_buy_flag_1h = False
 front_buy_flag_15m = False
@@ -38,10 +34,10 @@ runningHighFrame = None
 runningMidFrame = None
 runningLowFrame = None
 high_chart_data = None
+mid_chart_data = None
 high_ema9 = None
 high_ema13 = None
 high_macd = None
-mid_chart_data = None
 mid_d = None
 mid_ds = None
 mid_rs = None
@@ -50,6 +46,11 @@ low_reward = None
 low_limit = None
 low_stop = None
 low_risk = None
+log = 'Please set control parameters to start.'
+logs = []
+trades = []
+
+break_event = threading.Event()
 
 
 def signal_handler():
@@ -109,7 +110,7 @@ def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
 
 
 def chart_data(high_frame, mid_frame, low_frame):
-    global high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, \
+    global high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
         low_chart_data, low_reward, low_limit, low_stop, low_risk
     reward_data = []
     limit_data = []
@@ -206,7 +207,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     When setting buy order, vol = (money - money * max kraken fee) / crypto price
     When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
-    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, \
+    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame,\
         crypto_balance, fiat_balance, buy_price
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
@@ -621,8 +622,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     """
     global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, sell_flag_4h, \
         buy_flag_1h, sell_flag_1h, buy_flag_15m, sell_flag_15m, \
-        crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
-        mid_frame_15m, risk, reward, closing_price, runningHighFrame, \
+        crypto_balance, fiat_balance, risk, reward, closing_price, runningHighFrame, \
         runningMidFrame, runningLowFrame, buy_price
     # TODO activate licence check
     licence = True  # check()['license_active']
