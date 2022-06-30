@@ -915,6 +915,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
+                    runningLowFrame = '5minutes'
                     high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
                         mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
                         = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
