@@ -88,6 +88,7 @@ def beeper(cond):
 
 
 def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
+    global front_buy_flag_4h, front_buy_flag_1h, front_buy_flag_15m
     """
     Signal to buy is true for the user when trend is positive on high-frame AND momentum is strong on mid-frame.
     So user needs to see a true buy flag as signal when conditions above are fulfilled. Not the internal buy flag
@@ -110,7 +111,6 @@ def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
         front_flag4 = True
     if trend1 and mid15:
         front_flag1 = True
-    return front_flag24, front_flag4, front_flag1
 
 
 def chart_data(high_frame, mid_frame, low_frame):
@@ -624,8 +624,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             low-frame candle minus atr.
             That is considered as minimum stop loss level price can reach on a pullback.
     """
-    global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
-        buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
+    global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, sell_flag_4h, \
+        buy_flag_1h, sell_flag_1h, buy_flag_15m, sell_flag_15m, \
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
         mid_frame_15m, risk, reward, closing_price, runningHighFrame, \
         runningMidFrame, runningLowFrame, buy_price
@@ -681,8 +681,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
             buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
             sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
-            front_buy_flag_4h, front_buy_flag_1h, front_buy_flag_15m = \
-                front_flags(trend_24h, trend_4h, trend_1h, buy_flag_4h, buy_flag_1h, buy_flag_15m)
+            front_flags(trend_24h, trend_4h, trend_1h, buy_flag_4h, buy_flag_1h, buy_flag_15m)
             if condition == 'buy':
                 if trend_24h:
                     log = '{} 24hour trend is {}'.format(time_stamp(time.time()), trend_24h)
