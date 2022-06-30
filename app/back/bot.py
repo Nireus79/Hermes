@@ -114,6 +114,8 @@ def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
 
 
 def chart_data(high_frame, mid_frame, low_frame):
+    global high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
+        low_chart_data, low_reward, low_limit, low_stop, low_risk
     reward_data = []
     limit_data = []
     stop_data = []
@@ -138,9 +140,19 @@ def chart_data(high_frame, mid_frame, low_frame):
             'x': i['x'],
             'y': risk
         })
-    return high_candles, e9, e13, mac, \
-        mid_candles, d, ds, rs, \
-        low_candles, reward_data, limit_data, stop_data, risk_data
+    high_chart_data = high_candles
+    high_ema9 = e9
+    high_ema13 = e13
+    high_macd = mac
+    mid_chart_data = mid_candles
+    mid_d = d
+    mid_ds = ds
+    mid_rs = rs
+    low_chart_data = low_candles
+    low_reward = reward_data
+    low_limit = limit_data
+    low_stop = stop_data
+    low_risk = risk_data
 
 
 def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_currency, time_divisor, max_rsi, risk_ratio):
@@ -199,9 +211,8 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     When setting buy order, vol = (money - money * max kraken fee) / crypto price
     When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
-    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, \
-        high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, \
-        crypto_balance, fiat_balance, buy_price, low_chart_data, low_reward, low_limit, low_stop, low_risk
+    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame,\
+        crypto_balance, fiat_balance, buy_price
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -223,9 +234,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     log = '{} Wait {}min.'.format(time_stamp(time.time()), low.interval)
     logging.info(log)
     logs.append(log + '<br>')
-    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
-        low_chart_data, low_reward, low_limit, low_stop, low_risk = \
-        chart_data(high_f, mid_f, low_f)
+    chart_data(high_f, mid_f, low_f)
     time.sleep(low.candle)
     while True:
         high_f = high_frame_indicators(high.get_frame())
@@ -237,9 +246,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
-        high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
-            low_chart_data, low_reward, low_limit, low_stop, low_risk \
-            = chart_data(high_f, mid_f, low_f)
+        chart_data(high_f, mid_f, low_f)
         if break_event.is_set():  # thread "kill" by user
             cancel_order()
             log = '{} Break ordering.'.format(time_stamp(time.time()))
@@ -363,9 +370,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
     :param low: The low frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
-    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, high_chart_data, \
-        high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, buy_price,\
-        low_chart_data, low_reward, low_limit, low_stop, low_risk
+    global risk, reward, condition, stop, limit, log, closing_price, runningLowFrame, buy_price
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -389,9 +394,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
             .format(time_stamp(time.time()), stop, low.interval)
     logging.info(log)
     logs.append(log + '<br>')
-    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
-        low_chart_data, low_reward, low_limit, low_stop, low_risk = \
-        chart_data(high_f, mid_f, low_f)
+    chart_data(high_f, mid_f, low_f)
     time.sleep(low.candle)
     while True:
         high_f = high_frame_indicators(high.get_frame())
@@ -403,9 +406,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
-        high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
-            low_chart_data, low_reward, low_limit, low_stop, low_risk \
-            = chart_data(high_f, mid_f, low_f)
+        chart_data(high_f, mid_f, low_f)
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
@@ -626,9 +627,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, front_buy_flag_4h, sell_flag_4h, \
         buy_flag_1h, front_buy_flag_1h, sell_flag_1h, buy_flag_15m, front_buy_flag_15m, sell_flag_15m, \
         crypto_balance, fiat_balance, high_frame_24h, high_frame_4h, high_frame_1h, mid_frame_4h, mid_frame_1h, \
-        mid_frame_15m, risk, reward, closing_price, high_chart_data, mid_chart_data, runningHighFrame, \
-        runningMidFrame, runningLowFrame, high_ema9, high_ema13, high_macd, mid_d, mid_ds, mid_rs, buy_price, \
-        low_chart_data, low_reward, low_limit, low_stop, low_risk
+        mid_frame_15m, risk, reward, closing_price, runningHighFrame, \
+        runningMidFrame, runningLowFrame, buy_price
     # TODO activate licence check
     licence = True  # check()['license_active']
     if licence:
@@ -694,9 +694,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '24Hour'
                     runningMidFrame = '4Hour'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_24h, mid_frame_4h, low_frame_1h)
+                    chart_data(high_frame_24h, mid_frame_4h, low_frame_1h)
                     if buy_flag_4h:
                         log = '{} 4hour momentum is strong.'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -720,9 +718,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             logs.append(log + '<br>')
                             runningHighFrame = '4Hour'
                             runningMidFrame = '1Hour'
-                            high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
-                                low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                                = chart_data(high_frame_4h, mid_frame_1h, low_frame_15m)
+                            chart_data(high_frame_4h, mid_frame_1h, low_frame_15m)
                             if buy_flag_1h and sell_flag_4h is not True:
                                 log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                                 logging.info(log)
@@ -741,9 +737,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 logs.append(log + '<br>')
                                 runningHighFrame = '1Hour'
                                 runningMidFrame = '15minutes'
-                                high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, \
-                                    mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                                    = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                                chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                                 if trend_1h:
                                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                                     logging.info(log)
@@ -782,9 +776,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             logs.append(log + '<br>')
                             runningHighFrame = '1Hour'
                             runningMidFrame = '15minutes'
-                            high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, \
-                                mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                                = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                            chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                             if trend_1h:
                                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                                 logging.info(log)
@@ -827,9 +819,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '4Hour'
                     runningMidFrame = '1Hour'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_4h, mid_frame_1h, low_frame_15m)
+                    chart_data(high_frame_4h, mid_frame_1h, low_frame_15m)
                     if buy_flag_1h:
                         log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -847,9 +837,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logs.append(log + '<br>')
                         runningHighFrame = '1Hour'
                         runningMidFrame = '15minutes'
-                        high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, \
-                            mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                            = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                        chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                         if trend_1h:
                             log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                             logging.info(log)
@@ -890,9 +878,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                    chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                     if buy_flag_15m:
                         log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -916,9 +902,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
                     runningLowFrame = '5minutes'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                    chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                     time.sleep(i5m_frame.candle)
             elif condition == 'sell':
                 closing = i5m_frame.get_frame().iloc[-1]['close']
@@ -928,9 +912,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_1h, mid_frame_15m, i5m_frame)
+                    chart_data(high_frame_1h, mid_frame_15m, i5m_frame)
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
@@ -943,9 +925,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                    chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
@@ -962,9 +942,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '24Hour'
                     runningMidFrame = '4Hour'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_24h, mid_frame_4h, low_frame_5m)
+                    chart_data(high_frame_24h, mid_frame_4h, low_frame_5m)
                     if sell_flag_4h:
                         log = '{} 4hour momentum is weak.'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -990,9 +968,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '4Hour'
                     runningMidFrame = '1Hour'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_4h, mid_frame_1h, low_frame_5m)
+                    chart_data(high_frame_4h, mid_frame_1h, low_frame_5m)
                     if sell_flag_1h:
                         log = '{} 1hour momentum is weak.'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -1018,9 +994,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                    chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                     if sell_flag_15m:
                         log = '{} 15min momentum is weak.'.format(time_stamp(time.time()))
                         logging.info(log)
@@ -1044,9 +1018,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
-                    high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, \
-                        mid_d, mid_ds, mid_rs, low_chart_data, low_reward, low_limit, low_stop, low_risk\
-                        = chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
+                    chart_data(high_frame_1h, mid_frame_15m, low_frame_5m)
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
@@ -1096,6 +1068,5 @@ def data_feed():
         'low_reward': low_reward,
         'low_limit': low_limit,
         'low_stop': low_stop,
-        'low_risk': low_risk,
-
+        'low_risk': low_risk
     }
