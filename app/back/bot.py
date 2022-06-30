@@ -12,11 +12,8 @@ condition = None
 trend_24h = None
 trend_4h = None
 trend_1h = None
-buy_flag_4h = None
 sell_flag_4h = None
-buy_flag_1h = None
 sell_flag_1h = None
-buy_flag_15m = None
 sell_flag_15m = None
 crypto_balance = None
 fiat_balance = 0
@@ -620,10 +617,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             low-frame candle minus atr.
             That is considered as minimum stop loss level price can reach on a pullback.
     """
-    global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, sell_flag_4h, \
-        buy_flag_1h, sell_flag_1h, buy_flag_15m, sell_flag_15m, \
-        crypto_balance, fiat_balance, risk, reward, closing_price, runningHighFrame, \
-        runningMidFrame, runningLowFrame, buy_price
+    global condition, log, trend_24h, trend_4h, trend_1h, sell_flag_4h, sell_flag_1h, sell_flag_15m, \
+        crypto_balance, fiat_balance, risk, reward, closing_price,\
+        runningHighFrame, runningMidFrame, runningLowFrame, buy_price
     # TODO activate licence check
     licence = True  # check()['license_active']
     if licence:
