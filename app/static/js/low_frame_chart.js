@@ -34,7 +34,7 @@ var options = {
         },
         title: {
           text: 'Correction frame',
-          align: 'Right'
+          align: 'left'
         },
         stroke: {
           width: [3, 1]
