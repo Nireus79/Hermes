@@ -370,7 +370,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
     logs.append(log + '<br>')
     high_f = high_frame_indicators(high.get_frame())
     mid_f = mid_frame_indicators(mid.get_frame(), max_rsi)
-    low_f = low_frame_indicators(low.get_frame()).iloc[-1]
+    low_f = low_frame_indicators(low.get_frame())
     l_atr = low_f.iloc[-1]['atr']
     limit = low_f.iloc[-1]['high'] + l_atr
     stop = low_f.iloc[-1]['low'] - l_atr
