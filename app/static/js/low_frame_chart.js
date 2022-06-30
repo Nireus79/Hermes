@@ -5,6 +5,10 @@ var options = {
           type: 'candlestick',
           data: []
         },{
+          name: 'Closing price: ',
+          type: 'line',
+          data: []
+          },{
           name: 'Reward level: ',
           type: 'line',
           data: []
@@ -66,8 +70,9 @@ function update_values() {
             low_frame_chart.updateSeries([{
               name: 'Running low frame: ' + data_update.runningLowFrame,
               data: data_update.low_chart_data
-            }
-            ,{
+            },{
+              name: 'Closing price: ' + data_update.price
+            },{
               name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
               data: data_update.low_reward
             },
