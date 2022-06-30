@@ -24,12 +24,12 @@ var options = {
           }
         ],
         chart: {
-          height: 230,
+          height: 300,
           type: 'line',
           stacked: false
         },
         title: {
-          text: 'Trend frame',
+          text: 'Correction frame',
           align: 'left'
         },
         stroke: {
@@ -64,23 +64,23 @@ function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
             low_frame_chart.updateSeries([{
-              name: 'Correction frame: ' + data_update.runningLowFrame,
+              name: 'Running low frame: ' + data_update.runningLowFrame,
               data: data_update.low_chart_data
             }
-//            ,{
-//              name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
-//              data: data_update.low_reward
-//            },
-//            {
-//              name: 'Buy limit: ' + data_update.low_buy_limit[data_update.low_buy_limit.length - 1]['y'],
-//              data: data_update.low_buy_limit
-//            },{
-//              name: 'Stop loss: ' + data_update.low_stop_loss[data_update.low_stop_loss.length - 1]['y'],
-//              data: data_update.low_stop_loss
-//              },{
-//              name: 'Risk level: ' + data_update.low_risk_level[data_update.low_risk_level.length - 1]['y'],
-//              data: data_update.low_risk_level
-//              }
+            ,{
+              name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
+              data: data_update.low_reward
+            },
+            {
+              name: 'Buy limit: ' + data_update.low_limit[data_update.low_limit.length - 1]['y'],
+              data: data_update.low_limit
+            },{
+              name: 'Stop loss: ' + data_update.low_stop[data_update.low_stop.length - 1]['y'],
+              data: data_update.low_stop
+              },{
+              name: 'Risk level: ' + data_update.low_risk[data_update.low_risk.length - 1]['y'],
+              data: data_update.low_risk
+              }
             ]);
         }
     );

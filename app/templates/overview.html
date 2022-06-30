@@ -26,86 +26,75 @@
     <script type="text/javascript" src="{{url_for('static', filename='js/high_frame_chart.js')}}"></script>
     <div id="mid_frame_chart"></div>
     <script type="text/javascript" src="{{url_for('static', filename='js/mid_frame_chart.js')}}"></script>
-<!--    <div id="low_frame_chart"></div>-->
-<!--    <script type="text/javascript" src="{{url_for('static', filename='js/low_frame_chart.js')}}"></script>-->
 
-    <div>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>
-                        Frames
-                    </th>
-                    <th>
-                        Trend
-                    </th>
-                    <th>
-                        Buy
-                    </th>
-                    <th>
-                        Sell
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        24 hours
-                    </td>
-                    <td>
-                        <span id="trend_24h"></span>
-                    </td>
-                    <td>
-                        <span id="buy_flag_4h"></span>
-                    </td>
-                    <td>
-                        <span id="sell_flag_4h"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        4 hours
-                    </td>
-                    <td>
-                        <span id="trend_4h"></span>
-                    </td>
-                    <td>
-                        <span id="buy_flag_1h"></span>
-                    </td>
-                    <td>
-                        <span id="sell_flag_1h"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        1 hour
-                    </td>
-                    <td>
-                        <span id="trend_1h"></span>
-                    </td>
-                    <td>
-                        <span id="buy_flag_15m"></span>
-                    </td>
-                    <td>
-                        <span id="sell_flag_15m"></span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="container">
+        <div class="fixed">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>
+                            Frames
+                        </th>
+                        <th>
+                            Trend
+                        </th>
+                        <th>
+                            Buy
+                        </th>
+                        <th>
+                            Sell
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            24 hours
+                        </td>
+                        <td>
+                            <span id="trend_24h"></span>
+                        </td>
+                        <td>
+                            <span id="buy_flag_4h"></span>
+                        </td>
+                        <td>
+                            <span id="sell_flag_4h"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            4 hours
+                        </td>
+                        <td>
+                            <span id="trend_4h"></span>
+                        </td>
+                        <td>
+                            <span id="buy_flag_1h"></span>
+                        </td>
+                        <td>
+                            <span id="sell_flag_1h"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            1 hour
+                        </td>
+                        <td>
+                            <span id="trend_1h"></span>
+                        </td>
+                        <td>
+                            <span id="buy_flag_15m"></span>
+                        </td>
+                        <td>
+                            <span id="sell_flag_15m"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="low_frame_chart" class="flex-item"></div>
+        <script type="text/javascript" src="{{url_for('static', filename='js/low_frame_chart.js')}}"></script>
     </div>
-    <span id="price"></span>
-    <br>
-    <span id="reward"></span>
-    <br>
-    <span id="limit"></span>
-    <br>
-<!--    <span id="buy_price"></span>-->
-<!--    <br>-->
-    <span id="stop"></span>
-    <br>
-    <span id="risk"></span>
-    <br>
-    <br>
     <span id="log"></span>
     <br>
     <br>
