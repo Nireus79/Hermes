@@ -34,7 +34,7 @@ var options = {
         },
         title: {
           text: 'Correction frame',
-          align: 'left'
+          align: 'Right'
         },
         stroke: {
           width: [3, 1]
@@ -68,7 +68,7 @@ function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
             low_frame_chart.updateSeries([{
-              name: 'Running low frame: ' + data_update.runningLowFrame,
+              name: 'Low frame: ' + data_update.runningLowFrame,
               data: data_update.low_chart_data
             },{
               name: 'Closing price: ' + data_update.price

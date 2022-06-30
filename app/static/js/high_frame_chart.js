@@ -60,7 +60,7 @@ function update_values() {
     $.getJSON($SCRIPT_ROOT + '/update',
         function(data_update) {
             high_frame_chart.updateSeries([{
-              name: 'Trend frame: ' + data_update.runningHighFrame,
+              name: 'High frame: ' + data_update.runningHighFrame,
               data: data_update.high_chart_data
             },{
               name: 'EMA9: ' + data_update.high_ema9[data_update.high_ema9.length - 1]['y'],
