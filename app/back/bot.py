@@ -19,7 +19,7 @@ crypto_balance = None
 fiat_balance = 0
 reward = None
 limit = None
-stop = 0
+stop = None
 risk = None
 buy_price = None
 closing_price = None
@@ -239,6 +239,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
+        buy_price = closing_price  # In case of connection when condition is already 'sell'.
         chart_data(high_f, mid_f, low_f)
         if break_event.is_set():  # thread "kill" by user
             cancel_order()
@@ -396,6 +397,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
+        buy_price = closing_price  # In case of connection when condition is already 'sell'.
         chart_data(high_f, mid_f, low_f)
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
@@ -627,7 +629,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
         i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
-        risk = closing_price * 0.96  # r/r set to +-4% , in case of connection when condition is already 'sell'
+        risk = closing_price * 0.96  # r/r set to +-4% , in case of connection when condition is already 'sell'.
         reward = closing_price * 1.04
         buy_price = closing_price
         log = '{} Operation start. Condition is {}.' \
