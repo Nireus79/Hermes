@@ -19,7 +19,7 @@ crypto_balance = None
 fiat_balance = 0
 reward = None
 limit = None
-stop = None
+stop = 0
 risk = None
 buy_price = None
 closing_price = None
@@ -271,9 +271,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
                     time.sleep(10)
-                    runningLowFrame = None
-                    limit = None
-                    stop = 0
                     break
                 else:
                     if new_limit <= limit:
@@ -297,7 +294,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 time.sleep(10)
                 runningLowFrame = None
                 limit = None
-                stop = 0
+                stop = None
                 break
         elif cond == 'sell':
             if sell_flag:
@@ -433,8 +430,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                         risk = low_f.iloc[-1]['low'] - l_atr
                     r = (buy_price - risk) * 2  # 1 / 2 risk - reward ratio
                     reward = buy_price + r
-                    limit = None
-                    stop = 0
                     break
                 elif closing_price <= limit:
                     if new_limit < limit:
@@ -459,7 +454,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                 time.sleep(10)
                 runningLowFrame = None
                 limit = None
-                stop = 0
+                stop = None
                 break
         elif cond == 'sell':
             if sell_flag:
@@ -863,12 +858,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
+                    runningLowFrame = '5minutes'
                     chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                     if buy_flag_15m:
                         log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
-                        runningLowFrame = '5minutes'
                         if mode == 'trading':
                             order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
                                           crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
