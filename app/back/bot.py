@@ -247,7 +247,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
             logs.append(log + '<br>')
             runningLowFrame = None
             limit = None
-            stop = 0
+            stop = None
             break
         elif cond == 'buy':
             if buy_flag:
@@ -261,7 +261,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     buy_price = closing_price
                     log = tx
                     logging.info(log)
-                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:  # Probably impossible.
+                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:
                         risk = low_f.iloc[-2]['low'] - l_atr
                     else:
                         risk = low_f.iloc[-1]['low'] - l_atr
@@ -314,9 +314,9 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     time.sleep(10)
                     runningLowFrame = None
                     risk = closing_price * 0.96  # risk reset to 4% loss
+                    reward = closing_price * 1.04
                     limit = None
-                    stop = 0
-                    reward = 0
+                    stop = None
                     break
                 elif buy_price > closing_price > risk:
                     log = '{} Closing price between risk {} and buy price {}. Possible pullback. Wait {}min' \
@@ -407,7 +407,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
             runningLowFrame = None
             risk = 0
             limit = None
-            stop = 0
+            stop = None
             break
         if cond == 'buy':
             if buy_flag:
@@ -427,7 +427,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                         trades.append(log + '<br>')
                         condition = 'sell'
                     runningLowFrame = None
-                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:  # Probably impossible.
+                    if (low_f.iloc[-2]['low'] - l_atr) < buy_price:
                         risk = low_f.iloc[-2]['low'] - l_atr
                     else:
                         risk = low_f.iloc[-1]['low'] - l_atr
@@ -483,10 +483,8 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                         trades.append(log + '<br>')
                         condition = 'buy'
                     runningLowFrame = None
-                    risk = 0
                     limit = None
-                    stop = 0
-                    reward = 0
+                    stop = None
                     break
                 elif closing_price >= stop:
                     if new_stop > stop:
