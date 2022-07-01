@@ -319,7 +319,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     reward = 0
                     break
                 elif buy_price > closing_price > risk:
-                    log = '{} Closing price over risk {} and buy price {}. Possible pullback. Wait {}min' \
+                    log = '{} Closing price between risk {} and buy price {}. Possible pullback. Wait {}min' \
                         .format(time_stamp(time.time()), risk, buy_price, low.interval / time_divisor)
                     logging.info(log)
                     logs.append(log + '<br>')
