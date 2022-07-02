@@ -31,10 +31,11 @@
             }
             .container {
                 display:flex;
+                flex-grow: 1;
             }
             .fixed {
                 flex-grow: 1;
             }
             .flex-item {
-                flex-grow: 5;
+                flex-grow: 10;
             }

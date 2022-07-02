@@ -237,7 +237,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
-        buy_price = closing_price  # In case of connection when condition is already 'sell'.
         chart_data(high_f, mid_f, low_f)
         if break_event.is_set():  # thread "kill" by user
             cancel_order()
@@ -392,7 +391,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
         new_limit = low_f.iloc[-1]['high'] + l_atr
         new_stop = low_f.iloc[-1]['low'] - l_atr
         closing_price = low_f.iloc[-1]['close']
-        buy_price = closing_price  # In case of connection when condition is already 'sell'.
         chart_data(high_f, mid_f, low_f)
         if break_event.is_set():  # thread "kill" by user
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
