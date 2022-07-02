@@ -292,7 +292,34 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 stop = None
                 break
         elif cond == 'sell':
-            if sell_flag:
+            if stop > closing_price > reward:
+                log = 'Reward. Setting {} order to {} {} {} at {}.' \
+                    .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
+                logging.info(log)
+                tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+                log = tx
+                logging.info(log)
+                beeper(cond)
+                log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+                trades.append(log + '<br>')
+                limit = None
+                stop = None
+                break
+            elif stop < closing_price > reward:
+                if new_stop >= stop:
+                    stop = new_stop
+                    log = '{} Reward reached. Stop loss set to {}. Wait {}min' \
+                        .format(time_stamp(time.time()), stop, low.interval / time_divisor)
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    time.sleep(low.candle / time_divisor)
+                else:
+                    log = '{} Reward reached.  Closing price over stop. Wait {}min.' \
+                        .format(time_stamp(time.time()), low.interval / time_divisor)
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    time.sleep(low.candle / time_divisor)
+            elif sell_flag:
                 if closing_price < risk or buy_price < closing_price < stop:
                     log = 'Setting {} order to {} {} {} at {}.' \
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
