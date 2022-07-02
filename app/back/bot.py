@@ -32,7 +32,6 @@ runningMidFrame = None
 runningLowFrame = None
 high_chart_data = None
 mid_chart_data = None
-high_ema9 = None
 high_ema13 = None
 high_macd = None
 mid_d = None
@@ -107,13 +106,13 @@ def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
 
 
 def chart_data(high_frame, mid_frame, low_frame):
-    global high_chart_data, high_ema9, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
+    global high_chart_data, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs,\
         low_chart_data, low_reward, low_limit, low_stop, low_risk
     reward_data = []
     limit_data = []
     stop_data = []
     risk_data = []
-    high_candles, e9, e13, mac = high_data(high_frame)
+    high_candles, e13, mac = high_data(high_frame)
     mid_candles, d, ds, rs = mid_data(mid_frame)
     low_candles = low_data(low_frame)
     for i in low_candles:
@@ -134,7 +133,6 @@ def chart_data(high_frame, mid_frame, low_frame):
             'y': risk
         })
     high_chart_data = high_candles
-    high_ema9 = e9
     high_ema13 = e13
     high_macd = mac
     mid_chart_data = mid_candles
@@ -1039,7 +1037,6 @@ def data_feed():
         'sell_flag_15m': str(sell_flag_15m),
         'high_chart_data': high_chart_data,
         'mid_chart_data': mid_chart_data,
-        'high_ema9': high_ema9,
         'high_ema13': high_ema13,
         'high_macd': high_macd,
         'mid_d': mid_d,

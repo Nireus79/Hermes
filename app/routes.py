@@ -84,7 +84,8 @@ def starter():
         logging.info('Set rsi.')
         return render_template('control.html')
     else:
-        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 50, divider, rsi, risk_ratio))
+        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 35, divider, rsi, risk_ratio))
+        # minimum depth argument is 34
         trading.daemon = True
         trading.start()
         return render_template('overview.html')

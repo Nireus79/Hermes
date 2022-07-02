@@ -4,10 +4,6 @@ var options = {
           name: 'Trend frame: ',
           type: 'candlestick',
           data: []
-        },{
-          name: 'EMA9: ',
-          type: 'line',
-          data: []
         },
         {
           name: 'EMA13: ',
@@ -61,14 +57,11 @@ function update_values() {
         function(data_update) {
             high_frame_chart.updateSeries([{
               name: 'High frame: ' + data_update.runningHighFrame,
-              data: data_update.high_chart_data
-            },{
-              name: 'EMA9: ' + data_update.high_ema9[data_update.high_ema9.length - 1]['y'],
-              data: data_update.high_ema9
+              data: data_update.high_chart_data.slice(-19)
             },
             {
               name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
-              data: data_update.high_ema13
+              data: data_update.high_ema13.slice(-19)
             },{
               name: 'MACD: ' + data_update.high_macd
               }
