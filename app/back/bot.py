@@ -243,9 +243,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
             log = '{} Break ordering.'.format(time_stamp(time.time()))
             logging.info(log)
             logs.append(log + '<br>')
-            runningLowFrame = None
-            limit = None
-            stop = None
             break
         elif cond == 'buy':
             if buy_flag:
@@ -270,7 +267,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     trades.append(log + '<br>')
                     stop = None
                     limit = None
-                    time.sleep(10)
                     break
                 else:
                     if new_limit <= limit:
@@ -307,7 +303,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     beeper(cond)
                     log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
-                    time.sleep(10)
                     limit = None
                     stop = None
                     break
@@ -336,7 +331,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 logging.info(log)
                 logs.append(log + '<br>')
                 beeper('break')
-                time.sleep(10)
                 limit = None
                 stop = None
                 break
@@ -396,10 +390,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
             log = '{} Operation interrupted by user.'.format(time_stamp(time.time()))
             logging.info(log)
             logs.append(log + '<br>')
-            runningLowFrame = None
-            risk = 0
-            limit = None
-            stop = None
             break
         if cond == 'buy':
             if buy_flag:
@@ -408,7 +398,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                     logging.info(log)
                     logs.append(log + '<br>')
                     beeper(cond)
-                    time.sleep(10)
                     buy_price = closing_price
                     if mode == 'simulator':
                         logging.info('')
@@ -448,7 +437,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                 logging.info(log)
                 logs.append(log + '<br>')
                 beeper('break')
-                time.sleep(10)
                 limit = None
                 stop = None
                 break
@@ -464,7 +452,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                     logging.info(log)
                     logs.append(log + '<br>')
                     beeper(cond)
-                    time.sleep(10)
                     if mode == 'simulator':
                         logging.info('')
                         logs.append('<br>')
@@ -496,7 +483,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                 logging.info(log)
                 logs.append(log + '<br>')
                 beeper('break')
-                time.sleep(10)
                 limit = None
                 stop = None
                 break
