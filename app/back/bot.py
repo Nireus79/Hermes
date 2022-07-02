@@ -269,6 +269,8 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     beeper(cond)
                     log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
+                    stop = None
+                    limit = None
                     time.sleep(10)
                     break
                 else:
@@ -291,7 +293,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 logs.append(log + '<br>')
                 beeper('break')
                 time.sleep(10)
-                runningLowFrame = None
                 limit = None
                 stop = None
                 break
@@ -308,9 +309,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
                     trades.append(log + '<br>')
                     time.sleep(10)
-                    runningLowFrame = None
-                    risk = closing_price * 0.96  # risk reset to 4% loss
-                    reward = closing_price * 1.04
                     limit = None
                     stop = None
                     break
@@ -340,9 +338,8 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 logs.append(log + '<br>')
                 beeper('break')
                 time.sleep(10)
-                runningLowFrame = None
                 limit = None
-                stop = 0
+                stop = None
                 break
 
 
@@ -430,6 +427,8 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                         risk = low_f.iloc[-1]['low'] - l_atr
                     r = (buy_price - risk) * 2  # 1 / 2 risk - reward ratio
                     reward = buy_price + r
+                    stop = None
+                    limit = None
                     break
                 elif closing_price <= limit:
                     if new_limit < limit:
@@ -452,7 +451,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                 logs.append(log + '<br>')
                 beeper('break')
                 time.sleep(10)
-                runningLowFrame = None
                 limit = None
                 stop = None
                 break
@@ -477,7 +475,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                         logs.append(log + '<br>')
                         trades.append(log + '<br>')
                         condition = 'buy'
-                    runningLowFrame = None
                     limit = None
                     stop = None
                     break
@@ -502,9 +499,8 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                 logs.append(log + '<br>')
                 beeper('break')
                 time.sleep(10)
-                runningLowFrame = None
                 limit = None
-                stop = 0
+                stop = None
                 break
 
 
