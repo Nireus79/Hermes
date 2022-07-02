@@ -536,7 +536,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
     General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc.
     According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback,
     entering the bullish zone.
-    In our case a preset combination of 9p EMA, 13p EMA and macd indicators (Closing > EMA9 > EMA13 and macd > 0)
+    In our case a preset combination of 13p EMA and macd indicators (Closing > EMA13 and macd > 0)
     is used to determine the high frame trend.
     Mid-frame.
     Trend momentum and position is detected with the use of stochastic slow indicator. Stochastic fast can be used for
@@ -629,7 +629,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
         risk = closing_price * 0.96  # r/r set to +-4% , in case of connection when condition is already 'sell'.
         reward = closing_price * 1.04
-        buy_price = closing_price
+        buy_price = closing_price  # buy price set to closing price, in case of condition is already 'sell'.
         log = '{} Operation start. Condition is {}.' \
               ' Mode is {}. Max RSI set to: {}. Low frame evaluations: {}.' \
             .format(time_stamp(time.time()), condition, mode, max_rsi, time_divisor)
@@ -717,6 +717,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 logs.append(log + '<br>')
                                 runningHighFrame = '1Hour'
                                 runningMidFrame = '15minutes'
+                                runningLowFrame = '5minutes'
                                 chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                                 if trend_1h:
                                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
@@ -730,7 +731,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                         log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                         logging.info(log)
                                         logs.append(log + '<br>')
-                                        runningLowFrame = '5minutes'
                                         if mode == 'trading':
                                             order_manager('market', i1h_frame, i15m_frame, i5m_frame,
                                                           condition, crypto_currency, fiat_currency, time_divisor,
@@ -756,6 +756,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             logs.append(log + '<br>')
                             runningHighFrame = '1Hour'
                             runningMidFrame = '15minutes'
+                            runningLowFrame = '5minutes'
                             chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                             if trend_1h:
                                 log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
@@ -769,7 +770,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                     log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                     logging.info(log)
                                     logs.append(log + '<br>')
-                                    runningLowFrame = '5minutes'
                                     if mode == 'trading':
                                         order_manager('market', i1h_frame, i15m_frame, i5m_frame,
                                                       condition, crypto_currency, fiat_currency, time_divisor,
@@ -817,6 +817,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logs.append(log + '<br>')
                         runningHighFrame = '1Hour'
                         runningMidFrame = '15minutes'
+                        runningLowFrame = '5minutes'
                         chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                         if trend_1h:
                             log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
@@ -830,7 +831,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
                                 logging.info(log)
                                 logs.append(log + '<br>')
-                                runningLowFrame = '5minutes'
                                 if mode == 'trading':
                                     order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
                                                   crypto_currency, fiat_currency, time_divisor, max_rsi, rr_ratio)
