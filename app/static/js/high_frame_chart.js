@@ -9,6 +9,11 @@ var options = {
           name: 'EMA13: ',
           type: 'line',
           data: []
+        },
+        {
+          name: 'EMA200: ',
+          type: 'line',
+          data: []
         },{
           name: 'MACD: ',
           type: 'line',
@@ -57,11 +62,14 @@ function update_values() {
         function(data_update) {
             high_frame_chart.updateSeries([{
               name: 'High frame: ' + data_update.runningHighFrame,
-              data: data_update.high_chart_data.slice(-19)
+              data: data_update.high_chart_data.slice(-20)
             },
             {
               name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
-              data: data_update.high_ema13.slice(-19)
+              data: data_update.high_ema13.slice(-20)
+            },{
+              name: 'EMA200: ' + data_update.high_ema200[data_update.high_ema200.length - 1]['y'],
+              data: data_update.high_ema200.slice(-20)
             },{
               name: 'MACD: ' + data_update.high_macd
               }

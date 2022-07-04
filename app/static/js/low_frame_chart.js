@@ -69,22 +69,22 @@ function update_values() {
         function(data_update) {
             low_frame_chart.updateSeries([{
               name: 'Low frame: ' + data_update.runningLowFrame,
-              data: data_update.low_chart_data.slice(-9)
+              data: data_update.low_chart_data.slice(-10)
             },{
               name: 'Closing price: ' + data_update.price
             },{
               name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
-              data: data_update.low_reward.slice(-9)
+              data: data_update.low_reward.slice(-10)
             },
             {
               name: 'Buy limit: ' + data_update.low_limit[data_update.low_limit.length - 1]['y'],
-              data: data_update.low_limit.slice(-9)
+              data: data_update.low_limit.slice(-10)
             },{
               name: 'Stop loss: ' + data_update.low_stop[data_update.low_stop.length - 1]['y'],
-              data: data_update.low_stop.slice(-9)
+              data: data_update.low_stop.slice(-10)
               },{
               name: 'Risk level: ' + data_update.low_risk[data_update.low_risk.length - 1]['y'],
-              data: data_update.low_risk.slice(-9)
+              data: data_update.low_risk.slice(-10)
               }
             ]);
         }
