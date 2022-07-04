@@ -11,10 +11,6 @@ var options = {
           data: []
         },
         {
-          name: 'EMA100: ',
-          type: 'line',
-          data: []
-        },{
           name: 'MACD: ',
           type: 'line',
           data: []
@@ -67,9 +63,6 @@ function update_values() {
             {
               name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
               data: data_update.high_ema13.slice(-20)
-            },{
-              name: 'EMA100: ' + data_update.high_ema100[data_update.high_ema100.length - 1]['y'],
-              data: data_update.high_ema100.slice(-20)
             },{
               name: 'MACD: ' + data_update.high_macd
               }
