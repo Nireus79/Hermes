@@ -129,9 +129,9 @@ def high_frame_indicators(hdf):
     :return: hdf enriched with technical indicators and flags
     """
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
-    hdf['EMA200'] = hdf['close'].rolling(200).mean()
+    hdf['EMA100'] = hdf['close'].rolling(100).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
-    hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['close'] > x['EMA200'] and x['macd'] > 0, axis=1)
+    hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['close'] > x['EMA100'] and x['macd'] > 0, axis=1)
     return hdf
 
 
@@ -182,7 +182,7 @@ def high_data(frame):
     data_list = front_df.values.tolist()
     candle_data = []
     ema13_data = []
-    ema200_data = []
+    ema100_data = []
     macd_data = round(data_list[-1][10], 4)
     for i in data_list:
         candle_data.append({
@@ -197,11 +197,11 @@ def high_data(frame):
             })
     for i in data_list:
         if i[9] != 0:
-            ema200_data.append({
+            ema100_data.append({
                 'x': i[0],
                 'y': round(i[9], 4)
             })
-    return candle_data, ema13_data, ema200_data, macd_data
+    return candle_data, ema13_data, ema100_data, macd_data
 
 
 def mid_data(frame):
