@@ -21,7 +21,7 @@ var options = {
           }
         ],
         chart: {
-          height: 200,
+          height: 230,
           type: 'line',
           stacked: false
         },
