@@ -899,7 +899,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     logs.append(log + '<br>')
                     runningHighFrame = '1Hour'
                     runningMidFrame = '15minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, i5m_frame)
+                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                     runningLowFrame = '5minutes'
                     if mode == 'trading':
                         order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
