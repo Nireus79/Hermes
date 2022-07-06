@@ -17,6 +17,10 @@ var options = {
           name: 'RSI: ',
           type: 'line',
           data: []
+          },{
+          name: '%ATR: ',
+          type: 'line',
+          data: []
           }
           ],
           chart: {
@@ -66,6 +70,8 @@ function update_values() {
               name: 'Stochastic %DS: ' + data_update.mid_ds
               },{
               name: 'RSI: ' + data_update.mid_rs
+              },{
+              name: '%ATR: ' + data_update.mid_p_atr
               }
             ])
         }
