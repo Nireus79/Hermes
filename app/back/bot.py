@@ -159,7 +159,8 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 Conditions are reevaluated until order is closed.
                 Risk level is set on the low of previous low frame candle - low frame atr as global variable.
                 Buy price is stored as global variable.
-                Reward level is set as the double of (buy price - risk level) + buy price
+                Reward level is set by choice as the single, double, triple or 100 (ignored)
+                of (buy price - risk level) + buy price
             else: (closing price under limit)
                 waits part or full time by choice, of low frame duration to reevaluate.
                     if new closing price is lower than limit:
@@ -581,8 +582,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             elif conditions at all time frame combinations are not aligned:
                 bot sleeps for 5 minutes to review conditions.
         elif condition is 'sell':
-            if new closing price < stop:
-                Risk
+            After every purchase of an asset risk and reward levels are set.
+            if closing < risk or closing > reward::
+                order_manager() kicks in to sell on 5min low frame.
             elif 24 hour high frame and 4 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 1 hour low frame.
                 if NOT waits 1 / 12 of 4 hours.
