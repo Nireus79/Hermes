@@ -176,7 +176,6 @@ def high_data(frame):
         :param frame: The modified pandas dataframe from high_frame_indicators.
         :return: json and last running indicators to be displayed.
     """
-    # front_df = frame.copy()
     front_df = frame.fillna(0)
     front_df['time'] = front_df['time'].apply(lambda x: (x * 1000) + 10800000)  # *1000 javascript time + 3hours
     data_list = front_df.values.tolist()
@@ -208,7 +207,6 @@ def mid_data(frame):
     """
     Same as above (high) FOR USE IN APEXCHARTS
     """
-    # front_df = frame.copy()
     front_df = frame.fillna(0)
     front_df['time'] = front_df['time'].apply(lambda x: (x * 1000) + 10800000)
     data_list = front_df.values.tolist()
@@ -228,7 +226,6 @@ def low_data(frame):
     """
     Same as above (mid) FOR USE IN APEXCHARTS
     """
-    # front_df = frame.copy()
     front_df = frame.fillna(0)
     front_df['time'] = front_df['time'].apply(lambda x: (x * 1000) + 10800000)
     data_list = front_df.values.tolist()
