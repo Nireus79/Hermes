@@ -14,6 +14,7 @@ mode = None
 divider = 2
 rsi = 70
 risk_ratio = 2
+atr = 0
 
 # Flask logs
 log = logging.getLogger('werkzeug')
@@ -28,7 +29,7 @@ def main():
 
 @app.route('/control', methods=['POST', 'GET'])
 def control():
-    global asset_a, asset_b, mode, divider, rsi, risk_ratio
+    global asset_a, asset_b, mode, divider, rsi, risk_ratio, atr
     if request.method == 'POST':
         try:
             asset_a = request.form['assetA']
@@ -37,12 +38,11 @@ def control():
             divider = float(request.form['divider'])
             rsi = float(request.form['rsi'])
             risk_ratio = float(request.form['risk'])
+            atr = float(request.form['atr'])
         except Exception as e:
             logging.info(e)
-
     else:
         render_template('control.html')
-
     return render_template('control.html')
 
 
@@ -66,6 +66,7 @@ def update():
     dt['divider'] = divider
     dt['rsi'] = rsi
     dt['rr_ratio'] = risk_ratio
+    dt['atr'] = atr
     return jsonify(dt)
 
 
@@ -84,7 +85,7 @@ def starter():
         logging.info('Set rsi.')
         return render_template('control.html')
     else:
-        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 220, divider, rsi, risk_ratio))
+        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 220, divider, rsi, risk_ratio, atr))
         # minimum depth argument is 200
         trading.daemon = True
         trading.start()

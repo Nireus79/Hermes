@@ -28,5 +28,6 @@ function update_values() {
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
                 $('#risk').text('Risk level: '+data.risk);
+                $('#atr').text('Minimum %ATR: '+data.atr);
         });
 };
