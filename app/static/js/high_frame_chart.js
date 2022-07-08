@@ -4,22 +4,23 @@ var options = {
           name: 'Trend frame: ',
           type: 'candlestick',
           data: []
-        },
-        {
+        },{
+          name: 'Closing price: ',
+          type: 'line',
+          data: []
+        },{
           name: 'EMA13: ',
           type: 'line',
           data: []
-        },
-        {
+        },{
           name: 'EMA200: ',
           type: 'line',
           data: []
-        },
-        {
+        },{
           name: 'MACD: ',
           type: 'line',
           data: []
-          }
+        }
         ],
         chart: {
           height: 230,
@@ -64,6 +65,8 @@ function update_values() {
             high_frame_chart.updateSeries([{
               name: 'High frame: ' + data_update.runningHighFrame,
               data: data_update.high_chart_data.slice(-20)
+            },{
+              name: 'Closing price: ' + data_update.price
             },{
               name: 'EMA13: ' + data_update.high_ema13[data_update.high_ema13.length - 1]['y'],
               data: data_update.high_ema13.slice(-20)

@@ -4,8 +4,7 @@ var options = {
           name: 'Momentum frame: ',
           type: 'candlestick',
           data: []
-          },
-          {
+          },{
           name: 'Stochastic %D: ',
           type: 'line',
           data: []

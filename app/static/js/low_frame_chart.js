@@ -5,15 +5,10 @@ var options = {
           type: 'candlestick',
           data: []
         },{
-          name: 'Closing price: ',
-          type: 'line',
-          data: []
-          },{
           name: 'Reward level: ',
           type: 'line',
           data: []
-        },
-        {
+        },{
           name: 'Buy limit: ',
           type: 'line',
           data: []
@@ -21,11 +16,11 @@ var options = {
           name: 'Stop loss: ',
           type: 'line',
           data: []
-          },{
+        },{
           name: 'Risk level: ',
           type: 'line',
           data: []
-          }
+        }
         ],
         chart: {
           height: 300,
@@ -70,8 +65,6 @@ function update_values() {
             low_frame_chart.updateSeries([{
               name: 'Low frame: ' + data_update.runningLowFrame,
               data: data_update.low_chart_data.slice(-10)
-            },{
-              name: 'Closing price: ' + data_update.price
             },{
               name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
               data: data_update.low_reward.slice(-10)
