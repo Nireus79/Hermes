@@ -105,7 +105,7 @@ def front_flags(trend24, trend4, trend1, mid4, mid1, mid15):
 
 
 def chart_data(high_frame, mid_frame, low_frame):
-    global high_chart_data, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr,\
+    global high_chart_data, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, \
         low_chart_data, low_limit, low_stop
     limit_data = []
     stop_data = []
@@ -190,7 +190,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     When setting buy order, vol = (money - money * max kraken fee) / crypto price
     When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
-    global condition, stop, limit, log, closing_price, runningLowFrame,\
+    global condition, stop, limit, log, closing_price, runningLowFrame, \
         crypto_balance, fiat_balance, buy_price
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
