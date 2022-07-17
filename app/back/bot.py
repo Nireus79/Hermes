@@ -133,11 +133,10 @@ def chart_data(high_frame, mid_frame, low_frame):
     low_stop = stop_data
 
 
-def simple_order(order_type, frame, cond, crypto_currency, fiat_currency):
-    global condition, log, closing_price, crypto_balance, fiat_balance
-    closing_price = frame.iloc[-1]['close']
+def simple_order(order_type, price, cond, crypto_currency, fiat_currency):
+    global condition, log, crypto_balance, fiat_balance
     if cond == 'buy':
-        asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
+        asset_vol = (fiat_balance - fiat_balance * 0.0026) / price
         # kraken max trading fee: 0.0026 * asset_vol
         log = '{} order to {} {} {} using {} {}.' \
             .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
@@ -589,7 +588,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
         i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
         i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
-        closing_price = i5m_frame.get_frame().iloc[-1]['close']
         log = '{} Operation start. Condition is {}.' \
               ' Mode is {}. Max RSI set to: {}. Low frame evaluations: {}.' \
             .format(time_stamp(time.time()), condition, mode, max_rsi, time_divisor)
@@ -613,6 +611,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame(), max_rsi)
             mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame(), max_rsi)
             mid_frame_15m = mid_frame_indicators(i15m_frame.get_frame(), max_rsi)
+            closing_price = high_frame_24h.iloc[-1]['close']
             trend_24h = high_frame_24h.iloc[-1]['trend']
             trend_4h = high_frame_4h.iloc[-1]['trend']
             trend_1h = high_frame_1h.iloc[-1]['trend']
@@ -671,91 +670,27 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                                     limit_manager(mode, i4h_frame, i1h_frame, i15m_frame,
                                                   condition, time_divisor, max_rsi)
                             elif buy_flag_1h is not True:
-                                log = '{} 1hour momentum is not strong.'.format(time_stamp(time.time()))
+                                log = '{} 1hour momentum is not strong. Wait 5 min.'.format(time_stamp(time.time()))
                                 logging.info(log)
                                 logs.append(log + '<br>')
-                                chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                                # TODO WAIT
-                                if trend_1h:
-                                    log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                                    logging.info(log)
-                                    logs.append(log + '<br>')
-                                    log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                                        .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                                    logging.info(log)
-                                    logs.append(log + '<br>')
-                                    runningHighFrame = '1Hour'
-                                    runningMidFrame = '15minutes'
-                                    runningLowFrame = '5minutes'
-                                    if buy_flag_15m and sell_flag_1h is not True:
-                                        log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
-                                        logging.info(log)
-                                        logs.append(log + '<br>')
-                                        if mode == 'trading':
-                                            order_manager('market', i1h_frame, i15m_frame, i5m_frame,
-                                                          condition, crypto_currency, fiat_currency, time_divisor,
-                                                          max_rsi)
-                                        elif mode == 'consulting' or mode == 'simulator':
-                                            limit_manager(mode, i1h_frame, i15m_frame, i5m_frame,
-                                                          condition, time_divisor, max_rsi)
-                                    elif buy_flag_15m is not True:
-                                        log = '{} 15 min momentum is not strong. Wait 5 minutes.' \
-                                            .format(time_stamp(time.time()))
-                                        logging.info(log)
-                                        logs.append(log + '<br>')
-                                        time.sleep(i5m_frame.candle)
-                                elif trend_1h is not True:
-                                    log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
-                                        .format(time_stamp(time.time()), trend_1h)
-                                    logging.info(log)
-                                    logs.append(log + '<br>')
-                                    runningHighFrame = '1Hour'
-                                    runningMidFrame = '15minutes'
-                                    runningLowFrame = '5minutes'
-                                    time.sleep(i5m_frame.candle)
+                                time.sleep(300)
                         elif trend_4h is not True:
                             log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                             logging.info(log)
                             logs.append(log + '<br>')
                             chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                            # TODO if buy_flag_1h (stochastic): BUY
-                            if trend_1h:
-                                runningHighFrame = '1Hour'
-                                runningMidFrame = '15minutes'
-                                runningLowFrame = '5minutes'
-                                log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                                logging.info(log)
-                                logs.append(log + '<br>')
-                                log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                                    .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                                logging.info(log)
-                                logs.append(log + '<br>')
-                                if buy_flag_15m:
-                                    log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
+                            if buy_flag_1h:
+                                if mode == 'trading':
+                                    simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
+                                elif mode == 'consulting' or mode == 'simulator':
+                                    log = '{} Buy asset'.format(time_stamp(time.time()))
                                     logging.info(log)
                                     logs.append(log + '<br>')
-                                    if mode == 'trading':
-                                        order_manager('market', i1h_frame, i15m_frame, i5m_frame,
-                                                      condition, crypto_currency, fiat_currency, time_divisor,
-                                                      max_rsi)
-                                    elif mode == 'consulting' or mode == 'simulator':
-                                        limit_manager(mode, i1h_frame,
-                                                      i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
-                                elif buy_flag_15m is not True:
-                                    log = '{} 15 min momentum is not strong. Wait 5 minutes.' \
-                                        .format(time_stamp(time.time()))
-                                    logging.info(log)
-                                    logs.append(log + '<br>')
-                                    time.sleep(i5m_frame.candle)
-                            elif trend_1h is not True:
-                                log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
-                                    .format(time_stamp(time.time()), trend_1h)
+                            else:
+                                log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
                                 logging.info(log)
                                 logs.append(log + '<br>')
-                                runningHighFrame = '1Hour'
-                                runningMidFrame = '15minutes'
-                                runningLowFrame = '5minutes'
-                                time.sleep(i5m_frame.candle)
+                                time.sleep(300)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -768,7 +703,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                     runningMidFrame = '1Hour'
                     runningLowFrame = '15minutes'
                     chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame.get_frame()))
-                    if buy_flag_1h:
+                    if buy_flag_1h and sell_flag_4h is not True:
                         log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
@@ -776,86 +711,30 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                             order_manager('market', i4h_frame, i1h_frame, i15m_frame, condition,
                                           crypto_currency, fiat_currency, time_divisor, max_rsi)
                         elif mode == 'consulting' or mode == 'simulator':
-                            limit_manager(mode, i4h_frame, i1h_frame, i15m_frame,
-                                          condition, time_divisor, max_rsi)
+                            limit_manager(mode, i4h_frame, i1h_frame, i15m_frame, condition, time_divisor, max_rsi)
                     elif buy_flag_1h is not True:
-                        log = '{} 1hour momentum is not strong.'.format(time_stamp(time.time()))
+                        log = '{} 1hour momentum is not strong. Wait 5 min'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
                         chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                        # TODO wait
-                        if trend_1h:
-                            log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                            logging.info(log)
-                            logs.append(log + '<br>')
-                            log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                                .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                            logging.info(log)
-                            logs.append(log + '<br>')
-                            runningHighFrame = '1Hour'
-                            runningMidFrame = '15minutes'
-                            runningLowFrame = '5minutes'
-                            if buy_flag_15m and sell_flag_1h is not True:
-                                log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
-                                logging.info(log)
-                                logs.append(log + '<br>')
-                                if mode == 'trading':
-                                    order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
-                                                  crypto_currency, fiat_currency, time_divisor, max_rsi)
-                                elif mode == 'consulting' or mode == 'simulator':
-                                    limit_manager(mode, i1h_frame, i15m_frame, i5m_frame,
-                                                  condition, time_divisor, max_rsi)
-                            elif buy_flag_15m is not True:
-                                log = '{} 15min momentum is not strong. Wait 5 minutes.'.format(time_stamp(time.time()))
-                                logging.info(log)
-                                logs.append(log + '<br>')
-                                time.sleep(i5m_frame.candle)
-                        elif trend_1h is not True:
-                            log = '{} 1hour trend is {}. No buying opportunity. Wait 5 minutes.' \
-                                .format(time_stamp(time.time()), trend_1h)
-                            logging.info(log)
-                            logs.append(log + '<br>')
-                            runningHighFrame = '1Hour'
-                            runningMidFrame = '15minutes'
-                            runningLowFrame = '5minutes'
-                            time.sleep(i5m_frame.candle)
-                # TODO else if buy_flag_1h: BUY
-                elif trend_1h:
-                    log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                        .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    runningHighFrame = '1Hour'
-                    runningMidFrame = '15minutes'
-                    runningLowFrame = '5minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                    if buy_flag_15m:
-                        log = '{} 15min momentum is strong.'.format(time_stamp(time.time()))
+                        logging.info(log)
+                        logs.append(log + '<br>')
+                        time.sleep(300)
+                else:
+                    if buy_flag_1h and sell_flag_4h is not True:
+                        log = '{} 1hour momentum is strong.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
                         if mode == 'trading':
-                            order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi)
-                        elif mode == 'consulting' or mode == 'simulator':
-                            limit_manager(mode, i1h_frame, i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
-                    elif buy_flag_15m is not True:
-                        log = '{} 15min momentum is not strong. Wait 5 minutes.'.format(time_stamp(time.time()))
+                            simple_order('market''market', closing_price, condition, crypto_currency, fiat_currency)
+                        elif mode == 'consulting' or mode == 'zero':
+                            limit_manager(mode, i4h_frame, i1h_frame, i15m_frame,
+                                          condition, time_divisor, max_rsi)
+                    elif buy_flag_1h is not True:
+                        log = '{} 1hour momentum is not strong. Wait 5 min.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i5m_frame.candle)
-                else:  # TODO wait
-                    log = '{} All high frames trends are negative. No buying opportunity. Wait 5 minutes.' \
-                        .format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    runningHighFrame = '1Hour'
-                    runningMidFrame = '15minutes'
-                    runningLowFrame = '5minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                    time.sleep(i5m_frame.candle)
+                        time.sleep(300)
             elif condition == 'sell':
                 if trend_24h:
                     log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
@@ -909,50 +788,19 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(i1h_frame.candle / 12)
-                # TODO if sell_flag_1h: SELL else wait
-                elif trend_1h:
-                    log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    log = '{} mid15 min frame buy flag is {}. mid15 min frame sell flag is {}.' \
-                        .format(time_stamp(time.time()), buy_flag_15m, sell_flag_15m)
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    runningHighFrame = '1Hour'
-                    runningMidFrame = '15minutes'
-                    runningLowFrame = '5minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                    if sell_flag_15m:
-                        log = '{} 15min momentum is weak.'.format(time_stamp(time.time()))
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        if mode == 'trading':
-                            order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
-                                          crypto_currency, fiat_currency, time_divisor, max_rsi)
-                        elif mode == 'consulting' or mode == 'simulator':
-                            limit_manager(mode, i1h_frame, i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
-                    elif sell_flag_15m is not True:
-                        log = '{} 15min momentum not weak. Wait {} minutes.' \
-                            .format(time_stamp(time.time()), i15m_frame.interval / 12)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(i15m_frame.candle / 12)
-                #  TODO erase
                 else:
-                    log = '{} All high-frame trends are negative.' \
-                        .format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    runningHighFrame = '1Hour'
-                    runningMidFrame = '15minutes'
-                    runningLowFrame = '5minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                    if mode == 'trading':
-                        order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
-                                      crypto_currency, fiat_currency, time_divisor, max_rsi)
-                    elif mode == 'consulting' or mode == 'simulator':
-                        limit_manager(mode, i1h_frame, i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
-                        time.sleep(10)
+                    if sell_flag_1h:
+                        if mode == 'trading':
+                            simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
+                        elif mode == 'consulting' or mode == 'simulator':
+                            log = '{} Buy asset'.format(time_stamp(time.time()))
+                            logging.info(log)
+                            logs.append(log + '<br>')
+                    else:
+                        log = '{} 1hour momentum is not weak. Wait 5 min.'.format(time_stamp(time.time()))
+                        logging.info(log)
+                        logs.append(log + '<br>')
+                        time.sleep(300)
     else:
         log = 'Your product licence is not active. Please activate or contact technical support.'
         logging.info(log)
