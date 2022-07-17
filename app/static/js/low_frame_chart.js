@@ -5,19 +5,11 @@ var options = {
           type: 'candlestick',
           data: []
         },{
-          name: 'Reward level: ',
-          type: 'line',
-          data: []
-        },{
           name: 'Buy limit: ',
           type: 'line',
           data: []
         },{
           name: 'Stop loss: ',
-          type: 'line',
-          data: []
-        },{
-          name: 'Risk level: ',
           type: 'line',
           data: []
         }
@@ -66,18 +58,11 @@ function update_values() {
               name: 'Low frame: ' + data_update.runningLowFrame,
               data: data_update.low_chart_data.slice(-10)
             },{
-              name: 'Reward level: ' + data_update.low_reward[data_update.low_reward.length - 1]['y'],
-              data: data_update.low_reward.slice(-10)
-            },
-            {
               name: 'Buy limit: ' + data_update.low_limit[data_update.low_limit.length - 1]['y'],
               data: data_update.low_limit.slice(-10)
             },{
               name: 'Stop loss: ' + data_update.low_stop[data_update.low_stop.length - 1]['y'],
               data: data_update.low_stop.slice(-10)
-              },{
-              name: 'Risk level: ' + data_update.low_risk[data_update.low_risk.length - 1]['y'],
-              data: data_update.low_risk.slice(-10)
               }
             ]);
         }

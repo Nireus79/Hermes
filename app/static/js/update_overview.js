@@ -24,10 +24,7 @@ function update_values() {
                 $('#price').text('Closing price: '+data.price);
                 $('#reward').text('Reward limit: '+data.reward);
                 $('#limit').text('Buy limit: '+data.limit);
-//                $('#buy_price').text('Buy price: '+data.buy_price);
                 $('#stop').text('Stop loss: '+data.stop);
                 $('#log').text('Log: '+data.log);
-                $('#risk').text('Risk level: '+data.risk);
-                $('#atr').text('Minimum %ATR: '+data.atr);
         });
 };

@@ -29,7 +29,7 @@ def main():
 
 @app.route('/control', methods=['POST', 'GET'])
 def control():
-    global asset_a, asset_b, mode, divider, rsi, risk_ratio, atr
+    global asset_a, asset_b, mode, divider, rsi
     if request.method == 'POST':
         try:
             asset_a = request.form['assetA']
@@ -37,8 +37,6 @@ def control():
             mode = request.form['mode']
             divider = float(request.form['divider'])
             rsi = float(request.form['rsi'])
-            risk_ratio = float(request.form['risk'])
-            atr = float(request.form['atr'])
         except Exception as e:
             logging.info(e)
     else:
@@ -65,8 +63,6 @@ def update():
     dt['mode'] = mode
     dt['divider'] = divider
     dt['rsi'] = rsi
-    dt['rr_ratio'] = risk_ratio
-    dt['atr'] = atr
     return jsonify(dt)
 
 
@@ -85,8 +81,8 @@ def starter():
         logging.info('Set rsi.')
         return render_template('control.html')
     else:
-        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 220, divider, rsi, risk_ratio, atr))
-        # minimum depth argument is 200
+        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 40, divider, rsi, risk_ratio, atr))
+        # minimum depth argument is 35
         trading.daemon = True
         trading.start()
         return render_template('overview.html')
