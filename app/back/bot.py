@@ -19,7 +19,6 @@ crypto_balance = None
 fiat_balance = 0
 limit = None
 stop = None
-buy_price = None
 closing_price = None
 
 front_buy_flag_4h = False
@@ -134,8 +133,34 @@ def chart_data(high_frame, mid_frame, low_frame):
     low_stop = stop_data
 
 
-def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_currency,
-                  time_divisor, max_rsi):
+def simple_order(order_type, frame, cond, crypto_currency, fiat_currency):
+    global condition, log, closing_price, crypto_balance, fiat_balance
+    closing_price = frame.iloc[-1]['close']
+    if cond == 'buy':
+        asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
+        # kraken max trading fee: 0.0026 * asset_vol
+        log = '{} order to {} {} {} using {} {}.' \
+            .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
+        logging.info(log)
+        tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
+        log = tx
+        logging.info(log)
+        beeper(cond)
+        log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+        trades.append(log + '<br>')
+    elif cond == 'sell':
+        log = '{} order to {} {} {} at {}.' \
+            .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
+        logging.info(log)
+        tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+        log = tx
+        logging.info(log)
+        beeper(cond)
+        log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+        trades.append(log + '<br>')
+
+
+def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_currency, time_divisor, max_rsi):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
     order_manager is setting limit and stop loss levels.
@@ -190,8 +215,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     When setting buy order, vol = (money - money * max kraken fee) / crypto price
     When setting sell order, vol = crypto_balance (fee is calculated by kraken)
     """
-    global condition, stop, limit, log, closing_price, runningLowFrame, \
-        crypto_balance, fiat_balance, buy_price
+    global condition, stop, limit, log, closing_price, runningLowFrame, crypto_balance, fiat_balance
     beeper('start')
     log = '{} Order management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -236,11 +260,10 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 if closing_price > limit:
                     asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
                     # kraken max trading fee: 0.0026 * asset_vol
-                    log = 'Setting {} order to {} {} {} using {} {}.' \
+                    log = '{} order to {} {} {} using {} {}.' \
                         .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
                     logging.info(log)
                     tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
-                    buy_price = closing_price
                     log = tx
                     logging.info(log)
                     beeper(cond)
@@ -275,7 +298,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
         elif cond == 'sell':
             if sell_flag:
                 if closing_price < stop:
-                    log = 'Setting {} order to {} {} {} at {}.' \
+                    log = '{} order to {} {} {} at {}.' \
                         .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
                     logging.info(log)
                     tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
@@ -324,7 +347,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
     :param low: The low frame instance, used to set limit/stop-loss borders.
     :param cond: Condition sell/buy
     """
-    global condition, stop, limit, log, closing_price, runningLowFrame, buy_price
+    global condition, stop, limit, log, closing_price, runningLowFrame
     beeper('start')
     log = '{} Limit management. Setting {}min low frame {} limits.'.format(time_stamp(time.time()), low.interval, cond)
     logging.info(log)
@@ -372,7 +395,6 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                     logging.info(log)
                     logs.append(log + '<br>')
                     beeper(cond)
-                    buy_price = closing_price
                     if mode == 'simulator':
                         logging.info('')
                         logs.append('<br>')
@@ -450,7 +472,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
                 break
 
 
-def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi, rr_ratio, atr):
+def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi):
     """
     Custom, real time, multiple time frame, consulting-trading bot application,
     interpretation of Alexander Elder's "triple screen" forex market trading strategy.
@@ -539,8 +561,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             elif all high frames trend is negative:
                 second risk condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
-    :param atr:
-    :param rr_ratio:
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
     :param mode: trading / consulting
@@ -555,7 +575,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
             That is considered as minimum stop loss level price can reach on a pullback.
     """
     global condition, log, trend_24h, trend_4h, trend_1h, sell_flag_4h, sell_flag_1h, sell_flag_15m, \
-        crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame, buy_price
+        crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame
     # TODO activate licence check
     licence = True  # check()['license_active']
     if licence:
@@ -570,9 +590,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
         i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
         closing_price = i5m_frame.get_frame().iloc[-1]['close']
-        risk = closing_price * 0.96  # r/r set to +-4% , in case of connection when condition is already 'sell'.
-        reward = closing_price * 1.04
-        buy_price = closing_price  # buy price set to closing price, in case of condition is already 'sell'.
         log = '{} Operation start. Condition is {}.' \
               ' Mode is {}. Max RSI set to: {}. Low frame evaluations: {}.' \
             .format(time_stamp(time.time()), condition, mode, max_rsi, time_divisor)
@@ -658,6 +675,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                                 logging.info(log)
                                 logs.append(log + '<br>')
                                 chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
+                                # TODO WAIT
                                 if trend_1h:
                                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                                     logging.info(log)
@@ -700,6 +718,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             logging.info(log)
                             logs.append(log + '<br>')
                             chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
+                            # TODO if buy_flag_1h (stochastic): BUY
                             if trend_1h:
                                 runningHighFrame = '1Hour'
                                 runningMidFrame = '15minutes'
@@ -764,6 +783,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logging.info(log)
                         logs.append(log + '<br>')
                         chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
+                        # TODO wait
                         if trend_1h:
                             log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                             logging.info(log)
@@ -799,6 +819,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                             runningMidFrame = '15minutes'
                             runningLowFrame = '5minutes'
                             time.sleep(i5m_frame.candle)
+                # TODO else if buy_flag_1h: BUY
                 elif trend_1h:
                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                     logging.info(log)
@@ -825,7 +846,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(i5m_frame.candle)
-                else:
+                else:  # TODO wait
                     log = '{} All high frames trends are negative. No buying opportunity. Wait 5 minutes.' \
                         .format(time_stamp(time.time()))
                     logging.info(log)
@@ -836,34 +857,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                     chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                     time.sleep(i5m_frame.candle)
             elif condition == 'sell':
-                closing = i5m_frame.get_frame().iloc[-1]['close']
-                if closing < risk:  # Risk
-                    log = '{} Warning. Risk activated. Sell your asset.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    runningHighFrame = '1Hour'
-                    runningMidFrame = '15minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                    runningLowFrame = '5minutes'
-                    if mode == 'trading':
-                        order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
-                                      crypto_currency, fiat_currency, time_divisor, max_rsi)
-                    elif mode == 'consulting' or mode == 'simulator':
-                        limit_manager(mode, i1h_frame, i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
-                elif closing > reward:
-                    log = '{} Warning. Reward activated. Sell your asset.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
-                    runningHighFrame = '1Hour'
-                    runningMidFrame = '15minutes'
-                    chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
-                    runningLowFrame = '5minutes'
-                    if mode == 'trading':
-                        order_manager('market', i1h_frame, i15m_frame, i5m_frame, condition,
-                                      crypto_currency, fiat_currency, time_divisor, max_rsi)
-                    elif mode == 'consulting' or mode == 'simulator':
-                        limit_manager(mode, i1h_frame, i15m_frame, i5m_frame, condition, time_divisor, max_rsi)
-                elif trend_24h:
+                if trend_24h:
                     log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
                     logging.info(log)
                     logs.append(log + '<br>')
@@ -915,6 +909,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(i1h_frame.candle / 12)
+                # TODO if sell_flag_1h: SELL else wait
                 elif trend_1h:
                     log = '{} 1hour trend is {}.'.format(time_stamp(time.time()), trend_1h)
                     logging.info(log)
@@ -942,6 +937,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi,
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(i15m_frame.candle / 12)
+                #  TODO erase
                 else:
                     log = '{} All high-frame trends are negative.' \
                         .format(time_stamp(time.time()))
