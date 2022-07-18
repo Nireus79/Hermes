@@ -33,7 +33,6 @@ high_macd = None
 mid_d = None
 mid_ds = None
 mid_rs = None
-mid_p_atr = None
 low_chart_data = None
 low_reward = None
 low_limit = None
@@ -74,12 +73,12 @@ def beeper(cond):
 
 
 def chart_data(high_frame, mid_frame, low_frame):
-    global high_chart_data, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, mid_p_atr, \
+    global high_chart_data, high_ema13, high_macd, mid_chart_data, mid_d, mid_ds, mid_rs, \
         low_chart_data, low_limit, low_stop
     limit_data = []
     stop_data = []
     high_candles, e13, mac = high_data(high_frame)
-    mid_candles, d, ds, rs, at = mid_data(mid_frame)
+    mid_candles, d, ds, rs = mid_data(mid_frame)
     low_candles = low_data(low_frame)
     for i in low_candles:
         limit_data.append({
@@ -97,7 +96,6 @@ def chart_data(high_frame, mid_frame, low_frame):
     mid_d = d
     mid_ds = ds
     mid_rs = rs
-    mid_p_atr = at
     low_chart_data = low_candles
     low_limit = limit_data
     low_stop = stop_data
@@ -546,7 +544,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             low-frame candle minus atr.
             That is considered as minimum stop loss level price can reach on a pullback.
     """
-    global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, buy_flag_15m,\
+    global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, buy_flag_15m, \
         sell_flag_4h, sell_flag_1h, sell_flag_15m, \
         crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame
     # TODO activate licence check
@@ -561,7 +559,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
         i4h = Api(crypto_currency, fiat_currency, 240, depth)
         i1h = Api(crypto_currency, fiat_currency, 60, depth)
         i15m = Api(crypto_currency, fiat_currency, 15, depth)
-        log = '{} Operation start. Mode is {}. Max RSI set to: {}. Low frame evaluations: {}.'\
+        log = '{} Operation start. Mode is {}. Max RSI set to: {}. Low frame evaluations: {}.' \
             .format(time_stamp(time.time()), mode, max_rsi, time_divisor)
         logging.info(log)
         logs.append(log + '<br>')
@@ -635,13 +633,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                                     limit_manager(mode, i4h, i1h, i15m,
                                                   condition, time_divisor, max_rsi)
                             elif buy_flag_1h is not True:
-                                log = '{} 1hour momentum is not {}. Wait 5 min.'\
+                                log = '{} 1hour momentum is {}. Wait 5 min.' \
                                     .format(time_stamp(time.time()), buy_flag_1h)
                                 logging.info(log)
                                 logs.append(log + '<br>')
                                 time.sleep(300)
                         elif trend_4h is not True:
-                            log = '{} 4hour trend is {}. Entering stochastic mode.'\
+                            log = '{} 4hour trend is {}. Entering stochastic mode.' \
                                 .format(time_stamp(time.time()), trend_4h)
                             logging.info(log)
                             logs.append(log + '<br>')
@@ -690,7 +688,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         time.sleep(300)
                 else:
                     if buy_flag_1h and sell_flag_4h is not True:
-                        log = '{} 1hour momentum is {}. Entering stochastic mode.'\
+                        log = '{} 1hour momentum is {}. Entering stochastic mode.' \
                             .format(time_stamp(time.time()), buy_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
@@ -801,7 +799,6 @@ def data_feed():
         'mid_d': mid_d,
         'mid_ds': mid_ds,
         'mid_rs': mid_rs,
-        'mid_p_atr': mid_p_atr,
         'low_chart_data': low_chart_data,
         'price': closing_price,
         'low_limit': low_limit,

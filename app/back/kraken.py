@@ -205,13 +205,12 @@ def mid_data(frame):
     stoch_d_data = round(data_list[-1][9], 4)
     stoch_ds_data = round(data_list[-1][10], 4)
     rsi_data = round(data_list[-1][11], 4)
-    p_atr_data = round(data_list[-1][13], 4)
     for i in data_list:
         candle_data.append({
             'x': i[0],
             'y': [i[1], i[2], i[3], i[4]]
         })
-    return candle_data, stoch_d_data, stoch_ds_data, rsi_data, p_atr_data
+    return candle_data, stoch_d_data, stoch_ds_data, rsi_data
 
 
 def low_data(frame):
