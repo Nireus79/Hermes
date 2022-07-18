@@ -334,7 +334,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
     logs.append(log + '<br>')
     if cond == 'buy':
         log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
-            .format(time_stamp(time.time()), limit, low.interval / time_divisor)
+            .format(time_stamp(time.time()), limit, low.interval)
     elif cond == 'sell':
         log = '{} Please give sell order when price under {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, low.interval)
