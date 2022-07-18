@@ -11,7 +11,6 @@ logging.basicConfig(level=logging.INFO)
 condition = None
 trend_24h = None
 trend_4h = None
-trend_1h = None
 sell_flag_4h = None
 sell_flag_1h = None
 sell_flag_15m = None
@@ -544,7 +543,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             low-frame candle minus atr.
             That is considered as minimum stop loss level price can reach on a pullback.
     """
-    global condition, log, trend_24h, trend_4h, trend_1h, buy_flag_4h, buy_flag_1h, buy_flag_15m,\
+    global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, buy_flag_15m,\
         sell_flag_4h, sell_flag_1h, sell_flag_15m, \
         crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame
     # TODO activate licence check
@@ -559,7 +558,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
         i4h_frame = Api(crypto_currency, fiat_currency, 240, depth)
         i1h_frame = Api(crypto_currency, fiat_currency, 60, depth)
         i15m_frame = Api(crypto_currency, fiat_currency, 15, depth)
-        i5m_frame = Api(crypto_currency, fiat_currency, 5, depth)
         log = '{} Operation start. Mode is {}. Max RSI set to: {}. Low frame evaluations: {}.'\
             .format(time_stamp(time.time()), mode, max_rsi, time_divisor)
         logging.info(log)
@@ -573,14 +571,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                 break
             high_frame_24h = high_frame_indicators(i24h_frame.get_frame())
             high_frame_4h = high_frame_indicators(i4h_frame.get_frame())
-            high_frame_1h = high_frame_indicators(i1h_frame.get_frame())
             mid_frame_4h = mid_frame_indicators(i4h_frame.get_frame(), max_rsi)
             mid_frame_1h = mid_frame_indicators(i1h_frame.get_frame(), max_rsi)
             mid_frame_15m = mid_frame_indicators(i15m_frame.get_frame(), max_rsi)
             closing_price = high_frame_24h.iloc[-1]['close']
             trend_24h = high_frame_24h.iloc[-1]['trend']
             trend_4h = high_frame_4h.iloc[-1]['trend']
-            trend_1h = high_frame_1h.iloc[-1]['trend']
             buy_flag_4h = mid_frame_4h.iloc[-1]['buy flag']
             sell_flag_4h = mid_frame_4h.iloc[-1]['sell flag']
             buy_flag_1h = mid_frame_1h.iloc[-1]['buy flag']
@@ -641,7 +637,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                             log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                             logging.info(log)
                             logs.append(log + '<br>')
-                            chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                             if buy_flag_1h and sell_flag_4h is not True:
                                 log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
                                 logging.info(log)
@@ -682,7 +677,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         log = '{} 1hour momentum is {}. Wait 5 min'.format(time_stamp(time.time()), buy_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        chart_data(high_frame_1h, mid_frame_15m, low_frame_indicators(i5m_frame.get_frame()))
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(300)
@@ -785,7 +779,6 @@ def data_feed():
         'runningLowFrame': runningLowFrame,
         'trend_24h': str(trend_24h),
         'trend_4h': str(trend_4h),
-        'trend_1h': str(trend_1h),
         'buy_flag_4h': str(buy_flag_4h),
         'sell_flag_4h': str(sell_flag_4h),
         'buy_flag_1h': str(buy_flag_1h),
