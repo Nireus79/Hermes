@@ -105,6 +105,9 @@ def chart_data(high_frame, mid_frame, low_frame):
 
 def simple_order(order_type, price, cond, crypto_currency, fiat_currency):
     global condition, log, crypto_balance, fiat_balance
+    log = '{} Setting trade.'.format(time_stamp(time.time()))
+    logging.info(log)
+    logs.append(log + '<br>')
     if cond == 'buy':
         asset_vol = (fiat_balance - fiat_balance * 0.0026) / price
         # kraken max trading fee: 0.0026 * asset_vol
@@ -634,7 +637,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                                 logs.append(log + '<br>')
                                 time.sleep(300)
                         elif trend_4h is not True:
-                            log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
+                            log = '{} 4hour trend is {}. Entering stochastic mode.'\
+                                .format(time_stamp(time.time()), trend_4h)
                             logging.info(log)
                             logs.append(log + '<br>')
                             if buy_flag_1h and sell_flag_4h is not True:
@@ -682,7 +686,8 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         time.sleep(300)
                 else:
                     if buy_flag_1h and sell_flag_4h is not True:
-                        log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
+                        log = '{} 1hour momentum is {}. Entering stochastic mode.'\
+                            .format(time_stamp(time.time()), buy_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
                         if mode == 'trading':
@@ -743,7 +748,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         time.sleep(i1h_frame.candle / 12)
                 else:
                     if sell_flag_1h:
-                        log = '1hour momentum is {}.'.format(sell_flag_1h)
+                        log = '1hour momentum is {}. Entering stochastic mode.'.format(sell_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
                         if mode == 'trading':
