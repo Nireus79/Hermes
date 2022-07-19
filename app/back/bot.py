@@ -753,10 +753,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                             limit_manager(mode, i24h, i4h, i1h, condition, time_divisor, max_rsi)
                     elif sell_flag_4h is not True:
                         log = '{} 4hour momentum is {}. Wait {} minutes.' \
-                            .format(time_stamp(time.time()), sell_flag_4h, i4h_frame.interval / 12)
+                            .format(time_stamp(time.time()), sell_flag_4h, i4h.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i4h_frame.candle / 12)
+                        time.sleep(i4h.candle / 12)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -775,10 +775,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, i4h, i1h, i15m, condition, time_divisor, max_rsi)
                     elif sell_flag_1h is not True:
-                        log = '1hour momentum is {}. Wait {} minutes.'.format(sell_flag_1h, i1h_frame.interval / 12)
+                        log = '1hour momentum is {}. Wait {} minutes.'.format(sell_flag_1h, i1h.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(i1h_frame.candle / 12)
+                        time.sleep(i1h.candle / 12)
                 else:
                     if sell_flag_1h:
                         log = '1hour momentum is {}. Entering stochastic mode.'.format(sell_flag_1h)
