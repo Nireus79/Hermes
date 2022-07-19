@@ -831,8 +831,3 @@ def data_feed():
         'low_limit': low_limit,
         'low_stop': low_stop
     }
-
-
-# i24h = Api('DOT', 'EUR', 1440, 50)
-# i24h_frame = i24h.get_frame()
-# print(i24h.interval)
