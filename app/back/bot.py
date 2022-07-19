@@ -101,62 +101,6 @@ def chart_data(high_frame, mid_frame, low_frame):
     low_stop = stop_data
 
 
-# def chart_data_1(frame):
-#     global high_chart_data, mid_d, mid_ds, mid_rs
-#     d_data = []
-#     ds_data = []
-#     rs_data = []
-#     candles, d, ds, rs = mid_data(frame)
-#     for i in candles:
-#         d_data.append({
-#             'x': i[0],
-#             'y': round(i[9], 4)
-#         })
-#     for i in candles:
-#         ds_data.append({
-#             'x': i[0],
-#             'y': round(i[10], 4)
-#         })
-#     for i in candles:
-#         rs_data.append({
-#             'x': i[0],
-#             'y': round(i[11], 4)
-#         })
-#     high_chart_data = candles
-#     mid_d = d_data
-#     mid_ds = ds_data
-#     mid_rs = rs_data
-
-
-def simple_order(order_type, price, cond, crypto_currency, fiat_currency):
-    global condition, log, crypto_balance, fiat_balance
-    log = '{} Setting trade.'.format(time_stamp(time.time()))
-    logging.info(log)
-    logs.append(log + '<br>')
-    if cond == 'buy':
-        asset_vol = (fiat_balance - fiat_balance * 0.0026) / price
-        # kraken max trading fee: 0.0026 * asset_vol
-        log = '{} order to {} {} {} using {} {}.' \
-            .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
-        logging.info(log)
-        tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
-        log = tx
-        logging.info(log)
-        beeper(cond)
-        log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
-        trades.append(log + '<br>')
-    elif cond == 'sell':
-        log = '{} order to {} {} {} at {}.' \
-            .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
-        logging.info(log)
-        tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
-        log = tx
-        logging.info(log)
-        beeper(cond)
-        log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
-        trades.append(log + '<br>')
-
-
 def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_currency, time_divisor, max_rsi):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
@@ -272,7 +216,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     limit = None
                     break
                 else:
-                    if new_limit <= limit:
+                    if new_limit < limit:
                         limit = new_limit
                         log = '{} limit set to {}. Wait {}min' \
                             .format(time_stamp(time.time()), limit, low.interval / time_divisor)
@@ -310,7 +254,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                     stop = None
                     break
                 else:
-                    if new_stop >= stop:
+                    if new_stop > stop:
                         stop = new_stop
                         log = '{} Stop loss set to {}. Wait {}min' \
                             .format(time_stamp(time.time()), stop, low.interval / time_divisor)
@@ -486,7 +430,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
     Frames combinations:
     Combination 1: High 24hours - mid 4 hours - low 1 hour.
     Combination 2: High 4 hours - mid 1 hour - low 15 min.
-    Combination 3: High 1 hour - mid 15 min - low 5 min.
 
     Evaluation phases
     1) Trend. The long-term trend is evaluated. – Alex Elder calls this as being the tide, and it's evaluation gives
@@ -535,11 +478,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         if 1 hour mid-frame conditions are aligned:
                             order_manager() kicks in to buy on 15 min low frame.
                         elif 1 hour mid-frame conditions are NOT aligned:
-                            if 1 hour high frame trend is positive:
-                                if 15-min mid-frame conditions are aligned:
-                                    order_manager() kicks in to buy on 5 min low frame.
-                                elif 15-min mid-frame conditions are NOT aligned:
-                                    sleep 5 minutes to review conditions.
+                            sleep 5 minutes to review conditions.
             elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15 and H1 M15 L5)...
             elif 1 hour high frame trend is positive ... same as above for frames (H1 M15 L5) only...
             elif conditions at all time frame combinations are not aligned:
@@ -667,26 +606,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                                 logs.append(log + '<br>')
                                 time.sleep(300)
                         elif trend_4h is not True:
-                            log = '{} 4hour trend is {}. Entering stochastic mode.' \
-                                .format(time_stamp(time.time()), trend_4h)
+                            log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
                             logging.info(log)
                             logs.append(log + '<br>')
-                            if buy_flag_1h and sell_flag_4h is not True:
-                                log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
-                                logging.info(log)
-                                logs.append(log + '<br>')
-                                if mode == 'trading':
-                                    simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
-                                elif mode == 'consulting' or mode == 'simulator':
-                                    log = '{} Buy asset'.format(time_stamp(time.time()))
-                                    beeper(condition)
-                                    logging.info(log)
-                                    logs.append(log + '<br>')
-                            else:
-                                log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
-                                logging.info(log)
-                                logs.append(log + '<br>')
-                                time.sleep(300)
+                            time.sleep(300)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -716,23 +639,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         logs.append(log + '<br>')
                         time.sleep(300)
                 else:
-                    if buy_flag_1h and sell_flag_4h is not True:
-                        log = '{} 1hour momentum is {}. Entering stochastic mode.' \
-                            .format(time_stamp(time.time()), buy_flag_1h)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        if mode == 'trading':
-                            simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
-                        elif mode == 'consulting' or mode == 'zero':
-                            log = '{} Buy asset'.format(time_stamp(time.time()))
-                            beeper(condition)
-                            logging.info(log)
-                            logs.append(log + '<br>')
-                    elif buy_flag_1h is not True:
-                        log = '{} 1hour momentum is {}. Wait 5 min.'.format(time_stamp(time.time()), buy_flag_1h)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(300)
+                    log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    time.sleep(300)
             elif condition == 'sell':
                 if trend_24h:
                     log = '{} 24hour trend is {}.'.format(time_stamp(time.time()), trend_24h)
@@ -780,22 +690,14 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         logs.append(log + '<br>')
                         time.sleep(i1h.candle / 12)
                 else:
-                    if sell_flag_1h:
-                        log = '1hour momentum is {}. Entering stochastic mode.'.format(sell_flag_1h)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        if mode == 'trading':
-                            simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
-                        elif mode == 'consulting' or mode == 'simulator':
-                            log = '{} Sell asset'.format(time_stamp(time.time()))
-                            beeper(condition)
-                            logging.info(log)
-                            logs.append(log + '<br>')
-                    else:
-                        log = '{} 1hour momentum is not {}. Wait 5 min.'.format(time_stamp(time.time()), sell_flag_1h)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(300)
+                    log = '{} All high-frame trends are negative.'.format(time_stamp(time.time()))
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    if mode == 'trading':
+                        order_manager('market', i4h, i1h, i15m, condition,
+                                      crypto_currency, fiat_currency, time_divisor, max_rsi)
+                    elif mode == 'consulting' or mode == 'simulator':
+                        limit_manager(mode, i4h, i1h, i15m, condition, time_divisor, max_rsi)
     else:
         log = 'Your product licence is not active. Please activate or contact technical support.'
         logging.info(log)
