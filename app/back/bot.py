@@ -675,7 +675,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                                 logs.append(log + '<br>')
                                 if mode == 'trading':
                                     simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
-                                    beeper(condition)
                                 elif mode == 'consulting' or mode == 'simulator':
                                     log = '{} Buy asset'.format(time_stamp(time.time()))
                                     beeper(condition)
@@ -722,7 +721,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         logs.append(log + '<br>')
                         if mode == 'trading':
                             simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
-                            beeper(condition)
                         elif mode == 'consulting' or mode == 'zero':
                             log = '{} Buy asset'.format(time_stamp(time.time()))
                             beeper(condition)
@@ -786,7 +784,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         logs.append(log + '<br>')
                         if mode == 'trading':
                             simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
-                            beeper(condition)
                         elif mode == 'consulting' or mode == 'simulator':
                             log = '{} Sell asset'.format(time_stamp(time.time()))
                             beeper(condition)
