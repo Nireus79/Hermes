@@ -221,8 +221,10 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     mid_f = mid_frame_indicators(mid.get_frame(), max_rsi)
     low_f = low_frame_indicators(low.get_frame())
     l_atr = low_f.iloc[-1]['atr']
-    limit = low_f.iloc[-1]['high'] + l_atr
-    stop = low_f.iloc[-1]['low'] - l_atr
+    if cond == 'buy':
+        limit = low_f.iloc[-1]['high'] + l_atr
+    elif cond == 'sell':
+        stop = low_f.iloc[-1]['low'] - l_atr
     closing_price = low_f.iloc[-1]['close']
     log = 'Balance: {} {}. {} {}'.format(crypto_balance, crypto_currency, fiat_balance, fiat_currency)
     logging.info(log)
