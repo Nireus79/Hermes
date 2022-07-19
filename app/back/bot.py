@@ -101,6 +101,33 @@ def chart_data(high_frame, mid_frame, low_frame):
     low_stop = stop_data
 
 
+# def chart_data_1(frame):
+#     global high_chart_data, mid_d, mid_ds, mid_rs
+#     d_data = []
+#     ds_data = []
+#     rs_data = []
+#     candles, d, ds, rs = mid_data(frame)
+#     for i in candles:
+#         d_data.append({
+#             'x': i[0],
+#             'y': round(i[9], 4)
+#         })
+#     for i in candles:
+#         ds_data.append({
+#             'x': i[0],
+#             'y': round(i[10], 4)
+#         })
+#     for i in candles:
+#         rs_data.append({
+#             'x': i[0],
+#             'y': round(i[11], 4)
+#         })
+#     high_chart_data = candles
+#     mid_d = d_data
+#     mid_ds = ds_data
+#     mid_rs = rs_data
+
+
 def simple_order(order_type, price, cond, crypto_currency, fiat_currency):
     global condition, log, crypto_balance, fiat_balance
     log = '{} Setting trade.'.format(time_stamp(time.time()))
@@ -630,8 +657,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                                     order_manager('market', i4h, i1h, i15m, condition,
                                                   crypto_currency, fiat_currency, time_divisor, max_rsi)
                                 elif mode == 'consulting' or mode == 'zero':
-                                    limit_manager(mode, i4h, i1h, i15m,
-                                                  condition, time_divisor, max_rsi)
+                                    limit_manager(mode, i4h, i1h, i15m, condition, time_divisor, max_rsi)
                             elif buy_flag_1h is not True:
                                 log = '{} 1hour momentum is {}. Wait 5 min.' \
                                     .format(time_stamp(time.time()), buy_flag_1h)
@@ -695,8 +721,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         if mode == 'trading':
                             simple_order('market', closing_price, condition, crypto_currency, fiat_currency)
                         elif mode == 'consulting' or mode == 'zero':
-                            limit_manager(mode, i4h_frame, i1h_frame, i15m_frame,
-                                          condition, time_divisor, max_rsi)
+                            log = '{} Buy asset'.format(time_stamp(time.time()))
+                            logging.info(log)
+                            logs.append(log + '<br>')
                     elif buy_flag_1h is not True:
                         log = '{} 1hour momentum is {}. Wait 5 min.'.format(time_stamp(time.time()), buy_flag_1h)
                         logging.info(log)
@@ -804,3 +831,8 @@ def data_feed():
         'low_limit': low_limit,
         'low_stop': low_stop
     }
+
+
+# i24h = Api('DOT', 'EUR', 1440, 50)
+# i24h_frame = i24h.get_frame()
+# print(i24h.interval)
