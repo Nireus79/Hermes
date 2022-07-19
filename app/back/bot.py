@@ -510,8 +510,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             low-frame candle minus atr.
             That is considered as minimum stop loss level price can reach on a pullback.
     """
-    global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, buy_flag_15m, \
-        sell_flag_4h, sell_flag_1h, sell_flag_15m, \
+    global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, sell_flag_4h, sell_flag_1h, \
         crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame
     # TODO activate licence check
     licence = True  # check()['license_active']
@@ -544,7 +543,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             high_frame_4h = high_frame_indicators(i4h_frame)
             mid_frame_4h = mid_frame_indicators(i4h_frame, max_rsi)
             mid_frame_1h = mid_frame_indicators(i1h_frame, max_rsi)
-            mid_frame_15m = mid_frame_indicators(i15m_frame, max_rsi)
             closing_price = high_frame_24h.iloc[-1]['close']
             trend_24h = high_frame_24h.iloc[-1]['trend']
             trend_4h = high_frame_4h.iloc[-1]['trend']
@@ -552,8 +550,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             sell_flag_4h = mid_frame_4h.iloc[-1]['sell flag']
             buy_flag_1h = mid_frame_1h.iloc[-1]['buy flag']
             sell_flag_1h = mid_frame_1h.iloc[-1]['sell flag']
-            buy_flag_15m = mid_frame_15m.iloc[-1]['buy flag']
-            sell_flag_15m = mid_frame_15m.iloc[-1]['sell flag']
             if mode == 'consulting' or mode == 'trading':
                 condition, crypto_balance, fiat_balance = get_condition(crypto_currency, fiat_currency, closing_price)
             log = '{} Condition is {}.'.format(time_stamp(time.time()), condition)
@@ -722,8 +718,6 @@ def data_feed():
         'sell_flag_4h': str(sell_flag_4h),
         'buy_flag_1h': str(buy_flag_1h),
         'sell_flag_1h': str(sell_flag_1h),
-        'buy_flag_15m': str(buy_flag_15m),
-        'sell_flag_15m': str(sell_flag_15m),
         'high_chart_data': high_chart_data,
         'mid_chart_data': mid_chart_data,
         'high_ema13': high_ema13,

@@ -18,8 +18,6 @@ function update_values() {
                 $('#trend_4h').text(data.trend_4h);
                 $('#buy_flag_1h').text(data.buy_flag_1h);
                 $('#sell_flag_1h').text(data.sell_flag_1h);
-                $('#buy_flag_15m').text(data.buy_flag_15m);
-                $('#sell_flag_15m').text(data.sell_flag_15m);
                 $('#price').text('Closing price: '+data.price);
                 $('#reward').text('Reward limit: '+data.reward);
                 $('#limit').text('Buy limit: '+data.limit);
