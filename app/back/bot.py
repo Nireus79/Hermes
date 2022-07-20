@@ -574,7 +574,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                             runningLowFrame = '15minutes'
                             chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
                             if sell_flag_4h:
-                                log = '{} 24hour momentum is {}. Wait 5 min.' \
+                                log = '{} 4hour sell flag is {}. Wait 5 min.' \
                                     .format(time_stamp(time.time()), sell_flag_4h)
                                 logging.info(log)
                                 logs.append(log + '<br>')
@@ -613,7 +613,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                     runningLowFrame = '15minutes'
                     chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
                     if sell_flag_4h:
-                        log = '{} 24hour momentum is {}. Wait 5 min.'.format(time_stamp(time.time()), sell_flag_4h)
+                        log = '{} 4hour sell flag is {}. Wait 5 min.'.format(time_stamp(time.time()), sell_flag_4h)
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(300)
