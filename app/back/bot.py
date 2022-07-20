@@ -440,7 +440,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
     General trend can be detected with the use of 200 periods EMA, combination of 9, 20, 50 periods EMA, macd, etc.
     According to Elder the highly profitable spectrum of a positive trend is when price overcomes a pullback,
     entering the bullish zone.
-    In our case a preset combination of 13p, 200p EMA and macd indicators (Closing > EMA13 and macd > 0)
+    In our case a preset combination of 13p EMA and macd indicators (Closing > EMA13 and macd > 0)
     is used to determine the high frame trend.
     Mid-frame.
     Trend momentum and position is detected with the use of stochastic slow indicator. Stochastic fast can be used for
@@ -478,7 +478,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         elif 1 hour mid-frame conditions are NOT aligned:
                             sleep 5 minutes to review conditions.
             elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15 and H1 M15 L5)...
-            elif 1 hour high frame trend is positive ... same as above for frames (H1 M15 L5) only...
             elif conditions at all time frame combinations are not aligned:
                 bot sleeps for 5 minutes to review conditions.
         elif condition is 'sell':
@@ -491,11 +490,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
             elif 4 hour high frame and 1 hour mid-frame conditions are aligned (both flags True):
                 order_manager() kicks in to sell on 15 min low frame.
                 if NOT waits 1 / 12 of 1 hour.
-            elif 1 hour high frame and 15min  mid-frame conditions are aligned (both flags True):
-                order_manager() kicks in to sell on 5min low frame.
-                if NOT waits 1 / 12 of 15 min.
             elif all high frames trend is negative:
-                second risk condition is activated.
                 order_manager() kicks in to sell on 5minute low frame.
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
@@ -503,12 +498,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
     :param crypto_currency: the crypto asset to be traded
     :param fiat_currency: the fiat asset to be traded
     :param depth: the time periods back to be analysed
-    risk: A safety level is set at the beginning of the process to 4% under current price.
-            That is for the case of bot starts evaluating sell condition and no other
-            safety level is stored.
-            After every buy of asset A, a safety level is set on the lowest low of previous (from buy)
-            low-frame candle minus atr.
-            That is considered as minimum stop loss level price can reach on a pullback.
     """
     global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, sell_flag_4h, sell_flag_1h, \
         crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame
