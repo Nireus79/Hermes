@@ -649,7 +649,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                     runningLowFrame = '1Hour'
                     chart_data(high_frame_24h, mid_frame_4h, low_frame_indicators(i1h_frame))
                     if sell_flag_4h:
-                        log = '{} 4hour momentum is {}.'.format(time_stamp(time.time()), sell_flag_4h)
+                        log = '{} 4hour sell flag is {}.'.format(time_stamp(time.time()), sell_flag_4h)
                         logging.info(log)
                         logs.append(log + '<br>')
                         if mode == 'trading':
@@ -658,7 +658,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, i24h, i4h, i1h, condition, time_divisor, max_rsi)
                     elif sell_flag_4h is not True:
-                        log = '{} 4hour momentum is {}. Wait {} minutes.' \
+                        log = '{} 4hour sell flag is {}. Wait {} minutes.' \
                             .format(time_stamp(time.time()), sell_flag_4h, i4h.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
@@ -672,7 +672,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                     runningLowFrame = '15minutes'
                     chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
                     if sell_flag_1h:
-                        log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), sell_flag_1h)
+                        log = '{} 1hour sell flag is {}.'.format(time_stamp(time.time()), sell_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
                         if mode == 'trading':
@@ -681,7 +681,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, i4h, i1h, i15m, condition, time_divisor, max_rsi)
                     elif sell_flag_1h is not True:
-                        log = '1hour momentum is {}. Wait {} minutes.'.format(sell_flag_1h, i1h.interval / 12)
+                        log = '1hour sell flag is {}. Wait {} minutes.'.format(sell_flag_1h, i1h.interval / 12)
                         logging.info(log)
                         logs.append(log + '<br>')
                         time.sleep(i1h.candle / 12)
