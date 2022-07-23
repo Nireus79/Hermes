@@ -119,7 +119,7 @@ def time_stamp(unix):
     return datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 
-def high_frame_indicators(hdf):
+def high_frame_indicators(df):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
     adding columns to each row with the technical indicators of ohlc (EMA13, macd),
@@ -128,13 +128,14 @@ def high_frame_indicators(hdf):
     : param hdf: raw api dataframe
     :return: hdf enriched with technical indicators and flags
     """
+    hdf = df.copy()
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
     hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['macd'] > 0, axis=1)
     return hdf
 
 
-def mid_frame_indicators(mdf, max_rsi):
+def mid_frame_indicators(df, max_rsi):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
     adding columns to each row with the technical indicators of ohlc (stochastic %k, stochastic%d, rsi, %atr),
@@ -142,6 +143,7 @@ def mid_frame_indicators(mdf, max_rsi):
     : param mdf: raw api dataframe
     :return: mdf enriched with technical indicators and flags
     """
+    mdf = df.copy()
     mdf['%K'] = stoch(mdf['high'], mdf['low'], mdf['close'], window=14, smooth_window=3, fillna=False)
     mdf['%D'] = mdf['%K'].rolling(3).mean()
     mdf['%DS'] = mdf['%D'].rolling(3).mean()  # Stochastic slow.
@@ -151,14 +153,15 @@ def mid_frame_indicators(mdf, max_rsi):
     return mdf
 
 
-def low_frame_indicators(ldf):
+def low_frame_indicators(df):
     """
     Takes a pandas dataframe provided by Kraken rest api containing ohlc data,
     adding column to each row with the technical indicators of atr,
     using the "ta" library.
-    :param ldf: low data frame
+    :param df: low data frame
     :return: ldf enriched with atr
     """
+    ldf = df.copy()
     ldf['atr'] = average_true_range(ldf['high'], ldf['low'], ldf['close'], window=14, fillna=False)
     return ldf
 
