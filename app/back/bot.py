@@ -638,6 +638,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                     log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
+                    runningHighFrame = '4Hour'
+                    runningMidFrame = '1Hour'
+                    runningLowFrame = '15minutes'
+                    chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
                     time.sleep(300)
             elif condition == 'sell':
                 if trend_24h:
@@ -689,6 +693,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
                     log = '{} All high-frame trends are negative.'.format(time_stamp(time.time()))
                     logging.info(log)
                     logs.append(log + '<br>')
+                    runningHighFrame = '4Hour'
+                    runningMidFrame = '1Hour'
+                    runningLowFrame = '15minutes'
+                    chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
                     if mode == 'trading':
                         order_manager('market', i4h, i1h, i15m, condition,
                                       crypto_currency, fiat_currency, time_divisor, max_rsi)
