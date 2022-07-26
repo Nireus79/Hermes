@@ -1,10 +1,9 @@
 import time
 import threading
 from app.back.bot import elderbot, data_feed, signal_handler
-from app.back.kraken import cancel_order
+from app.back.kraken import cancel_order, time_stamp
 from app import app
 from flask import render_template, request, jsonify
-from app.back.kraken import time_stamp
 import logging
 
 # Default values given as preset
@@ -13,8 +12,6 @@ asset_b = None
 mode = None
 divider = 2
 rsi = 70
-risk_ratio = 2
-atr = 0
 
 # Flask logs
 log = logging.getLogger('werkzeug')
