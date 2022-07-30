@@ -103,34 +103,29 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     order_manager is setting limit and stop loss levels.
     Then starts monitoring periodically closing price at current running low time frame duration:
         When intending to buy asset
-            if closing price exceeds set limit level:
-                places a market buy asset for the asset
-                Conditions are reevaluated until order is closed.
-                Risk level is set on the low of previous low frame candle - low frame atr as global variable.
-                Buy price is stored as global variable.
-                Reward level is set by choice as the single, double, triple or 100 (ignored)
-                of (buy price - risk level) + buy price
-            else: (closing price under limit)
-                waits part or full time by choice, of low frame duration to reevaluate.
+            if mid-frame momentum is strong:
+                if closing price exceeds set limit level:
+                    places a market buy order for the asset
+                else: (closing price under limit)
                     if new closing price is lower than limit:
-                        if new higher high of low frame is higher than previous set:
-                            sets new limit equal to new higher high.
+                        if new higher high of low frame is lower than previous:
+                            sets new limit equal to new lower higher high.
                         else:
                             waits one low candle / divisor
+            else:
+                breaks to reevaluate conditions.
         When intending to sell asset
-            if closing price is under buy price AND over risk:
-                waits one low candle / divisor
-                as this zone is considered possible pullback zone of the price.
-            elif closing price is over buy price AND lower than set stop-loss level:
-                places market sell order for the asset.
-                Conditions are reevaluated until order is closed.
-            else: (closing price over stop-loss)
-                waits part or full time by choice, of low frame duration to reevaluate:
+            if mid-frame momentum is weak:
+                if closing price is under stop level:
+                    places market sell order for the asset.
+                else: (closing price over stop-loss)
                     if new closing price is higher than stop-loss:
                         if new lower low of low frame is higher than previous set:
-                            sets new stop-loss equal to new lower-low.
+                            sets new stop-loss equal to new higher lower-low.
                         else:
                             waits one low candle / divisor
+            else:
+                breaks to reevaluate conditions.
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
     :param order_type: limit / market
@@ -280,7 +275,7 @@ def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
     User is just informed for the action he has to take.
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
-    :param mode: zero or consulting
+    :param mode: simulation or consulting
     :param high: The high frame instance, used for chart data.
     :param mid: The middle frame instance, used to check if buy/sell flag is still True.
     :param low: The low frame instance, used to set limit/stop-loss borders.
@@ -446,10 +441,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
     version of stoch fast. (d > ds > 20 buy Flag / d < ds < 80 sell Flag)
     An additional indicator of strength is added (RSI) as choice for safety reasons,
     as when current price strength is above safety, price is actually 'overbought' and probability of descent is high.
-    ATR detects the volatility of the price. ATR% is ATR related with the closing price.
-    An extra condition of %ATR is given as choice, to avoid false buy flags in price consolidation instances.
-    ATR of middle frame is also subtracted by lowest low of low-candle before buy candle,
-    to be used as risk level and avoid false flag.
     Low frame.
     When conditions are aligned in the higher frames action limits are set, according to the last low frame
     closed candle range. Next time fragment of candle price gives action flag or sets new limits.
@@ -463,33 +454,34 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, time_divisor, max_rsi)
 
     Original strategy dictates to wait the whole time of each candle to set condition flag,
         but as api provides data in real time, duration is divided optionally to make bot faster.
-        Next, condition (get_condition()) is taken from users account balance
+        Next, condition (get_condition()) is taken from users account balance (when in trading or consulting mode)
         and bot constantly evaluates the flags in a while loop.
         if condition is 'buy':
             if 24 hour high frame trend is positive (True trend flag):
-                if 4 hour mid-frame conditions are aligned (buy or sell flag True according to condition):
-                    order_manager() kicks in to buy on 1 hour low frame.
+                if 4 hour mid-frame is strong (buy flag True):
+                    order_manager() evaluates to buy on 1 hour low frame.
                 elif 4 hour mid-frame conditions are NOT aligned:
                     if 4 hour high frame trend is positive:
-                        if 1 hour mid-frame conditions are aligned:
-                            order_manager() kicks in to buy on 15 min low frame.
+                        if 1 hour momentum is strong and 4hour momentum is not weak:
+                            order_manager() evaluates to buy on 15 min low frame.
                         elif 1 hour mid-frame conditions are NOT aligned:
                             sleep 5 minutes to review conditions.
-            elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15 and H1 M15 L5)...
-            elif conditions at all time frame combinations are not aligned:
+            elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15)...
+            else: (conditions at all time frame combinations are not aligned)
                 bot sleeps for 5 minutes to review conditions.
         elif condition is 'sell':
-            After every purchase of an asset risk and reward levels are set.
-            if closing < risk or closing > reward::
-                order_manager() kicks in to sell on 5min low frame.
-            elif 24 hour high frame and 4 hour mid-frame conditions are aligned (both flags True):
-                order_manager() kicks in to sell on 1 hour low frame.
-                if NOT waits 1 / 12 of 4 hours.
-            elif 4 hour high frame and 1 hour mid-frame conditions are aligned (both flags True):
-                order_manager() kicks in to sell on 15 min low frame.
-                if NOT waits 1 / 12 of 1 hour.
-            elif all high frames trend is negative:
-                order_manager() kicks in to sell on 5minute low frame.
+            if 24 hour high frame trend is positive:
+                if 4 hour momentum is weak:
+                    order_manager() kicks in to sell on 1 hour low frame.
+                else:
+                    waits 5min.
+            elif 4 hour high-frame is positive:
+                if 1 hour mid-frame is weak:
+                    order_manager() kicks in to sell on 15 min low frame.
+                else:
+                    waits 5min.
+            else: (all high frames trend is negative)
+                order_manager() kicks in to sell on 15minute low frame.
     :param max_rsi: maximum rsi in mid-frame
     :param time_divisor: reevaluation of low frame
     :param mode: trading / consulting
