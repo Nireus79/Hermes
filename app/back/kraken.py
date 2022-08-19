@@ -131,7 +131,13 @@ def high_frame_indicators(df):
     hdf = df.copy()
     hdf['EMA13'] = hdf['close'].rolling(13).mean()
     hdf['macd'] = macd_diff(hdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
-    hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['macd'] > 0, axis=1)
+    hdf['%K'] = stoch(hdf['high'], hdf['low'], hdf['close'], window=14, smooth_window=3, fillna=False)
+    hdf['%D'] = hdf['%K'].rolling(3).mean()
+    hdf['%DS'] = hdf['%D'].rolling(3).mean()  # Stochastic slow.
+    hdf['negative momentum'] = hdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
+    hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and
+                                       x['macd'] > 0 and
+                                       x['negative momentum'] is False, axis=1)
     return hdf
 
 
