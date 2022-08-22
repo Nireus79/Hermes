@@ -156,6 +156,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     mid_f = mid_frame_indicators(mid.get_frame(), max_rsi)
     low_f = low_frame_indicators(low.get_frame())
     l_atr = low_f.iloc[-1]['atr']
+    candle_time = low_f.iloc[-1]['time']
     if cond == 'buy':
         limit = low_f.iloc[-1]['high'] + l_atr
     elif cond == 'sell':
@@ -167,105 +168,114 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     log = '{} Current price: {}. limit: {}. Stop loss: {}'.format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Wait {}min.'.format(time_stamp(time.time()), low.interval)
+    log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
     logging.info(log)
     logs.append(log + '<br>')
     chart_data(high_f, mid_f, low_f)
-    time.sleep(low.candle)
+    time.sleep(60)
     while True:
-        high_f = high_frame_indicators(high.get_frame())
-        mid_f = mid_frame_indicators(mid.get_frame(), max_rsi)
         low_f = low_frame_indicators(low.get_frame())
-        buy_flag = mid_f.iloc[-1]['buy flag']
-        sell_flag = mid_f.iloc[-1]['sell flag']
-        l_atr = low_f.iloc[-1]['atr']
-        new_limit = low_f.iloc[-1]['high'] + l_atr
-        new_stop = low_f.iloc[-1]['low'] - l_atr
-        closing_price = low_f.iloc[-1]['close']
-        chart_data(high_f, mid_f, low_f)
-        if break_event.is_set():  # thread "kill" by user
-            cancel_order()
-            log = '{} Break ordering.'.format(time_stamp(time.time()))
+        new_candle_time = low_f.iloc[-1]['time']
+        if new_candle_time > candle_time + low.candle:  # wait one candle to close
+            high_f = high_frame_indicators(high.get_frame())
+            mid_f = mid_frame_indicators(mid.get_frame(), max_rsi)
+            buy_flag = mid_f.iloc[-1]['buy flag']
+            sell_flag = mid_f.iloc[-1]['sell flag']
+            l_atr = low_f.iloc[-1]['atr']
+            new_limit = low_f.iloc[-1]['high'] + l_atr
+            new_stop = low_f.iloc[-1]['low'] - l_atr
+            closing_price = low_f.iloc[-1]['close']
+            chart_data(high_f, mid_f, low_f)
+            if break_event.is_set():  # thread "kill" by user
+                cancel_order()
+                log = '{} Break ordering.'.format(time_stamp(time.time()))
+                logging.info(log)
+                logs.append(log + '<br>')
+                break
+            elif cond == 'buy':
+                if buy_flag:
+                    if closing_price > limit:
+                        asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
+                        # kraken max trading fee: 0.0026 * asset_vol
+                        log = '{} order to {} {} {} using {} {}.' \
+                            .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
+                        logging.info(log)
+                        tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
+                        log = tx
+                        logging.info(log)
+                        beeper(cond)
+                        log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+                        trades.append(log + '<br>')
+                        stop = None
+                        limit = None
+                        break
+                    else:
+                        if new_limit < limit:
+                            limit = new_limit
+                            candle_time = low_f.iloc[-1]['time']
+                            log = '{} limit set to {}. Wait {}min' \
+                                .format(time_stamp(time.time()), limit, low.interval / time_divisor)
+                            logging.info(log)
+                            logs.append(log + '<br>')
+                            time.sleep(60)
+                        else:
+                            log = '{} Closing price under limit. Wait {}min.' \
+                                .format(time_stamp(time.time()), low.interval / time_divisor)
+                            logging.info(log)
+                            logs.append(log + '<br>')
+                            time.sleep(low.candle / time_divisor)
+                elif buy_flag is not True:
+                    log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    beeper('break')
+                    time.sleep(10)
+                    limit = None
+                    stop = None
+                    break
+            elif cond == 'sell':
+                if sell_flag:
+                    if closing_price < stop:
+                        log = '{} order to {} {} {} at {}.' \
+                            .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
+                        logging.info(log)
+                        tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+                        log = tx
+                        logging.info(log)
+                        beeper(cond)
+                        log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
+                        trades.append(log + '<br>')
+                        limit = None
+                        stop = None
+                        break
+                    else:
+                        if new_stop > stop:
+                            stop = new_stop
+                            candle_time = low_f.iloc[-1]['time']
+                            log = '{} Stop loss set to {}. Wait {}min' \
+                                .format(time_stamp(time.time()), stop, low.interval / time_divisor)
+                            logging.info(log)
+                            logs.append(log + '<br>')
+                            time.sleep(60)
+                        else:
+                            log = '{} Closing price over stop. Wait {}min.' \
+                                .format(time_stamp(time.time()), low.interval / time_divisor)
+                            logging.info(log)
+                            logs.append(log + '<br>')
+                            time.sleep(low.candle / time_divisor)
+                elif sell_flag is not True:
+                    log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
+                    logging.info(log)
+                    logs.append(log + '<br>')
+                    beeper('break')
+                    limit = None
+                    stop = None
+                    break
+        else:
+            log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
             logging.info(log)
             logs.append(log + '<br>')
-            break
-        elif cond == 'buy':
-            if buy_flag:
-                if closing_price > limit:
-                    asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
-                    # kraken max trading fee: 0.0026 * asset_vol
-                    log = '{} order to {} {} {} using {} {}.' \
-                        .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
-                    logging.info(log)
-                    tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
-                    log = tx
-                    logging.info(log)
-                    beeper(cond)
-                    log = '{} Bought {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
-                    trades.append(log + '<br>')
-                    stop = None
-                    limit = None
-                    break
-                else:
-                    if new_limit < limit:
-                        limit = new_limit
-                        log = '{} limit set to {}. Wait {}min' \
-                            .format(time_stamp(time.time()), limit, low.interval / time_divisor)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(low.candle / time_divisor)
-                    else:
-                        log = '{} Closing price under limit. Wait {}min.' \
-                            .format(time_stamp(time.time()), low.interval / time_divisor)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(low.candle / time_divisor)
-            elif buy_flag is not True:
-                log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
-                logging.info(log)
-                logs.append(log + '<br>')
-                beeper('break')
-                time.sleep(10)
-                limit = None
-                stop = None
-                break
-        elif cond == 'sell':
-            if sell_flag:
-                if closing_price < stop:
-                    log = '{} order to {} {} {} at {}.' \
-                        .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
-                    logging.info(log)
-                    tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
-                    log = tx
-                    logging.info(log)
-                    beeper(cond)
-                    log = '{} Sold {} at: {}.'.format(time_stamp(time.time()), crypto_currency, closing_price)
-                    trades.append(log + '<br>')
-                    limit = None
-                    stop = None
-                    break
-                else:
-                    if new_stop > stop:
-                        stop = new_stop
-                        log = '{} Stop loss set to {}. Wait {}min' \
-                            .format(time_stamp(time.time()), stop, low.interval / time_divisor)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(low.candle / time_divisor)
-                    else:
-                        log = '{} Closing price over stop. Wait {}min.' \
-                            .format(time_stamp(time.time()), low.interval / time_divisor)
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(low.candle / time_divisor)
-            elif sell_flag is not True:
-                log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
-                logging.info(log)
-                logs.append(log + '<br>')
-                beeper('break')
-                limit = None
-                stop = None
-                break
+            time.sleep(60)
 
 
 def limit_manager(mode, high, mid, low, cond, time_divisor, max_rsi):
