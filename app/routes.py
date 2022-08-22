@@ -10,7 +10,6 @@ import logging
 asset_a = None
 asset_b = None
 mode = None
-divider = 2
 rsi = 70
 
 # Flask logs
@@ -26,13 +25,12 @@ def main():
 
 @app.route('/control', methods=['POST', 'GET'])
 def control():
-    global asset_a, asset_b, mode, divider, rsi
+    global asset_a, asset_b, mode, rsi
     if request.method == 'POST':
         try:
             asset_a = request.form['assetA']
             asset_b = request.form['assetB']
             mode = request.form['mode']
-            divider = float(request.form['divider'])
             rsi = float(request.form['rsi'])
         except Exception as e:
             logging.info(e)
@@ -58,7 +56,6 @@ def update():
     dt['crypto_currency'] = asset_a
     dt['fiat_currency'] = asset_b
     dt['mode'] = mode
-    dt['divider'] = divider
     dt['rsi'] = rsi
     return jsonify(dt)
 
@@ -71,15 +68,12 @@ def starter():
     elif asset_a is None or asset_b is None:
         logging.info('Set assets.')
         return render_template('control.html')
-    elif divider is None:
-        logging.info('Set low frame evaluations.')
-        return render_template('control.html')
     elif rsi is None:
         logging.info('Set rsi.')
         return render_template('control.html')
     else:
-        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 40, divider, rsi))
-        # minimum depth argument is 35
+        trading = threading.Thread(target=elderbot, args=(mode, asset_a, asset_b, 40, rsi))
+        # minimum depth argument is 35 needed for technical indicators
         trading.daemon = True
         trading.start()
         return render_template('overview.html')
