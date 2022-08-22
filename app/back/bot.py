@@ -212,7 +212,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         limit = None
                         break
                     else:
-                        candle_time = low_f.iloc[-1]['time']
+                        candle_time = low_f.iloc[-2]['time']
                         if new_limit < limit:
                             limit = new_limit
                             log = '{} limit set to {}.'.format(time_stamp(time.time()), limit)
@@ -253,7 +253,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         stop = None
                         break
                     else:
-                        candle_time = low_f.iloc[-1]['time']
+                        candle_time = low_f.iloc[-2]['time']
                         if new_stop > stop:
                             stop = new_stop
                             candle_time = low_f.iloc[-1]['time']
@@ -353,7 +353,7 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                         runningLowFrame = None
                         break
                     else:
-                        candle_time = low_f.iloc[-1]['time']
+                        candle_time = low_f.iloc[-2]['time']
                         if new_limit < limit:
                             limit = new_limit
                             stop = new_stop
@@ -398,7 +398,7 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                         stop = None
                         break
                     else:
-                        candle_time = low_f.iloc[-1]['time']
+                        candle_time = low_f.iloc[-2]['time']
                         if new_stop > stop:
                             limit = new_limit
                             stop = new_stop
