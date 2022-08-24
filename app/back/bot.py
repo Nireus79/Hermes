@@ -561,7 +561,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                     runningMidFrame = '4Hour'
                     runningLowFrame = '1Hour'
                     chart_data(high_frame_24h, mid_frame_4h, low_frame_indicators(i1h_frame))
-                    if sell_flag_24h is False:
+                    if sell_flag_24h is not True:
                         if buy_flag_4h:
                             log = '{} 4hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_4h)
                             logging.info(log)
@@ -582,7 +582,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                 runningMidFrame = '1Hour'
                                 runningLowFrame = '15minutes'
                                 chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
-                                if sell_flag_4h is False:
+                                if sell_flag_4h is not True:
                                     if buy_flag_1h:
                                         log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
                                         logging.info(log)
@@ -625,7 +625,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                     runningMidFrame = '1Hour'
                     runningLowFrame = '15minutes'
                     chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
-                    if sell_flag_4h is False:
+                    if sell_flag_4h is not True:
                         if buy_flag_1h:
                             log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
                             logging.info(log)
