@@ -593,26 +593,26 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                         elif mode == 'consulting' or mode == 'zero':
                                             limit_manager(mode, i4h, i1h, i15m, condition, max_rsi)
                                     elif buy_flag_1h is not True:
-                                        log = '{} 1hour momentum is {}. Wait 5 min.' \
+                                        log = '{} 1hour momentum is {}. Wait 1 min.' \
                                             .format(time_stamp(time.time()), buy_flag_1h)
                                         logging.info(log)
                                         logs.append(log + '<br>')
-                                        time.sleep(300)
+                                        time.sleep(60)
                                 else:
-                                    log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
+                                    log = '{} No buying opportunity. Wait 1 min.'.format(time_stamp(time.time()))
                                     logging.info(log)
                                     logs.append(log + '<br>')
-                                    time.sleep(300)
+                                    time.sleep(60)
                             else:
-                                log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
+                                log = '{} No buying opportunity. Wait 1 min.'.format(time_stamp(time.time()))
                                 logging.info(log)
                                 logs.append(log + '<br>')
-                                time.sleep(300)
+                                time.sleep(60)
                     else:
-                        log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
+                        log = '{} No buying opportunity. Wait 1 min.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(300)
+                        time.sleep(60)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -636,17 +636,17 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                             elif mode == 'consulting' or mode == 'simulator':
                                 limit_manager(mode, i4h, i1h, i15m, condition, max_rsi)
                         elif buy_flag_1h is not True:
-                            log = '{} 1hour momentum is {}. Wait 5 min'.format(time_stamp(time.time()), buy_flag_1h)
+                            log = '{} 1hour momentum is {}. Wait 1 min'.format(time_stamp(time.time()), buy_flag_1h)
                             logging.info(log)
                             logs.append(log + '<br>')
                             logging.info(log)
                             logs.append(log + '<br>')
-                            time.sleep(300)
+                            time.sleep(60)
                     else:
-                        log = '{} No buying opportunity. Wait 5 min.'.format(time_stamp(time.time()))
+                        log = '{} No buying opportunity. Wait 1 min.'.format(time_stamp(time.time()))
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(300)
+                        time.sleep(60)
                 else:
                     log = '{} All trend frames negative. No buying opportunity. Wait 5 min.' \
                         .format(time_stamp(time.time()))
@@ -675,11 +675,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, i24h, i4h, i1h, condition, max_rsi)
                     elif sell_flag_4h is not True:
-                        log = '{} 4hour sell flag is {}. Wait 5 minutes.' \
-                            .format(time_stamp(time.time()), sell_flag_4h, 300)
+                        log = '{} 4hour sell flag is {}. Wait 1 minute.'.format(time_stamp(time.time()), sell_flag_4h)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(300)
+                        time.sleep(60)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -697,10 +696,10 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                         elif mode == 'consulting' or mode == 'simulator':
                             limit_manager(mode, i4h, i1h, i15m, condition, max_rsi)
                     elif sell_flag_1h is not True:
-                        log = '{} 1hour sell flag is {}. Wait 5 minutes.'.format(time_stamp(time.time()), sell_flag_1h)
+                        log = '{} 1hour sell flag is {}. Wait 1 minute.'.format(time_stamp(time.time()), sell_flag_1h)
                         logging.info(log)
                         logs.append(log + '<br>')
-                        time.sleep(300)
+                        time.sleep(60)
                 else:
                     log = '{} All high-frame trends are negative.'.format(time_stamp(time.time()))
                     logging.info(log)
