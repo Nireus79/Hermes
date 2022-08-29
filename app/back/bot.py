@@ -536,13 +536,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
             i15m_frame = i15m.get_frame()
             high_frame_24h = high_frame_indicators(i24h_frame)
             high_frame_4h = high_frame_indicators(i4h_frame)
-            mid_frame_24h = mid_frame_indicators(i24h_frame, max_rsi)
             mid_frame_4h = mid_frame_indicators(i4h_frame, max_rsi)
             mid_frame_1h = mid_frame_indicators(i1h_frame, max_rsi)
             closing_price = high_frame_24h.iloc[-1]['close']
             trend_24h = high_frame_24h.iloc[-1]['trend']
             trend_4h = high_frame_4h.iloc[-1]['trend']
-            sell_flag_24h = mid_frame_24h.iloc[-1]['sell flag']
+            negative_momentum24h = high_frame_24h.iloc[-1]['negative momentum']
+            negative_momentum4h = high_frame_4h.iloc[-1]['negative momentum']
             buy_flag_4h = mid_frame_4h.iloc[-1]['buy flag']
             sell_flag_4h = mid_frame_4h.iloc[-1]['sell flag']
             buy_flag_1h = mid_frame_1h.iloc[-1]['buy flag']
@@ -561,7 +561,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                     runningMidFrame = '4Hour'
                     runningLowFrame = '1Hour'
                     chart_data(high_frame_24h, mid_frame_4h, low_frame_indicators(i1h_frame))
-                    if sell_flag_24h is False:
+                    if negative_momentum24h:
+                        log = '{} 24hour momentum is weak. No buying opportunity. Wait 1 min.' \
+                            .format(time_stamp(time.time()))
+                        logging.info(log)
+                        logs.append(log + '<br>')
+                        time.sleep(60)
+                    else:
                         if buy_flag_4h:
                             log = '{} 4hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_4h)
                             logging.info(log)
@@ -582,7 +588,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                 runningMidFrame = '1Hour'
                                 runningLowFrame = '15minutes'
                                 chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
-                                if sell_flag_4h is False:
+                                if negative_momentum4h:
+                                    log = '{} 4hour momentum is weak. No buying opportunity. Wait 1 min.' \
+                                        .format(time_stamp(time.time()))
+                                    logging.info(log)
+                                    logs.append(log + '<br>')
+                                    time.sleep(60)
+                                else:
                                     if buy_flag_1h:
                                         log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
                                         logging.info(log)
@@ -598,24 +610,12 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                         logging.info(log)
                                         logs.append(log + '<br>')
                                         time.sleep(60)
-                                else:
-                                    log = '{} 4hour momentum is weak. No buying opportunity. Wait 1 min.'\
-                                        .format(time_stamp(time.time()))
-                                    logging.info(log)
-                                    logs.append(log + '<br>')
-                                    time.sleep(60)
                             else:
                                 log = '{} 4hour trend is {}. No buying opportunity. Wait 1 min.'\
                                     .format(time_stamp(time.time()), buy_flag_4h)
                                 logging.info(log)
                                 logs.append(log + '<br>')
                                 time.sleep(60)
-                    else:
-                        log = '{} 24hour momentum is weak. No buying opportunity. Wait 1 min.'\
-                            .format(time_stamp(time.time()))
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(60)
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
@@ -625,7 +625,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                     runningMidFrame = '1Hour'
                     runningLowFrame = '15minutes'
                     chart_data(high_frame_4h, mid_frame_1h, low_frame_indicators(i15m_frame))
-                    if sell_flag_4h is False:
+                    if negative_momentum4h:
+                        log = '{} 4hour momentum is weak. No buying opportunity. Wait 1 min.' \
+                            .format(time_stamp(time.time()))
+                        logging.info(log)
+                        logs.append(log + '<br>')
+                        time.sleep(60)
+                    else:
                         if buy_flag_1h:
                             log = '{} 1hour momentum is {}.'.format(time_stamp(time.time()), buy_flag_1h)
                             logging.info(log)
@@ -642,12 +648,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                             logging.info(log)
                             logs.append(log + '<br>')
                             time.sleep(60)
-                    else:
-                        log = '{} 4hour momentum is weak. No buying opportunity. Wait 1 min.'\
-                            .format(time_stamp(time.time()))
-                        logging.info(log)
-                        logs.append(log + '<br>')
-                        time.sleep(60)
                 else:
                     log = '{} All trend frames negative. No buying opportunity. Wait 5 min.' \
                         .format(time_stamp(time.time()))
