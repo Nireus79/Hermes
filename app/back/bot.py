@@ -619,7 +619,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                 elif trend_4h:
                     log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                     logging.info(log)
-                    logging.info(log)
                     logs.append(log + '<br>')
                     runningHighFrame = '4Hour'
                     runningMidFrame = '1Hour'
