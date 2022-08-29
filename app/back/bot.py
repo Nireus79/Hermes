@@ -582,8 +582,9 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                             logging.info(log)
                             logs.append(log + '<br>')
                             if trend_4h:
-                                logging.info('{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h))
+                                log = '{} 4hour trend is {}.'.format(time_stamp(time.time()), trend_4h)
                                 logging.info(log)
+                                logs.append(log + '<br>')
                                 runningHighFrame = '4Hour'
                                 runningMidFrame = '1Hour'
                                 runningLowFrame = '15minutes'
@@ -642,8 +643,6 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                 limit_manager(mode, i4h, i1h, i15m, condition, max_rsi)
                         else:
                             log = '{} 1hour momentum is {}. Wait 1 min'.format(time_stamp(time.time()), buy_flag_1h)
-                            logging.info(log)
-                            logs.append(log + '<br>')
                             logging.info(log)
                             logs.append(log + '<br>')
                             time.sleep(60)
