@@ -542,7 +542,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
             closing_price = high_frame_24h.iloc[-1]['close']
             trend_24h = high_frame_24h.iloc[-1]['trend']
             trend_4h = high_frame_4h.iloc[-1]['trend']
-            sell_flag_24h = mid_frame_24h['sell flag']
+            sell_flag_24h = mid_frame_24h.iloc[-1]['sell flag']
             buy_flag_4h = mid_frame_4h.iloc[-1]['buy flag']
             sell_flag_4h = mid_frame_4h.iloc[-1]['sell flag']
             buy_flag_1h = mid_frame_1h.iloc[-1]['buy flag']
