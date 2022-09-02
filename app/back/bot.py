@@ -114,7 +114,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         if new higher high of low frame is lower than previous:
                             sets new limit equal to new lower higher high.
                         else:
-                            waits one low candle / divisor
+                            waits one low candle
             else:
                 breaks to reevaluate conditions.
         When intending to sell asset
@@ -126,7 +126,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         if new lower low of low frame is higher than previous set:
                             sets new stop-loss equal to new higher lower-low.
                         else:
-                            waits one low candle / divisor
+                            waits one low candle
             else:
                 breaks to reevaluate conditions.
     :param max_rsi: maximum rsi in mid-frame
@@ -461,7 +461,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
     as when current price strength is above safety, price is actually 'overbought' and probability of descent is high.
     Low frame.
     When conditions are aligned in the higher frames action limits are set, according to the last low frame
-    closed candle range. Next time fragment of candle price gives action flag or sets new limits.
+    closed candle range. Next candle price gives action flag or sets new limits.
     Low frame current candle ATR is added to the limit and subtracted to stop-loss, so current volatility
     of the price is taken into consideration to avoid false transactions.
 
