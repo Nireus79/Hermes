@@ -476,14 +476,17 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
         and bot constantly evaluates the flags in a while loop.
         if condition is 'buy':
             if 24 hour high frame trend is positive (True trend flag):
-                if 4 hour mid-frame is strong (buy flag True):
-                    order_manager() evaluates to buy on 1 hour low frame.
-                elif 4 hour mid-frame conditions are NOT aligned:
-                    if 4 hour high frame trend is positive:
-                        if 1 hour momentum is strong and 4hour momentum is not weak:
-                            order_manager() evaluates to buy on 15 min low frame.
-                        elif 1 hour mid-frame conditions are NOT aligned:
-                            sleep 5 minutes to review conditions.
+                If 24 momentum (stochastic) is negative:
+                    wait 5min.
+                else:
+                    if 4 hour mid-frame is strong (buy flag True):
+                        order_manager() evaluates to buy on 1 hour low frame.
+                    elif 4 hour mid-frame conditions are NOT aligned:
+                        if 4 hour high frame trend is positive:
+                            if 1 hour momentum is strong and 4hour momentum is not weak:
+                                order_manager() evaluates to buy on 15 min low frame.
+                            elif 1 hour mid-frame conditions are NOT aligned:
+                                sleep 5 minutes to review conditions.
             elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15)...
             else: (conditions at all time frame combinations are not aligned)
                 bot sleeps for 5 minutes to review conditions.
