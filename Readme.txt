@@ -58,3 +58,4 @@ Message appears on Overview when done.
 In stop-loss/limit levels an extra margin of current atr (average true range) is added,
 to include the volatility factor and limit false positioning.
 
+FOR ANY ISSUES OR ADDITIONAL INFORMATION PLEASE CONTACT TECHNICAL SUPPORT Hermes_algotrading@proton.me
