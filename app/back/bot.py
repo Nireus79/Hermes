@@ -215,11 +215,13 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         candle_time = low_f.iloc[-2]['time']
                         if new_limit < limit:
                             limit = new_limit
-                            log = '{} limit set to {}.'.format(time_stamp(time.time()), limit)
+                            log = '{} limit set to {}. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), limit, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price under limit.'.format(time_stamp(time.time()))
+                            log = '{} Closing price under limit. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
@@ -254,11 +256,13 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         if new_stop > stop:
                             stop = new_stop
                             candle_time = low_f.iloc[-1]['time']
-                            log = '{} Stop loss set to {}.'.format(time_stamp(time.time()), stop)
+                            log = '{} Stop loss set to {}. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), stop, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price over stop.'.format(time_stamp(time.time()))
+                            log = '{} Closing price over stop. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
@@ -354,11 +358,13 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                         if new_limit < limit:
                             limit = new_limit
                             stop = new_stop
-                            log = '{} New limit set to {}.'.format(time_stamp(time.time()), limit)
+                            log = '{} New limit set to {}. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), limit, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price not exceeded limit.'.format(time_stamp(time.time()))
+                            log = '{} Closing price not exceeded limit. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
@@ -396,11 +402,13 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                         if new_stop > stop:
                             limit = new_limit
                             stop = new_stop
-                            log = '{} New stop-loss set to {}.'.format(time_stamp(time.time()), stop)
+                            log = '{} New stop-loss set to {}. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), stop, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price over stop-loss level.'.format(time_stamp(time.time()))
+                            log = '{} Closing price over stop-loss level. Waiting {}min until next candle close.'\
+                                .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
