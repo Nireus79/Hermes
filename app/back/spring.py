@@ -19,3 +19,6 @@ def activation():
 def check():
     check_key = api_client.check_license(product=product, license_key=LICENCE_KEY_SPRING)
     return check_key
+
+
+print(activation())

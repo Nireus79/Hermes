@@ -4,7 +4,7 @@ import threading
 import winsound
 from app.back.kraken import Api, high_frame_indicators, mid_frame_indicators, low_frame_indicators, time_stamp, \
     add_order, cancel_order, get_condition, high_data, mid_data, low_data
-from app.back.spring import check
+from app.back.spring import check, activation
 
 logging.basicConfig(level=logging.INFO)
 
@@ -715,6 +715,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                     elif mode == 'consulting' or mode == 'simulator':
                         limit_manager(mode, i4h, i1h, i15m, condition, max_rsi)
     else:
+        activation()
         log = 'Your product licence is not active. Please activate or contact technical support. ' \
               'Hermes_algotrading@proton.me'
         logging.info(log)
