@@ -170,7 +170,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     log = '{} Current price: {}. limit: {}. Stop loss: {}'.format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
+    log = '{} Waiting {}min until next candle close.'.format(time_stamp(time.time()), low.interval)
     logging.info(log)
     logs.append(log + '<br>')
     chart_data(high_f, mid_f, low_f)
@@ -223,9 +223,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
-                    log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
                     time.sleep(60)
             elif buy_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
@@ -265,9 +262,6 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
-                    log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
                     time.sleep(60)
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
@@ -308,11 +302,14 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
     logging.info(log)
     logs.append(log + '<br>')
     if cond == 'buy':
-        log = '{} Please give buy order when price exceeds {}. Wait {}min.' \
+        log = '{} Please wait 1 low candle time and give buy order if price exceeds {}. Wait {}min.' \
             .format(time_stamp(time.time()), limit, low.interval)
     elif cond == 'sell':
-        log = '{} Please give sell order when price under {}. Wait {}min.' \
+        log = '{} Please wait 1 low candle time and give sell order if price under {}. Wait {}min.' \
             .format(time_stamp(time.time()), stop, low.interval)
+    logging.info(log)
+    logs.append(log + '<br>')
+    log = '{} Waiting {}min until next candle close.'.format(time_stamp(time.time()), low.interval)
     logging.info(log)
     logs.append(log + '<br>')
     chart_data(high_f, mid_f, low_f)
@@ -365,9 +362,6 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
-                    log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
                     time.sleep(60)
             else:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
@@ -410,9 +404,6 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                             logging.info(log)
                             logs.append(log + '<br>')
                 else:
-                    log = '{} Waiting new candle close.'.format(time_stamp(time.time()))
-                    logging.info(log)
-                    logs.append(log + '<br>')
                     time.sleep(60)
             elif sell_flag is not True:
                 log = '{} Conditions re-evaluation.'.format(time_stamp(time.time()))
