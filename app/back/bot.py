@@ -170,7 +170,7 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
     log = '{} Current price: {}. limit: {}. Stop loss: {}'.format(time_stamp(time.time()), closing_price, limit, stop)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Waiting {}min until next candle close.'.format(time_stamp(time.time()), low.interval)
+    log = '{} Waiting until next {}min candle close.'.format(time_stamp(time.time()), low.interval)
     logging.info(log)
     logs.append(log + '<br>')
     chart_data(high_f, mid_f, low_f)
@@ -215,12 +215,12 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         candle_time = low_f.iloc[-2]['time']
                         if new_limit < limit:
                             limit = new_limit
-                            log = '{} limit set to {}. Waiting {}min until next candle close.'\
+                            log = '{} limit set to {}. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), limit, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price under limit. Waiting {}min until next candle close.'\
+                            log = '{} Closing price under limit. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
@@ -256,12 +256,12 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         if new_stop > stop:
                             stop = new_stop
                             candle_time = low_f.iloc[-1]['time']
-                            log = '{} Stop loss set to {}. Waiting {}min until next candle close.'\
+                            log = '{} Stop loss set to {}. Waiting until next{}min  candle close.'\
                                 .format(time_stamp(time.time()), stop, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price over stop. Waiting {}min until next candle close.'\
+                            log = '{} Closing price over stop. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
@@ -313,7 +313,7 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
             .format(time_stamp(time.time()), stop, low.interval)
     logging.info(log)
     logs.append(log + '<br>')
-    log = '{} Waiting {}min until next candle close.'.format(time_stamp(time.time()), low.interval)
+    log = '{} Waiting until next {}min candle close.'.format(time_stamp(time.time()), low.interval)
     logging.info(log)
     logs.append(log + '<br>')
     chart_data(high_f, mid_f, low_f)
@@ -358,12 +358,12 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                         if new_limit < limit:
                             limit = new_limit
                             stop = new_stop
-                            log = '{} New limit set to {}. Waiting {}min until next candle close.'\
+                            log = '{} New limit set to {}. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), limit, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price not exceeded limit. Waiting {}min until next candle close.'\
+                            log = '{} Closing price not exceeded limit. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
@@ -402,12 +402,12 @@ def limit_manager(mode, high, mid, low, cond, max_rsi):
                         if new_stop > stop:
                             limit = new_limit
                             stop = new_stop
-                            log = '{} New stop-loss set to {}. Waiting {}min until next candle close.'\
+                            log = '{} New stop-loss set to {}. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), stop, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
                         else:
-                            log = '{} Closing price over stop-loss level. Waiting {}min until next candle close.'\
+                            log = '{} Closing price over stop-loss level. Waiting until next {}min candle close.'\
                                 .format(time_stamp(time.time()), low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
