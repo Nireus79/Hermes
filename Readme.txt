@@ -27,7 +27,7 @@ Setting up your credentials:
 (This process needs to be done only once.)
 1) Go to kraken.com and log in or create a new account.
 2) Then proceed to support: How to generate an API key pair
-and follow instructions to create your personal API key and Secret Key.
+and follow instructions to create your personal API key, Secret Key and product licence key.
 These are essential for your app operation. The app will use them access your account.
 3) Carefully save your Api Key and secret. If you loose them you will have to generate new.
 A. Proceed to your windows "Control panel".
@@ -38,6 +38,7 @@ E. Click "New" button under "User variables" window.
 F. Type or paste API_KEY_KRAKEN on "Variable name" input field and your Api key on "Variable value" input field.
 G. Repeat "E" step and
 type or paste API_SEC_KRAKEN on "Variable name" input field and your Api secret key on "Variable value" input field.
+Repeat for product licence key.
 Now you have safely stored your credentials, and you can operate your app.
 Operating your app:
 A. Click "control" on nav bar field.
