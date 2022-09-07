@@ -2,8 +2,8 @@ import os
 from licensespring.api import APIClient
 
 # https://docs.licensespring.com/docs/apiclient-usage-examples
-API_KEY_SPRING = 'REDACTED'  # os.environ['API_KEY_SPRING']
-SHARED_KEY_SPRING = 'REDACTED'  # os.environ['SHARED_KEY_SPRING']
+API_KEY_SPRING = 'REDACTED'
+SHARED_KEY_SPRING = 'REDACTED'
 LICENCE_KEY_SPRING = os.environ['LICENCE_KEY_SPRING']
 product = "h1"
 api_client = APIClient(api_key=API_KEY_SPRING, shared_key=SHARED_KEY_SPRING)
