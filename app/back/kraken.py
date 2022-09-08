@@ -57,6 +57,9 @@ def get_condition(crypto_currency, fiat_currency, closing_price):
         return 'buy', crypto_balance, fiat_balance
     elif crypto_value >= fiat_balance:
         return 'sell', crypto_balance, fiat_balance
+    else:
+        log = 'No balance found. Please select existing assets in your account.'
+        print(log)
 
 
 def add_order(ordertype, cond, vol, price, crypto_currency, fiat_currency):
