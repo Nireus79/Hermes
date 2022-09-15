@@ -100,7 +100,7 @@ def chart_data(high_frame, mid_frame, low_frame):
     low_stop = stop_data
 
 
-def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_currency, max_rsi):
+def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, max_rsi):
     """
     When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
     order_manager is setting limit and stop loss levels.
@@ -129,8 +129,8 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                             waits one low candle
             else:
                 breaks to reevaluate conditions.
+    :param mode: limit / market
     :param max_rsi: maximum rsi in mid-frame
-    :param order_type: limit / market
     :param crypto_currency: asset a
     :param fiat_currency: asset b
     :param high: high-frame instance
@@ -200,9 +200,9 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                         asset_vol = (fiat_balance - fiat_balance * 0.0026) / closing_price
                         # kraken max trading fee: 0.0026 * asset_vol
                         log = '{} order to {} {} {} using {} {}.' \
-                            .format(order_type, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
+                            .format(mode, cond, asset_vol, crypto_currency, fiat_balance, fiat_currency)
                         logging.info(log)
-                        tx = add_order(order_type, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
+                        tx = add_order(mode, cond, asset_vol, closing_price, crypto_currency, fiat_currency)
                         log = tx
                         logging.info(log)
                         beeper(cond)
@@ -240,9 +240,9 @@ def order_manager(order_type, high, mid, low, cond, crypto_currency, fiat_curren
                 if new_candle_time > candle_time + low.candle:  # wait one candle to close
                     if closing_price < stop:
                         log = '{} order to {} {} {} at {}.' \
-                            .format(order_type, cond, crypto_balance, crypto_currency, closing_price)
+                            .format(mode, cond, crypto_balance, crypto_currency, closing_price)
                         logging.info(log)
-                        tx = add_order(order_type, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
+                        tx = add_order(mode, cond, crypto_balance, closing_price, crypto_currency, fiat_currency)
                         log = tx
                         logging.info(log)
                         beeper(cond)
