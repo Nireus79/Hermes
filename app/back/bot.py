@@ -256,7 +256,7 @@ def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, ma
                         if new_stop > stop:
                             stop = new_stop
                             candle_time = low_f.iloc[-1]['time']
-                            log = '{} Stop loss set to {}. Waiting until next{}min  candle close.'\
+                            log = '{} Stop loss set to {}. Waiting until next {}min  candle close.'\
                                 .format(time_stamp(time.time()), stop, low.interval)
                             logging.info(log)
                             logs.append(log + '<br>')
