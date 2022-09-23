@@ -58,7 +58,7 @@ function update_values() {
         function(data_update) {
             mid_frame_chart.updateSeries([{
               name: 'Middle frame: ' + data_update.runningMidFrame,
-              data: data_update.mid_chart_data.slice(-20)
+              data: data_update.mid_chart_data
               },{
               name: 'Stochastic %D: ' + data_update.mid_d
               },{

@@ -56,13 +56,13 @@ function update_values() {
         function(data_update) {
             low_frame_chart.updateSeries([{
               name: 'Low frame: ' + data_update.runningLowFrame,
-              data: data_update.low_chart_data.slice(-10)
+              data: data_update.low_chart_data
             },{
               name: 'Buy limit: ' + data_update.low_limit[data_update.low_limit.length - 1]['y'],
-              data: data_update.low_limit.slice(-10)
+              data: data_update.low_limit
             },{
               name: 'Stop loss: ' + data_update.low_stop[data_update.low_stop.length - 1]['y'],
-              data: data_update.low_stop.slice(-10)
+              data: data_update.low_stop
               }
             ]);
         }

@@ -88,16 +88,16 @@ def chart_data(high_frame, mid_frame, low_frame):
             'x': i['x'],
             'y': stop
         })
-    high_chart_data = high_candles
-    high_ema13 = e13
+    high_chart_data = high_candles[-20:]
+    high_ema13 = e13[-20:]
     high_macd = mac
-    mid_chart_data = mid_candles
+    mid_chart_data = mid_candles[-20:]
     mid_d = d
     mid_ds = ds
     mid_rs = rs
-    low_chart_data = low_candles
-    low_limit = limit_data
-    low_stop = stop_data
+    low_chart_data = low_candles[-10:]
+    low_limit = limit_data[-10:]
+    low_stop = stop_data[-10:]
 
 
 def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, max_rsi):
