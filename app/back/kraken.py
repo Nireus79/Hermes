@@ -112,14 +112,22 @@ def get_order_info(txid):
     return resp.json()
 
 
-def time_stamp(unix):
+def time_stamp():
     """
     Takes unix time and gives datetime format.
-    :param unix: unix time.time()
     :return: Readable datetime format.
     """
-    ts = int(unix) + 10800  # (7200 +2 hours winter, 10800 +3 hours summer) for local time Athens
-    return datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    unix = time.time()
+    dt = datetime.utcfromtimestamp(int(unix)).strftime('%Y-%m-%d %H:%M:%S')
+    month = int(dt[5] + dt[6])
+    if month > 10 or month < 4:
+        ts = int(unix) + 7200  # 7200 +2 hours winter local time Athens
+        stamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return stamp
+    else:
+        ts = int(unix) + 10800  # 10800 +3 hours summer local time Athens
+        stamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return stamp
 
 
 def high_frame_indicators(df):
@@ -264,3 +272,17 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
+
+
+# i24h = Api('DOT', 'EUR', 1440, 40)
+# i4h = Api('DOT', 'EUR', 240, 40)
+# i1h = Api('DOT', 'EUR', 60, 40)
+# i15m = Api('DOT', 'EUR', 15, 40)
+# i24h_frame = i24h.get_frame()
+# i4h_frame = i4h.get_frame()
+# i1h_frame = i1h.get_frame()
+# i15m_frame = i15m.get_frame()
+#
+# f = mid_frame_indicators(i24h_frame, 70)
+#
+# print(f.to_string())
