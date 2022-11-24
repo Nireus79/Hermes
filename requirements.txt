@@ -33,7 +33,6 @@ imageio==2.22.4
 itsdangerous==2.1.2
 Jinja2==3.1.2
 jsonschema==4.17.1
-kraken==4.2.0
 krakenex==2.1.0
 licensespring==1.0.7
 lxml==4.9.1
